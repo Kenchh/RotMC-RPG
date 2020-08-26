@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.reykench</groupId>
+    <groupId>me.kench</groupId>
     <artifactId>RotMC</artifactId>
     <version>1.0</version>
 
@@ -35,7 +35,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                me.reykench.RotMC
+                                me.kench.RotMC
                             </mainClass>
                         </manifest>
                     </archive>
