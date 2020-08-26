@@ -1,0 +1,18 @@
+name: RotMC
+version: 1.0
+author: FreakzBoy
+
+main: me.reykench.RotMC
+api-version: 1.15
+
+commands:
+  fame:
+    description: Used to display fame related stuff
+  skills:
+    description: Used to display your stats
+    aliases: stats
+  class:
+    description: Used to select your class
+    aliases: classes
+  rotmc:
+    description: Best command out of all
