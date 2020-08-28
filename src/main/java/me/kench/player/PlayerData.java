@@ -176,6 +176,8 @@ public class PlayerData {
         pclass.applyStats();
         assignPerms();
 
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn " + getPlayer().getName());
+
         RotMC.getInstance().getDatabase().update(p, old);
 
         getPlayer().getInventory().clear();

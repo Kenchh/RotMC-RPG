@@ -1,14 +1,11 @@
 package me.kench;
 
-import me.kench.commands.FameCMD;
+import me.kench.commands.*;
 import me.kench.commands.subcommand.SubCommandManager;
 import me.kench.events.*;
 import me.kench.gui.*;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
-import me.kench.commands.ClassCMD;
-import me.kench.commands.RotMCCMD;
-import me.kench.commands.SkillsCMD;
 import me.kench.config.MySQLConfig;
 import me.kench.database.ConnectionPoolManager;
 import me.kench.database.SQLManager;
@@ -49,6 +46,7 @@ public class RotMC extends JavaPlugin {
         getServer().getPluginCommand("class").setExecutor(new ClassCMD());
         getServer().getPluginCommand("skills").setExecutor(new SkillsCMD());
         getServer().getPluginCommand("fame").setExecutor(new FameCMD());
+        getServer().getPluginCommand("account").setExecutor(new AccountCMD());
 
         getServer().getPluginManager().registerEvents(new CreateClassGUI(), this);
         getServer().getPluginManager().registerEvents(new ClassesGUI(), this);

@@ -6,8 +6,12 @@ main: me.kench.RotMC
 api-version: 1.15
 
 commands:
+  account:
+    description: Used to display account-fame related stuff
+    aliases: [a, accounts]
   fame:
-    description: Used to display fame related stuff
+    description: Used to display class-fame related stuff
+    aliases: f
   skills:
     description: Used to display your stats
     aliases: stats

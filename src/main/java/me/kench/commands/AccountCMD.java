@@ -10,13 +10,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 import java.util.List;
 
-public class FameCMD implements CommandExecutor {
+public class AccountCMD implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
         if(args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Usage: /fame top");
+            sender.sendMessage(ChatColor.RED + "Usage: /account top");
             return true;
         }
 
@@ -24,12 +24,12 @@ public class FameCMD implements CommandExecutor {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    sender.sendMessage(ChatColor.GOLD + "Top 10 characters with highest fame");
+                    sender.sendMessage(ChatColor.GOLD + "Top 10 accounts with highest fame");
 
-                    HashMap<Integer, List<String>> topclasses = RotMC.getInstance().getDatabase().getTopClasses();
-                    for (int i : topclasses.keySet()) {
-                        List<String> data = topclasses.get(i);
-                        sender.sendMessage(ChatColor.YELLOW + "" + i + ". " + data.get(0) + " - " + ChatColor.GOLD + data.get(1) + " " + data.get(2));
+                    HashMap<Integer, List<String>> topaccounts = RotMC.getInstance().getDatabase().getTopProfiles();
+                    for (int i : topaccounts.keySet()) {
+                        List<String> data = topaccounts.get(i);
+                        sender.sendMessage(ChatColor.YELLOW + "" + i + ". " + data.get(0) + " - " + data.get(1));
                     }
                 }
             }.runTaskAsynchronously(RotMC.getInstance());

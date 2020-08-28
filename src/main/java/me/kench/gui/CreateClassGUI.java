@@ -142,9 +142,14 @@ public class CreateClassGUI implements Listener {
                 break;
         }
 
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kit " + pld.classes.get(pld.classes.size()-1).getData().getName() + " " + pld.getPlayer().getName());
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn " + pld.getPlayer().getName());
+
         pld.selectClass(pld.classes.get(pld.classes.size()-1));
+
         for(int i=0;i<3;i++)
             pld.getPlayer().playSound(pld.getPlayer().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);
+
         e.getWhoClicked().closeInventory();
 
     }

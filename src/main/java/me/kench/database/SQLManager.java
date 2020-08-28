@@ -246,10 +246,6 @@ public class SQLManager {
 
                 JSONArray array = new JSONArray(rs.getString("data"));
 
-                System.out.println("------------ [data] ------------");
-                System.out.println(rs.getString("data"));
-                System.out.println("------------ [data] ------------");
-
                 for(int i = 0; i < array.length(); i++) {
                     JSONObject input = array.getJSONObject(i);
 
@@ -475,6 +471,78 @@ public class SQLManager {
             }
 
             for(int i=0;i<10;i++) {
+
+                if(i+1 > all.size()) break;
+
+                List<String> data = all.get(i);
+                top10Classes.put(i+1, data);
+            }
+
+            return top10Classes;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            pool.close(conn, ps, rs);
+        }
+
+        return top10Classes;
+    }
+
+    public HashMap<Integer, List<String>> getTopProfiles() {
+        HashMap<Integer, List<String>> top10Classes = new HashMap<>();
+        ArrayList<List<String>> all = new ArrayList<>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+
+            conn = pool.getConnection();
+
+            String stmt = "SELECT * FROM " + playerDataTable + "";
+            ps = conn.prepareStatement(stmt);
+
+            rs = ps.executeQuery();
+
+            while(rs.next()) {
+
+                String uuid = rs.getString("uuid");
+                JSONArray array = new JSONArray(rs.getString("data"));
+
+                String name = Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
+
+                int xp = 0;
+
+                for(int i = 0; i < array.length(); i++) {
+                    JSONObject input = array.getJSONObject(i);
+
+                    xp += input.getInt("xp");
+                }
+
+                all.add(Arrays.asList(name, xp + ""));
+            }
+
+            /** Sorting **/
+            for(int i=0;i<all.size()-1;i++) {
+                for(int ii=0;ii<all.size()-1;ii++) {
+                    List<String> data = all.get(ii);
+                    int exp = Integer.parseInt(data.get(1));
+
+                    List<String> nextData = all.get(ii+1);
+                    int nextExp = Integer.parseInt(nextData.get(1));
+
+                    if(exp < nextExp) {
+                        all.set(ii, nextData);
+                        all.set(ii+1, data);
+                    }
+                }
+            }
+
+            for(int i=0;i<10;i++) {
+
+                if(i+1 > all.size()) break;
+
                 List<String> data = all.get(i);
                 top10Classes.put(i+1, data);
             }
