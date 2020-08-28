@@ -5,6 +5,7 @@ import me.kench.items.stats.Gem;
 import me.kench.player.PlayerClass;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,7 +16,7 @@ import java.util.List;
 public class GameItem {
 
     private ItemStack item;
-    private GameClass gameClass;
+    private GameClass gameClass = null;
     private int level;
 
     private ItemStats stats;
@@ -43,15 +44,16 @@ public class GameItem {
 
         for(String s : lore) {
 
-            if(s.contains("Player Class:")) {
+            Bukkit.broadcastMessage("Trying to get class & level req...");
+            if(s.contains("Class:")) {
                 String gc = TextUtils.getLastWord(s, 0);
-
+                Bukkit.broadcastMessage("Found class req: " + gc);
                 gameClass = new GameClass(gc);
             }
 
-            if(s.contains("Player Level:")) {
+            if(s.contains("Level:")) {
                 String lvl = TextUtils.getLastWord(s, 0);
-
+                Bukkit.broadcastMessage("Found level req: " + lvl);
                 level = Integer.parseInt(lvl.replace("+", ""));
             }
 
@@ -129,14 +131,6 @@ public class GameItem {
             } else {
                 lore.remove(i);
             }
-        }
-
-        if(gameClass != null) {
-            lore.add(ChatColor.RESET + " Player Class: " + gameClass.getName());
-        }
-
-        if(level > 0) {
-            lore.add(ChatColor.RESET + " Player Level: " + level + "+");
         }
 
         for(int i=0;i<stats.gems.size();i++) {

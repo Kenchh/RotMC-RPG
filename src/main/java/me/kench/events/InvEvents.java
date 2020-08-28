@@ -1,8 +1,12 @@
 package me.kench.events;
 
+import me.kench.RotMC;
 import me.kench.gui.ExtractorGUI;
 import me.kench.items.*;
+import me.kench.player.PlayerClass;
+import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 public class InvEvents implements Listener {
@@ -34,18 +39,54 @@ public class InvEvents implements Listener {
 
         if(e.getClick() != ClickType.LEFT) return;
 
+        ItemStack item = e.getCurrentItem();
+        ItemStack cursorItem = e.getCurrentItem();
+
+        Bukkit.broadcastMessage("Inv-Event");
+        if(isWearable(cursorItem)) {
+            Bukkit.broadcastMessage("Is wearable");
+            if(e.getSlotType() == InventoryType.SlotType.ARMOR) {
+                Bukkit.broadcastMessage("Is armor-slot");
+                GameItem gameItem = new GameItem(cursorItem);
+
+                PlayerData pd = RotMC.getPlayerData(p);
+                if (pd == null) return;
+
+                PlayerClass pc = pd.getMainClass();
+                if (pc == null) return;
+
+                Bukkit.broadcastMessage("Checking level req...");
+                if (gameItem.getLevel() != 0) {
+                    Bukkit.broadcastMessage("Level not 0");
+                    int level = gameItem.getLevel();
+
+                    if (pc.getLevel() < level) {
+                        Bukkit.broadcastMessage("Cancelled Armor-Equip");
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+
+                Bukkit.broadcastMessage("Checking class req...");
+                if (gameItem.getGameClass() != null) {
+                    Bukkit.broadcastMessage("Class not null");
+                    String className = gameItem.getGameClass().getName();
+
+                    if (!className.equalsIgnoreCase(pc.getData().getName())) {
+                        Bukkit.broadcastMessage("Cancelled Armor-Equip");
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+
         if(isExtractor) {
 
-            if(
-                    e.getCurrentItem().getType() == Material.ELYTRA ||
-                            e.getCurrentItem().getType() == Material.CARROT_ON_A_STICK ||
-                            e.getCurrentItem().getType().toString().toUpperCase().contains("HELMET") ||
-                            e.getCurrentItem().getType().toString().toUpperCase().contains("CHESTPLATE") ||
-                            e.getCurrentItem().getType().toString().toUpperCase().contains("LEGGINGS") ||
-                            e.getCurrentItem().getType().toString().toUpperCase().contains("BOOTS")
-            ) {
+            if(isGameItem(item)) {
 
-                ItemStack item = e.getCurrentItem();
                 GameItem gameItem = new GameItem(item);
 
                 if(gameItem.getStats().gems.isEmpty() && gameItem.getStats().getRune() == null && gameItem.getStats().getEssence() == null) return;
@@ -68,8 +109,8 @@ public class InvEvents implements Listener {
 
             MythicDustItem mythicDust = new MythicDustItem(e.getCursor());
 
-            boolean isGem2 = ItemUtils.isGem(e.getCurrentItem().getItemMeta().getDisplayName());
-            boolean isRune2 = ItemUtils.isRune(e.getCurrentItem().getItemMeta().getDisplayName());
+            boolean isGem2 = ItemUtils.isGem(item.getItemMeta().getDisplayName());
+            boolean isRune2 = ItemUtils.isRune(item.getItemMeta().getDisplayName());
 
             if(!isGem2 && !isRune2) return;
 
@@ -77,7 +118,7 @@ public class InvEvents implements Listener {
 
                 e.setCancelled(true);
 
-                GemItem gemItem = new GemItem(e.getCurrentItem());
+                GemItem gemItem = new GemItem(item);
 
                 if(gemItem.successChance == 100) {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
@@ -112,7 +153,7 @@ public class InvEvents implements Listener {
 
                 e.setCancelled(true);
 
-                RuneItem runeItem = new RuneItem(e.getCurrentItem());
+                RuneItem runeItem = new RuneItem(item);
 
                 if(runeItem.successChance == 100) {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
@@ -146,16 +187,8 @@ public class InvEvents implements Listener {
             return;
         }
 
-        if(
-                e.getCurrentItem().getType() == Material.ELYTRA ||
-                e.getCurrentItem().getType() == Material.CARROT_ON_A_STICK ||
-                e.getCurrentItem().getType().toString().toUpperCase().contains("HELMET") ||
-                e.getCurrentItem().getType().toString().toUpperCase().contains("CHESTPLATE") ||
-                e.getCurrentItem().getType().toString().toUpperCase().contains("LEGGINGS") ||
-                e.getCurrentItem().getType().toString().toUpperCase().contains("BOOTS")
-        ) {
+        if(isGameItem(item)) {
 
-            ItemStack item = e.getCurrentItem();
             GameItem gameItem = new GameItem(item);
 
             if(isGem) {
@@ -206,6 +239,20 @@ public class InvEvents implements Listener {
 
         }
 
+    }
+
+    private boolean isGameItem(ItemStack item) {
+        String typename = item.getType().toString().toUpperCase();
+
+        return item.getType() == Material.ELYTRA || item.getType() == Material.CARROT_ON_A_STICK ||
+                typename.contains("HELMET") || typename.contains("CHESTPLATE") || typename.contains("LEGGINGS") || typename.contains("BOOTS");
+    }
+
+    private boolean isWearable(ItemStack item) {
+        String typename = item.getType().toString().toUpperCase();
+
+        return item.getType() == Material.ELYTRA ||
+                typename.contains("HELMET") || typename.contains("CHESTPLATE") || typename.contains("LEGGINGS") || typename.contains("BOOTS");
     }
 
 }

@@ -115,10 +115,9 @@ public class RotMC extends JavaPlugin {
         return playerDataManager;
     }
 
-    public static PlayerData getPlayerData(final OfflinePlayer offlinePlayer) {
-        if (offlinePlayer == null) {
-            return null;
-        }
+    public static PlayerData getPlayerData(Player offlinePlayer) {
+        if (offlinePlayer == null) return null;
+
         return playerDataManager.getPlayerData(offlinePlayer);
     }
 

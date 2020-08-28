@@ -143,7 +143,6 @@ public class CreateClassGUI implements Listener {
         }
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kit " + pld.classes.get(pld.classes.size()-1).getData().getName() + " " + pld.getPlayer().getName());
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn " + pld.getPlayer().getName());
 
         pld.selectClass(pld.classes.get(pld.classes.size()-1));
 

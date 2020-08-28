@@ -61,7 +61,6 @@ public class PlayerData {
         /* Delete old perms */
         allPerms.add("rotmc.weapon.sword rotmc.weapon.dagger rotmc.weapon.staff rotmc.weapon.bow");
         allPerms.add("rotmc.knight rotmc.warrior rotmc.huntress rotmc.necromancer rotmc.assassin rotmc.rogue");
-        allPerms.add("rotmc.robe rotmc.leather rotmc.heavy");
 
         String lvl1 = "";
         for(int i=1;i<=5;i++) {
@@ -89,19 +88,19 @@ public class PlayerData {
 
         /* Add new Perms */
         if(classname.equalsIgnoreCase("Knight") || classname.equalsIgnoreCase("Warrior")) {
-            newPerms.add("rotmc.weapon.sword" + " rotmc." + classname.toLowerCase() + " rotmc.heavy");
+            newPerms.add("rotmc.weapon.sword" + " rotmc." + classname.toLowerCase());
         }
 
         if(classname.equalsIgnoreCase("Rogue") || classname.equalsIgnoreCase("Assassin")) {
-            newPerms.add("rotmc.weapon.dagger" + " rotmc." + classname.toLowerCase() + " rotmc.leather");
+            newPerms.add("rotmc.weapon.dagger" + " rotmc." + classname.toLowerCase());
         }
 
         if(classname.equalsIgnoreCase("Huntress")) {
-            newPerms.add("rotmc.weapon.bow" + " rotmc." + classname.toLowerCase() + " rotmc.leather");
+            newPerms.add("rotmc.weapon.bow" + " rotmc." + classname.toLowerCase());
         }
 
         if(classname.equalsIgnoreCase("Necromancer")) {
-            newPerms.add("rotmc.weapon.staff" + " rotmc." + classname.toLowerCase() + " rotmc.robe");
+            newPerms.add("rotmc.weapon.staff" + " rotmc." + classname.toLowerCase());
         }
 
         String nlvl1 = "";
