@@ -68,4 +68,17 @@ public class TextUtils {
         return word;
     }
 
+    public static String getLastNumber(String s, int indent) {
+        String word = "";
+        for (int i = s.length() - 1 - indent; i >= 0; i--) {
+            char c = s.toCharArray()[i];
+            if (c != ' ') {
+                word = c + word;
+            } else {
+                break;
+            }
+        }
+        return word;
+    }
+
 }

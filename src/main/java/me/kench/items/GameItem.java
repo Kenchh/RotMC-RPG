@@ -44,16 +44,13 @@ public class GameItem {
 
         for(String s : lore) {
 
-            Bukkit.broadcastMessage("Trying to get class & level req...");
             if(s.contains("Class:")) {
                 String gc = TextUtils.getLastWord(s, 0);
-                Bukkit.broadcastMessage("Found class req: " + gc);
                 gameClass = new GameClass(gc);
             }
 
             if(s.contains("Level:")) {
-                String lvl = TextUtils.getLastWord(s, 0);
-                Bukkit.broadcastMessage("Found level req: " + lvl);
+                String lvl = TextUtils.getLastNumber(s, 0);
                 level = Integer.parseInt(lvl.replace("+", ""));
             }
 

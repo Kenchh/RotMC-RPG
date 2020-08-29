@@ -36,7 +36,7 @@ public class GemItem {
                     createSuccessChance();
                     lore.set(line, s.replace("XXX", successChance + ""));
                 } else {
-                    successChance = Integer.parseInt(TextUtils.getLastWord(s, 1));
+                    successChance = Integer.parseInt(TextUtils.getLastNumber(s, 1));
                 }
             }
             if(s.contains("YYY:")) {
@@ -71,7 +71,7 @@ public class GemItem {
             String s = lore.get(i);
             if(s.contains("Success Chance:")) {
                 if(!s.contains("XXX")) {
-                    String value = TextUtils.getLastWord(s, 1);
+                    String value = TextUtils.getLastNumber(s, 1);
                     lore.set(i, s.replace("" + value, successChance + ""));
                 }
             }

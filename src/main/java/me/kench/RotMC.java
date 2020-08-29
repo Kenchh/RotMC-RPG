@@ -54,6 +54,7 @@ public class RotMC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GuiEvents(), this);
         getServer().getPluginManager().registerEvents(new SkillsGUI(), this);
         getServer().getPluginManager().registerEvents(new ExtractorGUI(), this);
+        getServer().getPluginManager().registerEvents(new InteractEvent(), this);
 
         getServer().getPluginManager().registerEvents(new JoinLeaveEvent(), this);
         getServer().getPluginManager().registerEvents(new ChatEvent(), this);
