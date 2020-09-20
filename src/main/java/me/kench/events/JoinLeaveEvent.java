@@ -1,8 +1,11 @@
 package me.kench.events;
 
 import me.kench.RotMC;
+import me.kench.items.stats.EssenceType;
 import me.kench.player.PlayerClass;
 import me.kench.gui.CreateClassGUI;
+import me.kench.player.PlayerData;
+import me.kench.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -10,12 +13,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+
 public class JoinLeaveEvent implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-
-        RotMC.getInstance().getPlayerDataManager().registerPlayerData(e.getPlayer());
 
         if(RotMC.getPlayerData(e.getPlayer()).getMainClass() != null) {
             PlayerClass pc = RotMC.getPlayerData(e.getPlayer()).getMainClass();
@@ -41,6 +44,22 @@ public class JoinLeaveEvent implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
+
+        PlayerData pd = RotMC.getPlayerData(e.getPlayer());
+
+
+        /* Removing old essences */
+        ArrayList<EssenceType> etToRemove = new ArrayList<>();
+        for(EssenceType et : pd.activeEssences.keySet()) {
+            etToRemove.add(et);
+            pd.activeEssences.get(et).cancel();
+        }
+
+        for(EssenceType et : etToRemove) {
+            pd.activeEssences.remove(et);
+        }
+        /*  */
+
         RotMC.getInstance().getPlayerDataManager().unregisterPlayerData(e.getPlayer());
     }
 

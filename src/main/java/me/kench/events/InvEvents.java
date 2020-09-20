@@ -1,12 +1,12 @@
 package me.kench.events;
 
 import me.kench.RotMC;
+import me.kench.game.GameClass;
 import me.kench.gui.ExtractorGUI;
 import me.kench.items.*;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -49,11 +49,15 @@ public class InvEvents implements Listener {
 
         ItemStack item = e.getCurrentItem();
 
+        if(!(item.hasItemMeta())) return;
+
         if(isExtractor) {
+            if(!(item.getItemMeta().hasDisplayName())) return;
             extract(e, p, item);
         }
 
         if(isMythicDust) {
+            if(!(item.getItemMeta().hasDisplayName())) return;
             mythicDust(e, p, item);
         }
 
@@ -166,9 +170,12 @@ public class InvEvents implements Listener {
     }
 
     private void checkForSocketing(InventoryClickEvent e, Player p, ItemStack item, boolean isGem, boolean isRune, boolean isEssence) {
+
         if(isGameItem(item)) {
 
             GameItem gameItem = new GameItem(item);
+
+            if(gameItem.getStats().gemsockets == 0 && gameItem.getStats().hasRuneSocket == false && gameItem.getStats().hasEssenceSocket == false) return;
 
             if(isGem) {
 
@@ -241,14 +248,21 @@ public class InvEvents implements Listener {
                         }
                     }
 
-                    if (gameItem.getGameClass() != null) {
-                        String className = gameItem.getGameClass().getName();
+                    boolean foundClass = false;
+                    if (gameItem.getGameClasses().isEmpty() == false) {
+                        for(GameClass gameClass : gameItem.getGameClasses()) {
+                            String className = gameClass.getName();
 
-                        if (!className.equalsIgnoreCase(pc.getData().getName())) {
-                            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-                            e.setCancelled(true);
-                            return;
+                            if (className.equalsIgnoreCase(pc.getData().getName())) {
+                                foundClass = true;
+                            }
                         }
+                    }
+
+                    if(!foundClass) {
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                        e.setCancelled(true);
+                        return;
                     }
                 }
             } else {
@@ -271,15 +285,23 @@ public class InvEvents implements Listener {
                         }
                     }
 
-                    if (gameItem.getGameClass() != null) {
-                        String className = gameItem.getGameClass().getName();
+                    boolean foundClass = false;
+                    if (gameItem.getGameClasses().isEmpty() == false) {
+                        for(GameClass gameClass : gameItem.getGameClasses()) {
+                            String className = gameClass.getName();
 
-                        if (!className.equalsIgnoreCase(pc.getData().getName())) {
-                            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-                            e.setCancelled(true);
-                            return;
+                            if (className.equalsIgnoreCase(pc.getData().getName())) {
+                                foundClass = true;
+                            }
                         }
                     }
+
+                    if(!foundClass) {
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                        e.setCancelled(true);
+                        return;
+                    }
+
                 }
             }
         }

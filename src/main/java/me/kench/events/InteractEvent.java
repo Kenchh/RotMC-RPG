@@ -1,6 +1,7 @@
 package me.kench.events;
 
 import me.kench.RotMC;
+import me.kench.game.GameClass;
 import me.kench.items.GameItem;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
@@ -49,14 +50,21 @@ public class InteractEvent implements Listener {
                     }
                 }
 
-                if (gameItem.getGameClass() != null) {
-                    String className = gameItem.getGameClass().getName();
+                boolean foundClass = false;
+                if (gameItem.getGameClasses().isEmpty() == false) {
+                    for(GameClass gameClass : gameItem.getGameClasses()) {
+                        String className = gameClass.getName();
 
-                    if (!className.equalsIgnoreCase(pc.getData().getName())) {
-                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-                        e.setCancelled(true);
-                        return;
+                        if (className.equalsIgnoreCase(pc.getData().getName())) {
+                            foundClass = true;
+                        }
                     }
+                }
+
+                if(!foundClass) {
+                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                    e.setCancelled(true);
+                    return;
                 }
             }
         }

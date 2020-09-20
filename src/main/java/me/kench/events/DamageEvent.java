@@ -3,11 +3,16 @@ package me.kench.events;
 import me.kench.RotMC;
 import me.kench.player.Stats;
 import me.kench.utils.ItemUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.Random;
 
@@ -15,6 +20,8 @@ public class DamageEvent implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDamage(EntityDamageByEntityEvent e) {
+
+        if(e.isCancelled()) return;
 
         if(e.getDamager() instanceof Player) {
 
@@ -33,11 +40,13 @@ public class DamageEvent implements Listener {
         if(e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
 
+            double damage = e.getDamage();
+
+            Stats stats = RotMC.getPlayerData(p).getMainClass().getStats();
+
             if(RotMC.getPlayerData(p) == null || RotMC.getPlayerData(p).getMainClass() == null) {
                 return;
             }
-
-            Stats stats = RotMC.getPlayerData(p).getMainClass().getStats();
 
             Random r = new Random();
             int random = r.nextInt(100);
@@ -47,7 +56,16 @@ public class DamageEvent implements Listener {
                 return;
             }
 
-            e.setDamage(e.getDamage() - e.getDamage()*(stats.getDefense(stats.defense + ItemUtils.getOverallGemStatsFromEquipment(p).defense, false)+(((float) ItemUtils.getOverallItemStatsFromEquipment(p).defense)/200F)));
+            double dmg = damage - damage*(stats.getDefense(stats.defense + ItemUtils.getOverallGemStatsFromEquipment(p).defense, false)+(((float) ItemUtils.getOverallItemStatsFromEquipment(p).defense)/200F));
+
+            e.setDamage(dmg);
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    p.setVelocity(new Vector(0, 0, 0));
+                }
+            }.runTaskLater(RotMC.getInstance(), 1L);
 
         }
     }

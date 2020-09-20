@@ -153,7 +153,7 @@ public class ExtractorGUI implements Listener {
 
             pd.extractGameItem.getStats().gems.remove(e.getSlot()-10);
             pd.extractGameItem.getStats().gemsockets++;
-            pd.extractGameItem.update(pd.getMainClass());
+            pd.extractGameItem.update();
 
             for(ItemStack it : p.getInventory().getContents()) {
                 if(!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
@@ -186,7 +186,7 @@ public class ExtractorGUI implements Listener {
 
             pd.extractGameItem.getStats().setRune(null);
             pd.extractGameItem.getStats().hasRuneSocket = true;
-            pd.extractGameItem.update(pd.getMainClass());
+            pd.extractGameItem.update();
 
             for(ItemStack it : p.getInventory().getContents()) {
                 if(!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
@@ -218,7 +218,7 @@ public class ExtractorGUI implements Listener {
 
             pd.extractGameItem.getStats().setEssence(null);
             pd.extractGameItem.getStats().hasEssenceSocket = true;
-            pd.extractGameItem.update(pd.getMainClass());
+            pd.extractGameItem.update();
 
             for(ItemStack it : p.getInventory().getContents()) {
                 if(!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;

@@ -1,10 +1,17 @@
 package me.kench.utils;
 
+import me.kench.RotMC;
+import me.kench.game.GameClass;
 import me.kench.items.GameItem;
 import me.kench.items.stats.*;
 import me.kench.items.stats.essenceanimations.*;
+import me.kench.player.PlayerClass;
+import me.kench.player.PlayerData;
 import me.kench.player.Stats;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -17,6 +24,7 @@ public class ItemUtils {
     public static Stats getOverallItemStatsFromEquipment(Player p) {
         Stats overallStats = new Stats();
 
+        /*
         if(p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() != Material.AIR) {
             GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());
 
@@ -44,6 +52,7 @@ public class ItemUtils {
                 overallStats.dodge += itemstats.dodge;
             }
         }
+        */
 
         for(ItemStack armor : p.getInventory().getArmorContents()) {
             if(armor != null && armor.getType() != Material.AIR) {
@@ -137,8 +146,10 @@ public class ItemUtils {
         }
 
         for(ItemStack armor : p.getInventory().getArmorContents()) {
+
             if(armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
+
                 if(gameItem.getStats().getEssence() != null) {
                     EssenceType essenceType = gameItem.getStats().getEssence().getType();
                     if (!essenceTypes.contains(essenceType)) {
@@ -149,6 +160,87 @@ public class ItemUtils {
         }
 
         return essenceTypes;
+    }
+
+    public static void checkAllowedArmor(Player p) {
+        int i = 0;
+        for(ItemStack armor : p.getInventory().getArmorContents()) {
+
+            if(armor != null && armor.getType() != Material.AIR) {
+                GameItem gameItem = new GameItem(armor);
+
+                PlayerData pd = RotMC.getPlayerData(p);
+                if (pd == null) {
+                    throwAwayArmor(armor, p, i);
+                    continue;
+                }
+
+                PlayerClass pc = pd.getMainClass();
+                if (pc == null) {
+                    throwAwayArmor(armor, p, i);
+                    continue;
+                }
+
+                if (gameItem.getLevel() != 0) {
+                    int level = gameItem.getLevel();
+
+                    if (pc.getLevel() < level) {
+                        throwAwayArmor(armor, p, i);
+
+                        continue;
+                    }
+                }
+
+                boolean foundClass = false;
+                if (gameItem.getGameClasses().isEmpty() == false) {
+                    for(GameClass gameClass : gameItem.getGameClasses()) {
+                        String className = gameClass.getName();
+
+                        if (className.equalsIgnoreCase(pc.getData().getName())) {
+                            foundClass = true;
+                        }
+                    }
+                }
+
+                if(!foundClass) {
+                    throwAwayArmor(armor, p, i);
+                    continue;
+                }
+            }
+            i++;
+        }
+    }
+
+    private static void throwAwayArmor(ItemStack armor, Player p, int i) {
+        ItemStack armorClone = armor.clone();
+        switch(i) {
+            case 3:
+                p.getInventory().setHelmet(null);
+                break;
+            case 2:
+                p.getInventory().setChestplate(null);
+                break;
+            case 1:
+                p.getInventory().setLeggings(null);
+                break;
+            case 0:
+                p.getInventory().setBoots(null);
+                break;
+        }
+
+        if(fullInv(p)) {
+            Item itemDropped = p.getWorld().dropItem(p.getLocation(), armorClone);
+            itemDropped.setPickupDelay(40);
+        } else {
+            p.getInventory().addItem(armorClone);
+        }
+    }
+
+    private static boolean fullInv(Player p) {
+        for(ItemStack it : p.getInventory().getStorageContents()) {
+            if(it == null) return false;
+        }
+        return true;
     }
 
     public static ArrayList<PotionEffectType> getOverallRuneEffects(Player p) {

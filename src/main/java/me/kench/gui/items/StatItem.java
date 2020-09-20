@@ -46,7 +46,7 @@ public class StatItem extends ItemStack {
 
                 meta.setLore(Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&',"&7(" + va + "/&2" + stats.getCap(pc.getData().getName(), "Attack", pc.getLevel()) + "&7)"),
-                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getAttack(stats.attack, true))
+                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getAttack(stats.attack, true) + "%")
                 ));
 
                 meta.setCustomModelData(201);
@@ -62,7 +62,7 @@ public class StatItem extends ItemStack {
 
                 meta.setLore(Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&',"&7(" + vd + "/&2" + stats.getCap(pc.getData().getName(), "Defense", pc.getLevel()) + "&7)"),
-                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getDefense(stats.defense, true))
+                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getDefense(stats.defense, true) + "%")
                 ));
 
                 meta.setCustomModelData(203);
@@ -78,7 +78,7 @@ public class StatItem extends ItemStack {
 
                 meta.setLore(Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&',"&7(" + vs + "/&2" + stats.getCap(pc.getData().getName(), "Speed", pc.getLevel()) + "&7)"),
-                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getSpeed(stats.speed, true))
+                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getSpeed(stats.speed, true) + "%")
                 ));
 
                 meta.setCustomModelData(202);
@@ -94,7 +94,7 @@ public class StatItem extends ItemStack {
 
                 meta.setLore(Arrays.asList(
                         ChatColor.translateAlternateColorCodes('&',"&7(" + vdo + "/&2" + stats.getCap(pc.getData().getName(), "Dodge", pc.getLevel()) + "&7)"),
-                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getDodge(stats.dodge, true))
+                        ChatColor.translateAlternateColorCodes('&',"&7▸ " + s + ": " + ChatColor.WHITE + "+" + stats.getDodge(stats.dodge, true) + "%")
                 ));
 
                 meta.setCustomModelData(204);

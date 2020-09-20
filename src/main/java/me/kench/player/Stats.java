@@ -36,7 +36,7 @@ public class Stats {
     public float getSpeed(int level, boolean inPercentage) {
 
         if(!inPercentage) {
-            return ((float) level) / 100F;
+            return (((float) level) / 100F) / 2F;
         } else {
             return (float) level;
         }

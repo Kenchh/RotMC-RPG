@@ -1,5 +1,7 @@
 package me.kench.utils;
 
+import org.bukkit.Bukkit;
+
 public class TextUtils {
 
     public static String constantToName(String constant) {
@@ -72,12 +74,13 @@ public class TextUtils {
         String word = "";
         for (int i = s.length() - 1 - indent; i >= 0; i--) {
             char c = s.toCharArray()[i];
-            if (c != ' ') {
+            if (Character.isDigit(c) || c == '+' || c == '-' || c == '%') {
                 word = c + word;
             } else {
                 break;
             }
         }
+
         return word;
     }
 

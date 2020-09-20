@@ -71,8 +71,8 @@ public class GemItem {
             String s = lore.get(i);
             if(s.contains("Success Chance:")) {
                 if(!s.contains("XXX")) {
-                    String value = TextUtils.getLastNumber(s, 1);
-                    lore.set(i, s.replace("" + value, successChance + ""));
+                    String value = TextUtils.getLastNumber(s, 0);
+                    lore.set(i, s.replace("" + value, successChance + "%"));
                 }
             }
         }

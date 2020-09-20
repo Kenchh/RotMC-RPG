@@ -66,7 +66,7 @@ public class RotMC_Item extends SubCommand {
 
         }
 
-        gameItem.update(pc);
+        gameItem.update();
         return true;
     }
 

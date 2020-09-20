@@ -16,7 +16,7 @@ import java.util.List;
 public class GameItem {
 
     private ItemStack item;
-    private GameClass gameClass = null;
+    private ArrayList<GameClass> gameClasses = new ArrayList<>();
     private int level;
 
     private ItemStats stats;
@@ -45,8 +45,11 @@ public class GameItem {
         for(String s : lore) {
 
             if(s.contains("Class:")) {
-                String gc = TextUtils.getLastWord(s, 0);
-                gameClass = new GameClass(gc);
+                String classes = s.replace("§eClass:§f ", "");
+
+                for(String gameClass : classes.split(", ")) {
+                    gameClasses.add(new GameClass(gameClass));
+                }
             }
 
             if(s.contains("Level:")) {
@@ -97,8 +100,8 @@ public class GameItem {
         return stats;
     }
 
-    public GameClass getGameClass() {
-        return gameClass;
+    public ArrayList<GameClass> getGameClasses() {
+        return gameClasses;
     }
 
     public int getLevel() {
@@ -109,11 +112,7 @@ public class GameItem {
         this.level = level;
     }
 
-    public void setGameClass(GameClass gameClass) {
-        this.gameClass = gameClass;
-    }
-
-    public void update(PlayerClass pc) {
+    public void update() {
 
         if(item == null) return;
 

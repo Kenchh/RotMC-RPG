@@ -21,7 +21,7 @@ public class Socketing {
             gameItem.getStats().gemsockets--;
             gameItem.getStats().gems.add(new Gem(gem.getGem().getType(), gem.getGem().getLevel()));
             p.sendMessage(ChatColor.GREEN + "Your item has successfully been upgraded!");
-            gameItem.update(RotMC.getPlayerData(p).getMainClass());
+            gameItem.update();
         } else {
             /** fail */
             p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 1F);
@@ -40,7 +40,7 @@ public class Socketing {
             gameItem.getStats().hasRuneSocket = false;
             gameItem.getStats().setRune(new Rune(rune.getRune().getType()));
             p.sendMessage(ChatColor.GREEN + "Your item has successfully been upgraded!");
-            gameItem.update(RotMC.getPlayerData(p).getMainClass());
+            gameItem.update();
         } else {
             /** fail */
             p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 1F);
@@ -55,7 +55,7 @@ public class Socketing {
         gameItem.getStats().hasEssenceSocket = false;
         gameItem.getStats().setEssence(new Essence(essence.getEssence().getType()));
         p.sendMessage(ChatColor.GREEN + "Your item has successfully been upgraded!");
-        gameItem.update(RotMC.getPlayerData(p).getMainClass());
+        gameItem.update();
 
     }
 

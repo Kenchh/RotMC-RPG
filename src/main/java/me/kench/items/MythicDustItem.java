@@ -13,7 +13,7 @@ public class MythicDustItem {
         this.item = item;
 
         ItemMeta meta = item.getItemMeta();
-        level = TextUtils.getNumberFromRoman(TextUtils.getLastNumber(meta.getDisplayName(), 0));
+        level = TextUtils.getNumberFromRoman(TextUtils.getLastWord(meta.getDisplayName(), 0));
 
     }
 

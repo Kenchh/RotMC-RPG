@@ -49,7 +49,7 @@ public class PlayerClass {
         switch (s) {
             case "Health":
                 if (stats.health < stats.getCap(getData().getName(), s, level)) {
-                    player.sendMessage(ChatColor.GREEN + "Your health stat has increased by " + GemType.HEALTH.getPrefix() + ChatColor.BOLD + stats.getHealth(1) + "!");
+                    player.sendMessage(ChatColor.GREEN + "Your health stat has increased by " + GemType.HEALTH.getPrefix() + "1!");
                     stats.health++;
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max health!");
@@ -57,16 +57,16 @@ public class PlayerClass {
                 break;
             case "Attack":
                 if (stats.attack < stats.getCap(getData().getName(), s, level)) {
-                    player.sendMessage(ChatColor.GREEN + "Your damage stat has increased by " + GemType.ATTACK.getPrefix() + ChatColor.BOLD + stats.getAttack(1, true) + "!");
+                    player.sendMessage(ChatColor.GREEN + "Your damage stat has increased by " + GemType.ATTACK.getPrefix() + "1!");
                     stats.attack++;
                 } else {
-                    player.sendMessage(ChatColor.RED + "You already have max attack damage!");
+                    player.sendMessage(ChatColor.RED + "You already have max attack!");
                 }
                 break;
             case "Defense":
                 if (stats.defense < stats.getCap(getData().getName(), s, level)) {
                     stats.defense++;
-                    player.sendMessage(ChatColor.GREEN + "Your defense stat has increased by " + GemType.DEFENSE.getPrefix() + ChatColor.BOLD + stats.getDefense(1, true) + "!");
+                    player.sendMessage(ChatColor.GREEN + "Your defense stat has increased by " + GemType.DEFENSE.getPrefix() + "1!");
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max defense!");
                 }
@@ -74,7 +74,7 @@ public class PlayerClass {
             case "Speed":
                 if (stats.speed < stats.getCap(getData().getName(), s, level)) {
                     stats.speed++;
-                    player.sendMessage(ChatColor.GREEN + "Your speed stat has increased by " + GemType.SPEED.getPrefix() + ChatColor.BOLD + stats.getSpeed(1, true) + "%!");
+                    player.sendMessage(ChatColor.GREEN + "Your speed stat has increased by " + GemType.SPEED.getPrefix() + "1!");
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max speed!");
                 }
@@ -82,7 +82,7 @@ public class PlayerClass {
             case "Dodge":
                 if (stats.dodge < stats.getCap(getData().getName(), s, level)) {
                     stats.dodge++;
-                    player.sendMessage(ChatColor.GREEN + "Your evasion stat has increased by " + GemType.DODGE.getPrefix() + ChatColor.BOLD + stats.getDodge(1, true) + "%!");
+                    player.sendMessage(ChatColor.GREEN + "Your evasion stat has increased by " + GemType.DODGE.getPrefix() + "1!");
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max dodge!");
                 }
@@ -166,6 +166,8 @@ public class PlayerClass {
     public void applyStats() {
 
         PlayerData pd = RotMC.getPlayerData(player);
+
+        ItemUtils.checkAllowedArmor(player);
 
         ArrayList<EssenceType> activeEssences = ItemUtils.getActiveEssences(player);
 

@@ -9,6 +9,7 @@ import me.kench.utils.JsonParser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,6 +28,7 @@ public class SQLManager {
         this.pool = pool;
         this.playerDataTable = infoTable;
         makeTable();
+
     }
 
     private void makeTable() {
@@ -56,6 +58,7 @@ public class SQLManager {
     }
 
     public void update(Player p, PlayerClass old) {
+
         PlayerData pd = RotMC.getPlayerData(p);
 
         JSONArray toUpdate = new JSONArray();
@@ -134,29 +137,40 @@ public class SQLManager {
             }
         }
 
-        setPlayerData(p.getUniqueId(), "data", toUpdate.toString());
-        setPlayerData(p.getUniqueId(), "maxslots", pd.maxSlots);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                setPlayerData(p.getUniqueId(), "data", toUpdate.toString());
+                setPlayerData(p.getUniqueId(), "maxslots", pd.maxSlots);
+            }
+        }.runTaskAsynchronously(RotMC.getInstance());
+
     }
 
     public void setPlayerData(UUID uuid, String column, Object data) {
-        Connection conn = null;
-        PreparedStatement ps = null;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Connection conn = null;
+                PreparedStatement ps = null;
 
-        try {
-            conn = pool.getConnection();
+                try {
+                    conn = pool.getConnection();
 
-            String stmt = "UPDATE " + playerDataTable + " SET " + column + "=?  WHERE uuid=?";
-            ps = conn.prepareStatement(stmt);
+                    String stmt = "UPDATE " + playerDataTable + " SET " + column + "=?  WHERE uuid=?";
+                    ps = conn.prepareStatement(stmt);
 
-            ps.setObject(1, data);
-            ps.setString(2, uuid.toString());
-            ps.executeUpdate();
+                    ps.setObject(1, data);
+                    ps.setString(2, uuid.toString());
+                    ps.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            pool.close(conn, ps, null);
-        }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    pool.close(conn, ps, null);
+                }
+            }
+        }.runTaskAsynchronously(RotMC.getInstance());
     }
 
     public boolean playerExists(UUID uuid) {
@@ -375,6 +389,13 @@ public class SQLManager {
         } finally {
             pool.close(conn, ps, rs);
         }
+    }
+
+    /* UUID, UUID & String-Inv */
+    public HashMap<UUID, HashMap<UUID, String>> inventories;
+
+    public void getInventories() {
+
     }
 
     public String getInventory(UUID playeruuid, UUID classuuid) {

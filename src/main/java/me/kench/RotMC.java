@@ -96,7 +96,7 @@ public class RotMC extends JavaPlugin {
                     }
                 }
             }
-        }.runTaskTimer(this, 1L, 20L);
+        }.runTaskTimer(this, 1L, 20L*3L);
 
     }
 

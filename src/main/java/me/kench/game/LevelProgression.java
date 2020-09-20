@@ -19,12 +19,10 @@ public class LevelProgression {
         int z = 16;
 
         levelxp.put(1, x + y + z);
-        System.out.println("----------->>>> " + 1 + " | " + (x+y+z) + " | " + (x+y+z));
 
         /* i = level */
         for(int i = 2; i <= 19; i++) {
             levelxp.put(i, x*i*i + y*i + z + levelxp.get(i-1));
-            System.out.println("----------->>>> " + i + " | " + (x*i*i + y*i + z) + " | " + levelxp.get(i));
         }
 
     }

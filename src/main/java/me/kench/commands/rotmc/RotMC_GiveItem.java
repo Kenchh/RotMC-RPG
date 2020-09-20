@@ -4,6 +4,9 @@ import me.kench.commands.subcommand.SubCommand;
 import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.GemType;
 import me.kench.items.stats.RuneType;
+import me.kench.utils.ItemUtils;
+import me.kench.utils.TextUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -119,6 +122,9 @@ public class RotMC_GiveItem extends SubCommand {
             ItemStack dust = new ItemStack(Material.GLOWSTONE_DUST);
             ItemMeta meta = dust.getItemMeta();
             meta.setDisplayName(ChatColor.LIGHT_PURPLE + "Mythic Dust VI");
+            if(args.length >= 3) {
+                meta.setDisplayName(ChatColor.LIGHT_PURPLE + "Mythic Dust " + TextUtils.getRomanFromNumber(Integer.parseInt(args[2])));
+            }
             dust.setItemMeta(meta);
 
             p.getInventory().addItem(dust);

@@ -18,6 +18,7 @@ public class RotMC_Help extends SubCommand {
     public boolean execute(CommandSender sender, Command basecmd, String subcmd, String label, String[] args) {
 
         List<String> help = Arrays.asList(
+                ChatColor.GREEN + "/rotmc help - Shows this",
                 ChatColor.AQUA + "/rotmc givexp <player> <amount> - Gives a player's xp.",
                 ChatColor.AQUA + "/rotmc setxp <player> <amount> - Sets a player's xp.",
                 ChatColor.AQUA + "/rotmc invis <player> <duration> - Makes a player go invis.",
