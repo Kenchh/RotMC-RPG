@@ -21,27 +21,15 @@ public class PlayerDataManager {
     }
 
     public void unregisterPlayerData(Player player) {
-        if(hasPlayerData(player)) {
-            playerData.remove(RotMC.getPlayerData(player));
-        }
+        playerData.remove(RotMC.getPlayerData(player));
     }
 
     public PlayerData getPlayerData(OfflinePlayer p) {
-        for(PlayerData pd : playerData.values()) {
-            if(pd.getPlayer().getUniqueId() == p.getUniqueId()) {
-                return pd;
-            }
-        }
-        return null;
+        return playerData.get(p.getUniqueId());
     }
 
     public boolean hasPlayerData(Player player) {
-        for(PlayerData pd : playerData.values()) {
-            if(pd.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                return true;
-            }
-        }
-        return false;
+        return playerData.containsKey(player.getUniqueId());
     }
 
 }
