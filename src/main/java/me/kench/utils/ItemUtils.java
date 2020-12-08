@@ -9,8 +9,10 @@ import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.player.Stats;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUtils {
+
+    public static ArrayList<Block> goldblocks = new ArrayList<>();
+    public static ArrayList<Block> iceblocks = new ArrayList<>();
+    public static ArrayList<Block> obbyblocks = new ArrayList<>();
 
     public static Stats getOverallItemStatsFromEquipment(Player p) {
         Stats overallStats = new Stats();
@@ -118,6 +124,15 @@ public class ItemUtils {
                 return new Blood();
             case WINTER:
                 return new Winter();
+
+            case GANDA:
+                return new Ganda();
+            case HADORI:
+                return new Hadori();
+            case ILLURI:
+                return new Illuri();
+            case KABIRI:
+                return new Kabiri();
         }
         return null;
     }
@@ -163,21 +178,23 @@ public class ItemUtils {
     }
 
     public static void checkAllowedArmor(Player p) {
+
         int i = 0;
         for(ItemStack armor : p.getInventory().getArmorContents()) {
-
             if(armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
 
                 PlayerData pd = RotMC.getPlayerData(p);
                 if (pd == null) {
                     throwAwayArmor(armor, p, i);
+                    i++;
                     continue;
                 }
 
                 PlayerClass pc = pd.getMainClass();
                 if (pc == null) {
                     throwAwayArmor(armor, p, i);
+                    i++;
                     continue;
                 }
 
@@ -185,25 +202,30 @@ public class ItemUtils {
                     int level = gameItem.getLevel();
 
                     if (pc.getLevel() < level) {
+                        p.sendMessage(ChatColor.RED + "You need to be level " + level + " to use this item!");
                         throwAwayArmor(armor, p, i);
-
+                        i++;
                         continue;
                     }
                 }
 
                 boolean foundClass = false;
+                String currentclass = pc.getData().getName();
                 if (gameItem.getGameClasses().isEmpty() == false) {
                     for(GameClass gameClass : gameItem.getGameClasses()) {
                         String className = gameClass.getName();
 
-                        if (className.equalsIgnoreCase(pc.getData().getName())) {
+                        if (className.equalsIgnoreCase(currentclass)) {
                             foundClass = true;
+                            break;
                         }
                     }
                 }
 
                 if(!foundClass) {
+                    p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
                     throwAwayArmor(armor, p, i);
+                    i++;
                     continue;
                 }
             }
@@ -246,17 +268,21 @@ public class ItemUtils {
     public static ArrayList<PotionEffectType> getOverallRuneEffects(Player p) {
         ArrayList<PotionEffectType> effects = new ArrayList<>();
 
-        if(p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() != Material.AIR) {
-            GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());
-            if(gameItem.getStats().getRune() != null)
-                effects.add(gameItem.getStats().getRune().getType().getPotionEffectType());
-        }
+        /*
 
-        if(p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR) {
-            GameItem gameItem = new GameItem(p.getInventory().getItemInOffHand());
-            if(gameItem.getStats().getRune() != null)
-                effects.add(gameItem.getStats().getRune().getType().getPotionEffectType());
-        }
+            if(p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() != Material.AIR) {
+                GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());
+                if(gameItem.getStats().getRune() != null)
+                    effects.add(gameItem.getStats().getRune().getType().getPotionEffectType());
+            }
+
+            if(p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR) {
+                GameItem gameItem = new GameItem(p.getInventory().getItemInOffHand());
+                if(gameItem.getStats().getRune() != null)
+                    effects.add(gameItem.getStats().getRune().getType().getPotionEffectType());
+            }
+
+         */
 
         for(ItemStack armor : p.getInventory().getArmorContents()) {
             if(armor != null && armor.getType() != Material.AIR) {
@@ -353,18 +379,18 @@ public class ItemUtils {
         return overallStats;
     }
 
-    public static float getValueFromGemType(GemType gemType, int level, boolean percentage) {
+    public static float getValueFromGemType(GemType gemType, int level, boolean visual) {
         switch(gemType) {
             case HEALTH:
-                return new Stats().getHealth(level);
+                return new Stats().getHealth(level, visual, true);
             case ATTACK:
-                return new Stats().getAttack(level, percentage);
+                return new Stats().getAttack(level, visual, true);
             case DEFENSE:
-                return new Stats().getDefense(level, percentage);
+                return new Stats().getDefense(level, visual, true);
             case SPEED:
-                return new Stats().getSpeed(level, percentage);
+                return new Stats().getSpeed(level, visual, true);
             case DODGE:
-                return new Stats().getDodge(level, percentage);
+                return new Stats().getDodge(level, visual, true);
         }
         return -1;
     }

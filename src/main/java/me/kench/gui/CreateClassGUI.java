@@ -79,12 +79,12 @@ public class CreateClassGUI implements Listener {
         inv.setItem(7, new ClassCategoryItem(ClassCategory.SWORD));
 
         /* classes */
-        inv.setItem(28, new ClassItem(new GameClass("Rogue")));
-        inv.setItem(30, new ClassItem(new GameClass("Huntress")));
-        inv.setItem(32, new ClassItem(new GameClass("Necromancer")));
-        inv.setItem(34, new ClassItem(new GameClass("Warrior")));
-        inv.setItem(46, new ClassItem(new GameClass("Assassin")));
-        inv.setItem(52, new ClassItem(new GameClass("Knight")));
+        inv.setItem(28, new ClassItem(pd.getPlayer(), new GameClass("Rogue")));
+        inv.setItem(30, new ClassItem(pd.getPlayer(), new GameClass("Huntress")));
+        inv.setItem(32, new ClassItem(pd.getPlayer(), new GameClass("Necromancer")));
+        inv.setItem(34, new ClassItem(pd.getPlayer(), new GameClass("Warrior")));
+        inv.setItem(46, new ClassItem(pd.getPlayer(), new GameClass("Assassin")));
+        inv.setItem(52, new ClassItem(pd.getPlayer(), new GameClass("Knight")));
 
     }
 
@@ -94,7 +94,7 @@ public class CreateClassGUI implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getView() != null && e.getView().getTitle() != "Choose your class") {
+        if(e.getView() == null || e.getView().getTitle() != "Choose your class") {
             return;
         }
 
@@ -142,9 +142,7 @@ public class CreateClassGUI implements Listener {
                 break;
         }
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kit " + pld.classes.get(pld.classes.size()-1).getData().getName() + " " + pld.getPlayer().getName());
-
-        pld.selectClass(pld.classes.get(pld.classes.size()-1));
+        pld.selectClass(pld.classes.get(pld.classes.size()-1), true);
 
         for(int i=0;i<3;i++)
             pld.getPlayer().playSound(pld.getPlayer().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);

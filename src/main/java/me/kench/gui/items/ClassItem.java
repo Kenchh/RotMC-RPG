@@ -1,8 +1,10 @@
 package me.kench.gui.items;
 
 import me.kench.game.GameClass;
+import me.kench.utils.RankUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -10,15 +12,15 @@ import java.util.Arrays;
 
 public class ClassItem extends ItemStack {
 
-    public ClassItem(GameClass GameClass) {
+    public ClassItem(Player p, GameClass gameClass) {
         this.setType(Material.CARROT_ON_A_STICK);
         this.setAmount(1);
 
         ItemMeta meta = this.getItemMeta();
-        meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.YELLOW + GameClass.getName());
+        meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.YELLOW + gameClass.getName() + " " + ChatColor.WHITE + RankUtils.getCharacterRank(p, gameClass.getName()) + "/5");
         meta.setCustomModelData(0);
 
-        switch (GameClass.getName()) {
+        switch (gameClass.getName()) {
             case "Knight":
                 meta.setLore(Arrays.asList(
                         ChatColor.GRAY + "" + ChatColor.ITALIC + "A slow hitting sword",

@@ -20,19 +20,28 @@ public class RotMC_GiveXP extends SubCommand {
         Player tp = Bukkit.getPlayer(args[1]);
 
         if(tp == null || !tp.isOnline()) {
-            sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
+            if(sender instanceof Player)
+                sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
             return true;
         }
 
         int amount = Integer.parseInt(args[2]);
 
         if(RotMC.getPlayerData(tp).getMainClass() == null) {
-            sender.sendMessage(ChatColor.RED + "Error: This player does not have a class selected.");
+            if(sender instanceof Player)
+                sender.sendMessage(ChatColor.RED + "Error: This player does not have a class selected.");
             return true;
         }
 
-        sender.sendMessage(ChatColor.GREEN + tp.getName() + " has received " + ChatColor.GOLD + amount + ChatColor.GREEN + " xp!");
-        RotMC.getPlayerData(tp).getMainClass().giveXP(amount);
+        if(amount <= 0) {
+            sender.sendMessage("Amount has to be over 0xp!");
+            return true;
+        }
+
+        if(sender instanceof Player)
+            sender.sendMessage(ChatColor.GREEN + tp.getName() + " has received " + ChatColor.GOLD + amount + ChatColor.GREEN + " xp!");
+
+        RotMC.getPlayerData(tp).getMainClass().giveXP(amount, false);
         return true;
     }
 

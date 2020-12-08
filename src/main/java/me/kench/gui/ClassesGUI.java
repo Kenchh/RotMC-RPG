@@ -6,6 +6,7 @@ import me.kench.player.PlayerData;
 import me.kench.gui.items.CreateClassItem;
 import me.kench.gui.items.LockedItem;
 import me.kench.gui.items.PlayerClassItem;
+import me.kench.utils.RankUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -29,9 +30,9 @@ public class ClassesGUI implements Listener {
     }
 
     public ClassesGUI(Player p) {
-        inv = Bukkit.createInventory(null, 6*9, "Select your profile");
-
         pd = RotMC.getPlayerData(p);
+
+        inv = Bukkit.createInventory(null, 6*9, RankUtils.getStarColor(pd) + "✦ " + ChatColor.WHITE + "Select your profile " + RankUtils.getOverallRank(p) + "/30");
 
         ItemStack black = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta blackmeta = black.getItemMeta();
@@ -63,7 +64,7 @@ public class ClassesGUI implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getView() != null && e.getView().getTitle() != "Select your profile") {
+        if(e.getView() == null || !e.getView().getTitle().contains("Select your profile")) {
             return;
         }
 
@@ -102,7 +103,7 @@ public class ClassesGUI implements Listener {
             }
 
             if(!pc.getUuid().equals(pld.getMainClass().getUuid())) {
-                pld.selectClass(pc);
+                pld.selectClass(pc, false);
                 for(int i=0;i<3;i++)
                     pld.getPlayer().playSound(pld.getPlayer().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);
                 p.sendMessage(ChatColor.GREEN + "You have selected " + ChatColor.GOLD + pc.getLevel() + " " + pc.getData().getName() + ChatColor.GREEN + "!");

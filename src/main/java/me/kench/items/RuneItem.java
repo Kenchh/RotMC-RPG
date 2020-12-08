@@ -3,6 +3,7 @@ package me.kench.items;
 import me.kench.items.stats.Rune;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -62,7 +63,7 @@ public class RuneItem {
             if(s.contains("Success Chance:")) {
                 if(!s.contains("XXX")) {
                     String value = TextUtils.getLastNumber(s, 0);
-                    lore.set(i, s.replace("" + value, successChance + "%    "));
+                    lore.set(i, s.replace("" + value, successChance + ""));
                 }
             }
             if(s.contains("ZZZ")) {

@@ -4,6 +4,7 @@ import me.kench.items.stats.Gem;
 import me.kench.items.stats.GemType;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -18,7 +19,7 @@ public class GemItem {
     
     public int successChance = 0;
 
-    public GemItem(ItemStack item) {
+    public  GemItem(ItemStack item) {
         this.item = item;
 
         ItemMeta meta = item.getItemMeta();
@@ -71,8 +72,8 @@ public class GemItem {
             String s = lore.get(i);
             if(s.contains("Success Chance:")) {
                 if(!s.contains("XXX")) {
-                    String value = TextUtils.getLastNumber(s, 0);
-                    lore.set(i, s.replace("" + value, successChance + "%"));
+                    String value = TextUtils.getLastNumber(s, 1);
+                    lore.set(i, s.replace("" + value, successChance + ""));
                 }
             }
         }

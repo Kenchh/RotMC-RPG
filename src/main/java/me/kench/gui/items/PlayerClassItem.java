@@ -2,6 +2,8 @@ package me.kench.gui.items;
 
 import me.kench.RotMC;
 import me.kench.player.PlayerClass;
+import me.kench.utils.RankUtils;
+import me.kench.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +28,8 @@ public class PlayerClassItem extends ItemStack {
 
         meta.setDisplayName(ChatColor.YELLOW + playerClass.getData().getName() + " " + ChatColor.GOLD + "" + playerClass.getLevel() + selected);
         meta.setLore(Arrays.asList(
-                ChatColor.GRAY + "" + playerClass.getXp() + " Fame",
+                ChatColor.GRAY + "" + TextUtils.getDecimalFormat().format(playerClass.getXp()) + " Fame "
+                        + ChatColor.WHITE + RankUtils.getCharacterRank(playerClass.getPlayer(), playerClass.getData().getName()) + "/5",
                 ChatColor.YELLOW + "Left-Click" + ChatColor.GRAY + " to select profile.",
                 ChatColor.YELLOW + "Right-Click" + ChatColor.GRAY + " to delete profile."
         ));

@@ -48,7 +48,7 @@ public class ConfirmationGUI implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getView() != null && e.getView().getTitle() != "Delete this class?") {
+        if(e.getView() == null || e.getView().getTitle() != "Delete this class?") {
             return;
         }
 
@@ -75,9 +75,10 @@ public class ConfirmationGUI implements Listener {
                         break;
                     }
 
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + pc.getXp());
                     pd.classes.remove(pc);
                     p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 0.75F);
-                    RotMC.getInstance().getDatabase().update(p, null);
+                    RotMC.getInstance().getSqlManager().update(p, null);
                     p.openInventory(new ClassesGUI(p).getInv());
                     break;
                 }

@@ -2,6 +2,9 @@ package me.kench.events;
 
 import me.kench.RotMC;
 import me.kench.player.PlayerClass;
+import me.kench.player.PlayerData;
+import me.kench.utils.TextUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -16,10 +19,11 @@ public class DeathEvent implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
+        PlayerData pd = RotMC.getPlayerData(p);
 
-        if(RotMC.getPlayerData(p) == null || RotMC.getPlayerData(p).getMainClass() == null) return;
+        if(pd == null || pd.getMainClass() == null) return;
 
-        PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
+        PlayerClass pc = pd.getMainClass();
 
         int losexp = (int) (((double) pc.getXp()) * -0.2D);
 
@@ -29,40 +33,15 @@ public class DeathEvent implements Listener {
 
         String msg = "";
 
-        EntityDamageEvent lastDamageCause = p.getLastDamageCause();
-        if(lastDamageCause != null) {
-            if (lastDamageCause instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent lastEntityDamageEvent = (EntityDamageByEntityEvent) lastDamageCause;
-                Entity killer = lastEntityDamageEvent.getDamager();
-
-                if(killer != null) {
-                    if(killer.getName() != null) {
-                        msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + killer.getName() + " &6and lost &e" + (losexp * -1) + " fame.";
-                    } else {
-                        msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + killer.getType() + " &6and lost &e" + (losexp * -1) + " fame.";
-                    }
-                }
-
-            } else {
-
-                String name = p.getLastDamageCause().getCause().name().toLowerCase();
-
-                String words[] = name.split("_");
-                name = "";
-                for(String word : words) {
-                    String firstletter = word.substring(0, 1).toUpperCase();
-                    String other = word.substring(1);
-
-                    String uppercaseWord = firstletter + other;
-                    name += uppercaseWord + " ";
-                }
-                name = name.substring(0, name.length() - 1);
-
-                msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + name + " &6and lost &e" + (losexp * -1) + " fame.";
-            }
+        if(pd.lastKiller != null && pd.lastKiller.toUpperCase().contains("CUSTOM") == false && pd.lastKiller != "") {
+            msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + pd.lastKiller + " &6and lost &e" + (TextUtils.getDecimalFormat().format(losexp * -1)) + " fame.";
         } else {
 
-            String name = p.getLastDamageCause().getCause().name().toLowerCase();
+            String name = "custom";
+
+            if(pd.lastDamage != null && pd.lastDamage != "") {
+                name = pd.lastDamage;
+            }
 
             String words[] = name.split("_");
             name = "";
@@ -75,11 +54,14 @@ public class DeathEvent implements Listener {
             }
             name = name.substring(0, name.length() - 1);
 
-            msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + name + " &6and lost &e" + (losexp * -1) + " fame.";
+            msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + name + " &6and lost &e" + (TextUtils.getDecimalFormat().format(losexp * -1)) + " fame.";
         }
 
-        if(losexp < 0)
-            pc.giveXP(losexp);
+        if(losexp < 0) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + (losexp*-1));
+            pc.giveXP(losexp, true);
+            pc.resetCaps();
+        }
         e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', msg));
 
     }

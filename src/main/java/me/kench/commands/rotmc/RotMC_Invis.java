@@ -23,7 +23,8 @@ public class RotMC_Invis extends SubCommand {
         Player tp = Bukkit.getPlayer(args[1]);
 
         if(tp == null || !tp.isOnline()) {
-            sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
+            if(sender instanceof Player)
+                sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
             return true;
         }
 

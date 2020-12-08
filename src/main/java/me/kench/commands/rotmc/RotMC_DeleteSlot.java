@@ -20,7 +20,8 @@ public class RotMC_DeleteSlot extends SubCommand {
         Player tp = Bukkit.getPlayer(args[1]);
 
         if(tp == null || !tp.isOnline()) {
-            sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
+            if(sender instanceof Player)
+                sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
             return true;
         }
 
@@ -31,8 +32,10 @@ public class RotMC_DeleteSlot extends SubCommand {
         } else {
             RotMC.getPlayerData(tp).maxSlots -= amount;
         }
-        RotMC.getInstance().getDatabase().update(tp, null);
-        sender.sendMessage(ChatColor.GREEN + "Deleted " + amount + " profile slot for " + tp.getName() + " !");
+        RotMC.getInstance().getSqlManager().update(tp, null);
+
+        if(sender instanceof Player)
+            sender.sendMessage(ChatColor.GREEN + "Deleted " + amount + " profile slot for " + tp.getName() + " !");
         return true;
     }
 

@@ -2,137 +2,272 @@ package me.kench.player;
 
 public class Stats {
 
-    public int health = 0;
-    public int attack = 0;
-    public int defense = 0;
-    public int speed = 0;
-    public int dodge = 0;
+    public static float healthMaxCap = 40F * 2F;
+    public static float attackMaxCap = 1.5F;
+    public static float defenseMaxCap = 1.80F / 2F;
+    public static float speedMaxCap = 1.70F;
+    public static float dodgeMaxCap = 65F;
+
+    public float health = 0;
+    public float attack = 0;
+    public float defense = 0;
+    public float speed = 0;
+    public float dodge = 0;
 
     public Stats() {
     }
 
-    public float getHealth(int level) {
-        return (float) level;
-    }
-
-    public float getAttack(int level, boolean inPercentage) {
-
-        if(!inPercentage) {
-            return (((float) level) / 100F) / 2F;
+    public float getHealth(float level, boolean visual, boolean gem) {
+        if(gem) {
+            if (!visual) {
+                return level;
+            } else {
+                return level / 2F;
+            }
         } else {
-            return ((float) level) / 2F;
+            if (!visual) {
+                return level * 2F / 2F;
+            } else {
+                return level;
+            }
         }
     }
 
-    public float getDefense(int level, boolean inPercentage) {
-
-        if(!inPercentage) {
-            return (((float) level) / 100F) / 2F;
+    public float getAttack(float level, boolean visual, boolean gem) {
+        if(gem) {
+            if (!visual) {
+                return (level / 100F) / 2F;
+            } else {
+                return level / 2F;
+            }
         } else {
-            return (float) level;
+            if (!visual) {
+                return level / 100F / 2F;
+            } else {
+                return level / 2F;
+            }
         }
     }
 
-    public float getSpeed(int level, boolean inPercentage) {
-
-        if(!inPercentage) {
-            return (((float) level) / 100F) / 2F;
+    public float getDefense(float level, boolean visual, boolean gem) {
+        if(gem) {
+            if (!visual) {
+                return (level / 100F) / 4F;
+            } else {
+                return level / 2F;
+            }
         } else {
-            return (float) level;
+            if (!visual) {
+                return (level / 100F) / 2F / 2F;
+            } else {
+                return level / 2F;
+            }
         }
     }
 
-    public float getDodge(int level, boolean inPercentage) {
-
-        if(!inPercentage) {
-            return (((float) level) / 100F) / 2F;
+    public float getSpeed(float level, boolean visual, boolean gem) {
+        if(gem) {
+            if (!visual) {
+                return (level / 100F) / 2F;
+            } else {
+                return level / 2F;
+            }
         } else {
-            return ((float) level) / 2F;
+            if (!visual) {
+                return level / 100F / 2F;
+            } else {
+                return level / 2F;
+            }
         }
     }
 
-    public int getCap(String clazz, String stat, int level) {
+    public float getDodge(float level, boolean visual, boolean gem) {
+        if(gem) {
+            if (!visual) {
+                return (level / 100F) / 2F;
+            } else {
+                return level / 2F;
+            }
+        } else {
+            if (!visual) {
+                return level / 100F / 2F;
+            } else {
+                return level / 2F;
+            }
+        }
+    }
 
-        double multiplier = (double) level/20D;
+    public int getCap(String clazz, String stat) {
+
+        //double multiplier = (double) level/20;
+
+        double multiplier = 1;
 
         switch (clazz) {
             case "Knight":
                 switch (stat) {
                     case "Health":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 35*multiplier);
                     case "Attack":
-                        return (int) ((double) 15*multiplier);
+                        return (int) ((double) 25*multiplier);
                     case "Defense":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 30*multiplier);
                     case "Speed":
-                        return (int) ((double) 5*multiplier);
+                        return (int) ((double) 15*multiplier);
                     case "Dodge":
-                        return (int) ((double) 10*multiplier);
+                        return (int) ((double) 20*multiplier);
                 }
             case "Necromancer":
                 switch (stat) {
                     case "Health":
-                        return (int) ((double) 5*multiplier);
+                        return (int) ((double) 30*multiplier);
                     case "Attack":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 35*multiplier);
                     case "Defense":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 25*multiplier);
                     case "Speed":
                         return (int) ((double) 15*multiplier);
                     case "Dodge":
-                        return (int) ((double) 10*multiplier);
+                        return (int) ((double) 20*multiplier);
                 }
             case "Warrior":
                 switch (stat) {
                     case "Health":
-                        return (int) ((double) 15*multiplier);
+                        return (int) ((double) 30*multiplier);
                     case "Attack":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 35*multiplier);
                     case "Defense":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 25*multiplier);
                     case "Speed":
-                        return (int) ((double) 10*multiplier);
+                        return (int) ((double) 20*multiplier);
                     case "Dodge":
-                        return (int) ((double) 5*multiplier);
+                        return (int) ((double) 15*multiplier);
                 }
             case "Huntress":
                 switch (stat) {
                     case "Health":
-                        return (int) ((double) 15*multiplier);
+                        return (int) ((double) 20*multiplier);
                     case "Attack":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 30*multiplier);
                     case "Defense":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 25*multiplier);
                     case "Speed":
-                        return (int) ((double) 10*multiplier);
+                        return (int) ((double) 35*multiplier);
                     case "Dodge":
-                        return (int) ((double) 5*multiplier);
+                        return (int) ((double) 15*multiplier);
                 }
             case "Assassin":
                 switch (stat) {
                     case "Health":
-                        return (int) ((double) 5*multiplier);
+                        return (int) ((double) 15*multiplier);
                     case "Attack":
-                        return (int) ((double) 10*multiplier);
+                        return (int) ((double) 25*multiplier);
                     case "Defense":
                         return (int) ((double) 20*multiplier);
                     case "Speed":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 30*multiplier);
                     case "Dodge":
-                        return (int) ((double) 15*multiplier);
+                        return (int) ((double) 35*multiplier);
                 }
             case "Rogue":
                 switch (stat) {
                     case "Health":
-                        return (int) ((double) 5*multiplier);
+                        return (int) ((double) 20*multiplier);
                     case "Attack":
-                        return (int) ((double) 10*multiplier);
+                        return (int) ((double) 25*multiplier);
                     case "Defense":
-                        return (int) ((double) 20*multiplier);
-                    case "Speed":
                         return (int) ((double) 15*multiplier);
+                    case "Speed":
+                        return (int) ((double) 35*multiplier);
                     case "Dodge":
-                        return (int) ((double) 20*multiplier);
+                        return (int) ((double) 30*multiplier);
+                }
+        }
+        return 1;
+    }
+
+    public double getCap(String clazz, String stat, int level) {
+
+        double multiplier = (double) level/20;
+
+        switch (clazz) {
+            case "Knight":
+                switch (stat) {
+                    case "Health":
+                        return ((double) 35*multiplier);
+                    case "Attack":
+                        return ((double) 25*multiplier);
+                    case "Defense":
+                        return ((double) 30*multiplier);
+                    case "Speed":
+                        return ((double) 15*multiplier);
+                    case "Dodge":
+                        return ((double) 20*multiplier);
+                }
+            case "Necromancer":
+                switch (stat) {
+                    case "Health":
+                        return ((double) 30*multiplier);
+                    case "Attack":
+                        return ((double) 35*multiplier);
+                    case "Defense":
+                        return ((double) 25*multiplier);
+                    case "Speed":
+                        return ((double) 15*multiplier);
+                    case "Dodge":
+                        return ((double) 20*multiplier);
+                }
+            case "Warrior":
+                switch (stat) {
+                    case "Health":
+                        return ((double) 30*multiplier);
+                    case "Attack":
+                        return ((double) 35*multiplier);
+                    case "Defense":
+                        return ((double) 25*multiplier);
+                    case "Speed":
+                        return ((double) 20*multiplier);
+                    case "Dodge":
+                        return ((double) 15*multiplier);
+                }
+            case "Huntress":
+                switch (stat) {
+                    case "Health":
+                        return ((double) 20*multiplier);
+                    case "Attack":
+                        return ((double) 30*multiplier);
+                    case "Defense":
+                        return ((double) 25*multiplier);
+                    case "Speed":
+                        return ((double) 35*multiplier);
+                    case "Dodge":
+                        return ((double) 15*multiplier);
+                }
+            case "Assassin":
+                switch (stat) {
+                    case "Health":
+                        return ((double) 15*multiplier);
+                    case "Attack":
+                        return ((double) 25*multiplier);
+                    case "Defense":
+                        return ((double) 20*multiplier);
+                    case "Speed":
+                        return ((double) 30*multiplier);
+                    case "Dodge":
+                        return ((double) 35*multiplier);
+                }
+            case "Rogue":
+                switch (stat) {
+                    case "Health":
+                        return ((double) 20*multiplier);
+                    case "Attack":
+                        return ((double) 25*multiplier);
+                    case "Defense":
+                        return ((double) 15*multiplier);
+                    case "Speed":
+                        return ((double) 35*multiplier);
+                    case "Dodge":
+                        return ((double) 30*multiplier);
                 }
         }
         return 1;

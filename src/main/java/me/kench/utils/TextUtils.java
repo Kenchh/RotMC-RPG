@@ -2,6 +2,8 @@ package me.kench.utils;
 
 import org.bukkit.Bukkit;
 
+import java.text.DecimalFormat;
+
 public class TextUtils {
 
     public static String constantToName(String constant) {
@@ -72,16 +74,32 @@ public class TextUtils {
 
     public static String getLastNumber(String s, int indent) {
         String word = "";
+
+        boolean stopAtNextInvalidChar = false;
         for (int i = s.length() - 1 - indent; i >= 0; i--) {
             char c = s.toCharArray()[i];
+
+            if(stopAtNextInvalidChar == false && c == ' ') {
+                continue;
+            }
+
             if (Character.isDigit(c) || c == '+' || c == '-' || c == '%') {
+                stopAtNextInvalidChar = true;
                 word = c + word;
             } else {
                 break;
             }
         }
 
-        return word;
+        return word.replace("%", "");
+    }
+
+    public static DecimalFormat getDecimalFormat() {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        decimalFormat.setGroupingUsed(true);
+        decimalFormat.setGroupingSize(3);
+
+        return decimalFormat;
     }
 
 }

@@ -20,12 +20,15 @@ public class RotMC_AddStat extends SubCommand {
         Player tp = Bukkit.getPlayer(args[1]);
 
         if(tp == null || !tp.isOnline()) {
-            sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
+            if(sender instanceof Player)
+                sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
             return true;
         }
 
         RotMC.getPlayerData(tp).getMainClass().addStat(args[2]);
-        sender.sendMessage(ChatColor.GREEN + "Added +1 " + args[2] + " to " + tp.getName() + "!");
+
+        if(sender instanceof Player)
+            sender.sendMessage(ChatColor.GREEN + "Added +1 " + args[2] + " to " + tp.getName() + "!");
         return true;
     }
 

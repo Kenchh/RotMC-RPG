@@ -81,7 +81,6 @@ public class GameItem {
         }
 
         stats.stats = ItemUtils.getItemStatsByLore(lore);
-
     }
 
     private void checkForStats(String s) {

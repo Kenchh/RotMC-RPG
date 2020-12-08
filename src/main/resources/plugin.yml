@@ -6,15 +6,17 @@ main: me.kench.RotMC
 api-version: 1.15
 
 commands:
-  account:
-    description: Used to display account-fame related stuff
-    aliases: [a, accounts]
-  fame:
+  glow:
+    description: Opens Glow-GUI
+    aliases: [glowgui, glows]
+  gtop:
+    description: Used to display guilds-fame related stuff
+  ftop:
     description: Used to display class-fame related stuff
-    aliases: f
-  skills:
+    aliases: [f, fames, fame]
+  stats:
     description: Used to display your stats
-    aliases: stats
+    aliases: [stat, skill, skills]
   class:
     description: Used to select your class
     aliases: classes

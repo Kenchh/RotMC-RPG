@@ -1,8 +1,13 @@
 package me.kench.commands.rotmc;
 
 import me.kench.commands.subcommand.SubCommand;
+import me.kench.items.EssenceItem;
+import me.kench.items.GameItem;
+import me.kench.items.GemItem;
+import me.kench.items.RuneItem;
 import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.GemType;
+import me.kench.items.stats.Rune;
 import me.kench.items.stats.RuneType;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
@@ -55,7 +60,9 @@ public class RotMC_GiveItem extends SubCommand {
 
             gem.setItemMeta(meta);
 
-            p.getInventory().addItem(gem);
+            GemItem gemItem = new GemItem(gem);
+
+            p.getInventory().addItem(gemItem.getItem());
         }
 
         if(args[1].equalsIgnoreCase("rune")) {
@@ -85,7 +92,9 @@ public class RotMC_GiveItem extends SubCommand {
 
             gem.setItemMeta(meta);
 
-            p.getInventory().addItem(gem);
+            RuneItem runeItem = new RuneItem(gem);
+
+            p.getInventory().addItem(runeItem.getItem());
         }
 
         if(args[1].equalsIgnoreCase("essence")) {
@@ -115,7 +124,9 @@ public class RotMC_GiveItem extends SubCommand {
 
             essence.setItemMeta(meta);
 
-            p.getInventory().addItem(essence);
+            EssenceItem essenceItem = new EssenceItem(essence);
+
+            p.getInventory().addItem(essenceItem.getItem());
         }
 
         if(args[1].equalsIgnoreCase("mythicdust")) {

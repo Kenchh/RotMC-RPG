@@ -60,6 +60,8 @@ public class SkillsGUI implements Listener {
             return;
         }
 
+        if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
+
         e.setCancelled(true);
 
         if(e.getCurrentItem().getType() == Material.BARRIER) {

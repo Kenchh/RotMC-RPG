@@ -7,6 +7,7 @@ import me.kench.items.*;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -52,13 +53,13 @@ public class InvEvents implements Listener {
         if(!(item.hasItemMeta())) return;
 
         if(isExtractor) {
-            if(!(item.getItemMeta().hasDisplayName())) return;
             extract(e, p, item);
+            return;
         }
 
         if(isMythicDust) {
-            if(!(item.getItemMeta().hasDisplayName())) return;
             mythicDust(e, p, item);
+            return;
         }
 
         checkForSocketing(e, p, item, isGem, isRune, isEssence);
@@ -186,6 +187,16 @@ public class InvEvents implements Listener {
                     e.setCancelled(true);
                 }
 
+                if(!e.getCursor().getItemMeta().hasLore()) return;
+
+                for(String s : e.getCursor().getItemMeta().getLore()) {
+                    if(s.contains("XXX") || s.contains("YYY") || s.contains("ZZZ")) {
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                        p.sendMessage(ChatColor.RED + "You need to right click the gem in your main hand to reveal it's success chance before socketing!");
+                        return;
+                    }
+                }
+
                 GemItem gemItem = new GemItem(e.getCursor());
                 new Socketing(p, gameItem, gemItem);
             }
@@ -199,7 +210,18 @@ public class InvEvents implements Listener {
                     e.setCancelled(true);
                 }
 
+                if(!e.getCursor().getItemMeta().hasLore()) return;
+
+                for(String s : e.getCursor().getItemMeta().getLore()) {
+                    if(s.contains("XXX") || s.contains("YYY") || s.contains("ZZZ")) {
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                        p.sendMessage(ChatColor.RED + "You need to right click the rune in your main hand to reveal it's success chance before socketing!");
+                        return;
+                    }
+                }
+
                 RuneItem runeItem = new RuneItem(e.getCursor());
+
                 new Socketing(p, gameItem, runeItem);
             }
 
@@ -227,6 +249,9 @@ public class InvEvents implements Listener {
     }
 
     private void checkIfArmorPutOn(InventoryClickEvent e, Player p, ItemStack item, boolean shift) {
+
+        if(!e.getView().getTitle().contains("Crafting")) return;
+
         if(isWearable(item)) {
             if(!shift) {
                 if (e.getSlotType() == InventoryType.SlotType.ARMOR) {
@@ -242,6 +267,7 @@ public class InvEvents implements Listener {
                         int level = gameItem.getLevel();
 
                         if (pc.getLevel() < level) {
+                            p.sendMessage(ChatColor.RED + "You need to be level " + level + " to use this item!");
                             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                             e.setCancelled(true);
                             return;
@@ -249,17 +275,20 @@ public class InvEvents implements Listener {
                     }
 
                     boolean foundClass = false;
+                    String currentclass = pc.getData().getName();
                     if (gameItem.getGameClasses().isEmpty() == false) {
                         for(GameClass gameClass : gameItem.getGameClasses()) {
                             String className = gameClass.getName();
 
-                            if (className.equalsIgnoreCase(pc.getData().getName())) {
+                            if (className.equalsIgnoreCase(currentclass)) {
                                 foundClass = true;
+                                break;
                             }
                         }
                     }
 
                     if(!foundClass) {
+                        p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                         e.setCancelled(true);
                         return;
@@ -279,6 +308,7 @@ public class InvEvents implements Listener {
                         int level = gameItem.getLevel();
 
                         if (pc.getLevel() < level) {
+                            p.sendMessage(ChatColor.RED + "You need to be level " + level + " to use this item!");
                             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                             e.setCancelled(true);
                             return;
@@ -286,17 +316,20 @@ public class InvEvents implements Listener {
                     }
 
                     boolean foundClass = false;
+                    String currentclass = pc.getData().getName();
                     if (gameItem.getGameClasses().isEmpty() == false) {
                         for(GameClass gameClass : gameItem.getGameClasses()) {
                             String className = gameClass.getName();
 
-                            if (className.equalsIgnoreCase(pc.getData().getName())) {
+                            if (className.equalsIgnoreCase(currentclass)) {
                                 foundClass = true;
+                                break;
                             }
                         }
                     }
 
                     if(!foundClass) {
+                        p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                         e.setCancelled(true);
                         return;

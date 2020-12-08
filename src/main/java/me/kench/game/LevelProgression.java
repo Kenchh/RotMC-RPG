@@ -29,7 +29,7 @@ public class LevelProgression {
 
     public boolean hasLeveledUp(Player p, int leveltocomparewith) {
         PlayerData pd = RotMC.getPlayerData(p);
-
+        
         if(pd.getMainClass().getLevel() < leveltocomparewith) {
             return true;
         }
@@ -47,6 +47,8 @@ public class LevelProgression {
     }
 
     public void displayLevelProgression(Player p) {
+
+        if(RotMC.getPlayerData(p).getMainClass() == null) return;
 
         PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
 

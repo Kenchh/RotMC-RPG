@@ -1,5 +1,7 @@
 package me.kench.commands;
 
+import me.kench.gui.GlowGUI;
+import me.kench.gui.SkillsGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +19,7 @@ public class GlowCMD implements CommandExecutor {
 
         Player p = (Player) sender;
 
-
+        p.openInventory(new GlowGUI(p).getInv());
 
         return true;
     }
