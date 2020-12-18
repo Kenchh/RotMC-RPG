@@ -5,8 +5,6 @@ import me.kench.items.GameItem;
 import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.essenceanimations.EssenceAnimation;
 import me.kench.utils.JsonParser;
-import me.kench.utils.RankUtils;
-import net.luckperms.api.model.data.DataMutateResult;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
@@ -18,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -67,6 +66,10 @@ public class PlayerData {
 
     public PlayerClass getMainClass() {
         return currentClass;
+    }
+
+    public ArrayList<PlayerClass> getClasses() {
+        return classes;
     }
 
     public void assignPerms() {
@@ -245,11 +248,11 @@ public class PlayerData {
         getPlayer().getInventory().clear();
 
         if(old != null && old.getPlayer() != null) {
-            String invjson = RotMC.getInstance().getSqlManager().getInventory(p.getUniqueId(), pclass.getUuid());
+            String inv64 = RotMC.getInstance().getSqlManager().getInventory(p.getUniqueId(), pclass.getUuid());
 
-            if(!(invjson == null || invjson.equalsIgnoreCase(""))) {
+            if(!(inv64 == null || inv64.equalsIgnoreCase(""))) {
 
-                Inventory inv = JsonParser.fromBase64(invjson);
+                Inventory inv = JsonParser.fromBase64(inv64);
 
                 if (inv != null) {
                     for (int i = 0; i < 36; i++) {

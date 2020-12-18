@@ -4,6 +4,7 @@ author: FreakzBoy
 
 main: me.kench.RotMC
 api-version: 1.15
+softdepend: [PlaceholderAPI, LuckPerms, Guilds, WorldGuard]
 
 commands:
   glow:

@@ -4,6 +4,7 @@ import me.kench.RotMC;
 import me.kench.game.GameClass;
 import me.kench.gui.ExtractorGUI;
 import me.kench.items.*;
+import me.kench.items.stats.Gem;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
@@ -198,6 +199,15 @@ public class InvEvents implements Listener {
                 }
 
                 GemItem gemItem = new GemItem(e.getCursor());
+
+                for (Gem gem : gameItem.getStats().gems) {
+                    if (gem.getType().equals(gemItem.getGem().getType())) {
+                        p.sendMessage(ChatColor.RED + "You can't use two gems of the same type on one item!");
+                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
+                        return;
+                    }
+                }
+
                 new Socketing(p, gameItem, gemItem);
             }
 
@@ -221,7 +231,6 @@ public class InvEvents implements Listener {
                 }
 
                 RuneItem runeItem = new RuneItem(e.getCursor());
-
                 new Socketing(p, gameItem, runeItem);
             }
 

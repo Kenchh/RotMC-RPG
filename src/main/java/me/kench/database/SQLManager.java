@@ -4,7 +4,6 @@ import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.api.GuildsAPI;
 import me.glaremasters.guilds.guild.Guild;
 import me.kench.RotMC;
-import me.kench.game.DataManager;
 import me.kench.game.GameClass;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
@@ -37,15 +36,15 @@ public class SQLManager {
 
     }
 
+    /*
+       Creates initial player data table in the database
+     */
     private void makeTable() {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            /*
-             * CREATING WHOLE TABLE
-             */
 
             String statement = "CREATE TABLE IF NOT EXISTS `" + playerDataTable + "` " +
                     "(" +
@@ -56,22 +55,58 @@ public class SQLManager {
             ps = conn.prepareStatement(statement);
             ps.executeUpdate();
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            pool.close(conn, ps, rs);
+        }
+
+    }
+
+    /*
+       Obtain a single object from desired type from the database
+     */
+    public <T> T getValueOrDefaultFromDatabase(OfflinePlayer p, String column, Class<T> type, T defaultV) {
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+
+            if (p == null) return defaultV;
+
+            conn = pool.getConnection();
+            ps = conn.prepareStatement("SELECT * FROM " + playerDataTable + " WHERE uuid=?");
+            ps.setString(1, p.getUniqueId().toString());
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) return type.cast(rs.getObject(column));
+            return defaultV;
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             pool.close(conn, ps, rs);
         }
+
+        return defaultV;
     }
 
+    /*
+       Set data for a single column within th e database
+     */
     public void setPlayerData(UUID uuid, String column, Object data) {
         new BukkitRunnable() {
             @Override
             public void run() {
+
                 Connection conn = null;
                 PreparedStatement ps = null;
 
                 try {
+
                     conn = pool.getConnection();
 
                     String stmt = "UPDATE " + playerDataTable + " SET " + column + "=?  WHERE uuid=?";
@@ -86,16 +121,22 @@ public class SQLManager {
                 } finally {
                     pool.close(conn, ps, null);
                 }
+
             }
         }.runTaskAsynchronously(RotMC.getInstance());
     }
 
+    /*
+        Creates initial player data table in the database
+     */
     public boolean playerExists(UUID uuid) {
+
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
+
             conn = pool.getConnection();
 
             String stmt = "SELECT * FROM " + playerDataTable + " WHERE uuid=?";
@@ -117,6 +158,7 @@ public class SQLManager {
     }
 
     public int getMaxSlots(UUID playeruuid) {
+
         int s = 2;
 
         createPlayerData(playeruuid);
@@ -135,9 +177,7 @@ public class SQLManager {
             ps.setString(1, playeruuid.toString());
             rs = ps.executeQuery();
 
-            while(rs.next()) {
-                s = rs.getInt("maxslots");
-            }
+            while(rs.next()) s = rs.getInt("maxslots");
 
         } catch (NullPointerException e) {
             return s;
@@ -151,8 +191,8 @@ public class SQLManager {
     }
 
     public ArrayList<PlayerClass> getPlayerClasses(Player p) {
-        ArrayList<PlayerClass> playerclasses = new ArrayList<PlayerClass>();
 
+        ArrayList<PlayerClass> playerclasses = new ArrayList<PlayerClass>();
         createPlayerData(p.getUniqueId());
 
         Connection conn = null;
@@ -171,13 +211,12 @@ public class SQLManager {
 
             while(rs.next()) {
 
-                /* TODO Go through all player classes a player has and putting them into the arraylist */
-
                 if(rs.getString("data") == null) return playerclasses;
 
                 JSONArray array = new JSONArray(rs.getString("data"));
 
                 for(int i = 0; i < array.length(); i++) {
+
                     JSONObject input = array.getJSONObject(i);
 
                     UUID classuuid = UUID.fromString(input.getString("uuid"));
@@ -196,13 +235,12 @@ public class SQLManager {
                     stats.speed = (float) stat.getDouble("speed");
                     stats.dodge = (float) stat.getDouble("dodge");
 
-                    Inventory inventory = JsonParser.fromBase64(input.getString("inv"));
-
                     if (classuuid != null && GameClass != null && xp != -1 && level != -1) {
                         PlayerClass pc = new PlayerClass(classuuid, Bukkit.getPlayer(p.getUniqueId()), GameClass, xp, level, stats);
                         if(selected) pc.selected = true;
                         playerclasses.add(pc);
                     }
+
                 }
 
                 return playerclasses;
@@ -237,7 +275,6 @@ public class SQLManager {
 
             while(rs.next()) {
 
-                /* TODO Go through all player classes a player has and putting them into the arraylist */
                 UUID classuuid = null;
                 GameClass GameClass = null;
                 int xp = -1;
@@ -249,6 +286,7 @@ public class SQLManager {
                 JSONArray array = new JSONArray(rs.getString("data"));
 
                 for(int i = 0; i < array.length(); i++) {
+
                     JSONObject input = array.getJSONObject(i);
 
                     if(!input.getBoolean("selected")) continue;
@@ -273,6 +311,7 @@ public class SQLManager {
                     pc.selected = true;
                     return pc;
                 }
+
             }
 
         } catch (Exception e) {
@@ -298,14 +337,15 @@ public class SQLManager {
             ps = conn.prepareStatement(stmt);
             ps.setString(1, uuid.toString());
             ps.setString(2, new JSONArray().toString());
+            ps.setString(2, new JSONArray().toString());
             ps.setInt(3, 2);
 
-            ps.setInt(4, 1);
-            ps.setInt(5, 1);
-            ps.setInt(6, 1);
-            ps.setInt(7, 1);
-            ps.setInt(8, 1);
-            ps.setInt(9, 1);
+            ps.setInt(4, 0);
+            ps.setInt(5, 0);
+            ps.setInt(6, 0);
+            ps.setInt(7, 0);
+            ps.setInt(8, 0);
+            ps.setInt(9, 0);
             ps.executeUpdate();
 
         } catch (SQLException e) {
@@ -363,6 +403,7 @@ public class SQLManager {
     }
 
     public HashMap<Integer, List<String>> getTopClasses() {
+
         HashMap<Integer, List<String>> top10Classes = new HashMap<>();
         ArrayList<List<String>> all = new ArrayList<>();
 
@@ -394,6 +435,7 @@ public class SQLManager {
 
                     all.add(Arrays.asList(name, gameclass, xp + ""));
                 }
+
             }
 
             /** Sorting **/
@@ -431,10 +473,12 @@ public class SQLManager {
     }
 
     public HashMap<Integer, List<String>> getTopGuilds() {
+
         HashMap<Integer, List<String>> top10Classes = new HashMap<>();
         ArrayList<List<String>> all = new ArrayList<>();
 
         GuildsAPI guildsAPI = Guilds.getApi();
+        List<Guild> guilds = guildsAPI.getGuildHandler().getGuilds();
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -452,9 +496,13 @@ public class SQLManager {
             while (rs.next()) {
 
                 String uuid = rs.getString("uuid");
-                OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
-                Guild g = guildsAPI.getGuild(op);
+                Guild g = null;
+                for (Guild z : guilds) {
+                    if (z.getMember(UUID.fromString(uuid)) == null) continue;
+                    g = z;
+                }
 
+                if (g == null || g.getName() == null) continue;
                 int xp = 0;
 
                 JSONArray array = new JSONArray(rs.getString("data"));
@@ -465,7 +513,7 @@ public class SQLManager {
                     xp += input.getInt("xp");
                 }
 
-                if (g == null || g.getName() == null) continue;
+
 
                 int size = all.size();
                 for (int i = 0; i < size; i++) {
@@ -479,8 +527,11 @@ public class SQLManager {
 
                 all.add(Arrays.asList(g.getName(), xp + ""));
             }
-        } catch (SQLException e) {
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            pool.close(conn, ps, rs);
         }
 
         /** Sorting **/
@@ -505,6 +556,7 @@ public class SQLManager {
 
             List<String> data = all.get(i);
             top10Classes.put(i+1, data);
+
         }
 
         return top10Classes;
@@ -590,67 +642,28 @@ public class SQLManager {
             }
         }
 
+        int huntress = RankUtils.getCharacterRank(p, "Huntress");
+        int knight = RankUtils.getCharacterRank(p, "Knight");
+        int warrior = RankUtils.getCharacterRank(p, "Warrior");
+        int necromancer = RankUtils.getCharacterRank(p, "Necromancer");
+        int assassin = RankUtils.getCharacterRank(p, "Assassin");
+        int rogue = RankUtils.getCharacterRank(p, "Rogue");
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 setPlayerData(p.getUniqueId(), "data", toUpdate.toString());
-                setPlayerData(p.getUniqueId(), "rankHuntress", RankUtils.getCharacterRank(p, "Huntress"));
-                setPlayerData(p.getUniqueId(), "rankKnight", RankUtils.getCharacterRank(p, "Knight"));
-                setPlayerData(p.getUniqueId(), "rankWarrior", RankUtils.getCharacterRank(p, "Warrior"));
-                setPlayerData(p.getUniqueId(), "rankNecromancer", RankUtils.getCharacterRank(p, "Necromancer"));
-                setPlayerData(p.getUniqueId(), "rankAssassin", RankUtils.getCharacterRank(p, "Assassin"));
-                setPlayerData(p.getUniqueId(), "rankRogue", RankUtils.getCharacterRank(p, "Rogue"));
+                setPlayerData(p.getUniqueId(), "maxslots", pd.maxSlots);
+                setPlayerData(p.getUniqueId(), "rankHuntress", huntress);
+                setPlayerData(p.getUniqueId(), "rankKnight", knight);
+                setPlayerData(p.getUniqueId(), "rankWarrior", warrior);
+                setPlayerData(p.getUniqueId(), "rankNecromancer", necromancer);
+                setPlayerData(p.getUniqueId(), "rankAssassin", assassin);
+                setPlayerData(p.getUniqueId(), "rankRogue", rogue);
             }
         }.runTaskAsynchronously(RotMC.getInstance());
 
     }
-
-
-    public void transferData() {
-
-        System.out.println("TRANSFERING DATA");
-
-        DataManager dataManager = RotMC.getInstance().getDataManager();
-
-        for (String uuid : dataManager.config.getKeys(false)) {
-            JSONArray toUpdate = new JSONArray();
-
-            for(String classuuid : dataManager.config.getConfigurationSection(uuid + ".classes").getKeys(false)) {
-                toUpdate.put(
-                        new JSONObject().
-                                put("uuid", classuuid).
-                                put("GameClass", dataManager.config.getString(uuid + ".classes." + classuuid + ".classtype")).
-                                put("selected", dataManager.config.getBoolean(uuid + ".classes." + classuuid + ".select")).
-                                put("xp", dataManager.config.getInt(uuid + ".classes." + classuuid + ".classtype")).
-                                put("level", dataManager.config.getInt(uuid + ".classes." + classuuid + ".classtype")).
-                                put("stats", new JSONObject().
-                                        put("health", dataManager.config.get(uuid + ".classes." + classuuid + ".stats.health")).
-                                        put("attack", dataManager.config.get(uuid + ".classes." + classuuid + ".stats.attack")).
-                                        put("defense", dataManager.config.get(uuid + ".classes." + classuuid + ".stats.defense")).
-                                        put("speed", dataManager.config.get(uuid + ".classes." + classuuid + ".stats.speed")).
-                                        put("dodge", dataManager.config.get(uuid + ".classes." + classuuid + ".stats.dodge"))
-
-                                ).
-                                put("inv", dataManager.config.getString(uuid + ".classes." + classuuid + ".inv"))
-                );
-            }
-
-            UUID id = UUID.fromString(uuid);
-
-            createPlayerData(id);
-
-            setPlayerData(id, "data", toUpdate.toString());
-            setPlayerData(id, "rankHuntress", dataManager.config.getInt(uuid + ".rankHuntress"));
-            setPlayerData(id, "rankKnight", dataManager.config.getInt(uuid + ".rankKnight"));
-            setPlayerData(id, "rankWarrior", dataManager.config.getInt(uuid + ".rankWarrior"));
-            setPlayerData(id, "rankNecromancer", dataManager.config.getInt(uuid + ".rankNecromancer"));
-            setPlayerData(id, "rankAssassin", dataManager.config.getInt(uuid + ".rankAssassin"));
-            setPlayerData(id, "rankRogue", dataManager.config.getInt(uuid + ".rankRogue"));
-
-        }
-
-    }
-
 
 
 }

@@ -4,6 +4,7 @@ import me.kench.RotMC;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.player.Stats;
+import me.kench.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -65,6 +66,11 @@ public class DamageEvent implements Listener {
         if(e.getDamager() instanceof Player) {
             Player p = (Player) e.getDamager();
 
+            if (!WorldGuardUtils.wgPvP(p) && e.getEntity() instanceof Player) {
+                e.setCancelled(true);
+                return;
+            }
+
             if(e.getEntity() instanceof Player) {
                 e.setCancelled(true);
                 return;
@@ -88,6 +94,11 @@ public class DamageEvent implements Listener {
 
         if(e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
+
+            if (!WorldGuardUtils.wgPvP(p) && e.getDamager() instanceof Player) {
+                e.setCancelled(true);
+                return;
+            }
 
             if(e.getDamager() instanceof Player) {
                 e.setCancelled(true);

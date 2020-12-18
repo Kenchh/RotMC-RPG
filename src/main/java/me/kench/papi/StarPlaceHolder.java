@@ -5,6 +5,7 @@ import me.kench.RotMC;
 import me.kench.player.PlayerData;
 import me.kench.utils.GlowUtils;
 import me.kench.utils.RankUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ public class StarPlaceHolder extends PlaceholderExpansion {
 
         if(params.equalsIgnoreCase("color")) {
             PlayerData pd = RotMC.getPlayerData(player);
-            return RankUtils.getStarColor(pd) + "";
+            return ChatColor.GRAY.toString() + RankUtils.getStarColor(pd) + "";
         }
 
         return "";

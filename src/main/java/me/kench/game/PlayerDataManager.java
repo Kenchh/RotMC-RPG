@@ -21,7 +21,7 @@ public class PlayerDataManager {
     }
 
     public void unregisterPlayerData(Player player) {
-        playerData.remove(RotMC.getPlayerData(player));
+        playerData.remove(player.getUniqueId());
     }
 
     public PlayerData getPlayerData(OfflinePlayer p) {

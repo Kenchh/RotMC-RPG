@@ -32,6 +32,7 @@ public class RotMC_GiveSlot extends SubCommand {
         } else {
             RotMC.getPlayerData(tp).maxSlots += amount;
         }
+
         RotMC.getInstance().getSqlManager().update(tp, null);
 
         if(sender instanceof Player)

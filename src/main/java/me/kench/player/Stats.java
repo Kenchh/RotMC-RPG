@@ -2,11 +2,11 @@ package me.kench.player;
 
 public class Stats {
 
-    public static float healthMaxCap = 40F * 2F;
+    public static float healthMaxCap = 30F * 2F;
     public static float attackMaxCap = 1.5F;
-    public static float defenseMaxCap = 1.80F / 2F;
-    public static float speedMaxCap = 1.70F;
-    public static float dodgeMaxCap = 65F;
+    public static float defenseMaxCap = 1.70F / 2F;
+    public static float speedMaxCap = 1.50F;
+    public static float dodgeMaxCap = 60F;
 
     public float health = 0;
     public float attack = 0;
@@ -26,7 +26,7 @@ public class Stats {
             }
         } else {
             if (!visual) {
-                return level * 2F / 2F;
+                return level / 2F;
             } else {
                 return level;
             }

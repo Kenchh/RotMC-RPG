@@ -47,6 +47,10 @@ public class PlayerClass {
 
     }
 
+    public GameClass getGameClass() {
+        return gameClass;
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -237,39 +241,33 @@ public class PlayerClass {
         return 1;
     }
 
-    public void tickEssences() {
+    public void tickEssences(PlayerData pd) {
 
-        PlayerData pd = RotMC.getPlayerData(player);
-
-        ArrayList<EssenceType> activeEssences = ItemUtils.getActiveEssences(player);
-
-        /* Removing old essences */
-        for(EssenceType et : pd.activeEssences.keySet()) {
-            if(!activeEssences.contains(et)) {
+        ArrayList<EssenceType> activeEssences = ItemUtils.getActiveEssences(this.player);
+        ArrayList<EssenceType> etToRemove = new ArrayList<>();
+        for (EssenceType et : pd.activeEssences.keySet()) {
+            if (!activeEssences.contains(et)) {
+                etToRemove.add(et);
                 pd.activeEssences.get(et).cancel();
             }
         }
-        /*  */
 
-        pd.activeEssences.clear();
+        for (EssenceType et : etToRemove)
+            pd.activeEssences.remove(et);
 
-        /* Adding new essences */
-        for(EssenceType et : activeEssences) {
-            if(!pd.activeEssences.containsKey(et)) {
-
+        for (EssenceType et : activeEssences) {
+            if (!pd.activeEssences.containsKey(et)) {
                 EssenceAnimation ea = ItemUtils.getAnimationFromType(et);
-
                 pd.activeEssences.put(et, ea);
-
-                ea.start(player);
+                ea.start(this.player);
             }
         }
-        /*  */
+
     }
 
     public void applyStats() {
 
-        ItemUtils.checkAllowedArmor(player);
+        // ItemUtils.checkAllowedArmor(player);
 
         ArrayList<PotionEffectType> effects = ItemUtils.getOverallRuneEffects(player);
         for(PotionEffect pe : player.getActivePotionEffects()) {

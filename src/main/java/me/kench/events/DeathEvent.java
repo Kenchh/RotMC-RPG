@@ -59,9 +59,15 @@ public class DeathEvent implements Listener {
 
         if(losexp < 0) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + (losexp*-1));
+
             pc.giveXP(losexp, true);
             pc.resetCaps();
         }
+
+        if (pd.getMainClass() != null) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/ultimatekits:kit " + p.getName() + " " + pd.getMainClass().getGameClass().getName().toLowerCase());
+        }
+
         e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', msg));
 
     }

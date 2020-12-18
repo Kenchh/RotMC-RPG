@@ -93,9 +93,11 @@ public class ClassesGUI implements Listener {
                 if(pld.currentClass.getUuid().equals(pc.getUuid())) {
                     p.sendMessage(ChatColor.RED + "You need to switch to another profile to delete your current one!");
                     p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.5F, 1.2F);
+                    p.closeInventory();
                     return;
                 }
 
+                p.closeInventory();
                 p.openInventory(new ConfirmationGUI(pc).getInv());
                 for(int i=0;i<3;i++)
                     pld.getPlayer().playSound(pld.getPlayer().getLocation(), Sound.BLOCK_LAVA_POP, 1F, 1.5F);

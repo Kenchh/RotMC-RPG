@@ -31,11 +31,13 @@ public class JoinLeaveEvent implements Listener {
 
             RotMC.getInstance().getLevelProgression().displayLevelProgression(p);
 
-            p.sendMessage(ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + pc.getData().getName() + " " + ChatColor.GOLD + pc.getLevel());
+            p.sendMessage(  ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + pc.getData().getName() + " " + ChatColor.GOLD + pc.getLevel());
 
             pc.applyStats();
 
             RotMC.getInstance().getSqlManager().update(p, null);
+
+            RotMC.getPlayerData(p).assignPerms();
 
         } else {
 
@@ -60,7 +62,7 @@ public class JoinLeaveEvent implements Listener {
                             @Override
                             public void run() {
                                 if(pp != null && pd.getMainClass() != null) {
-                                    pd.getMainClass().tickEssences();
+                                    pd.getMainClass().tickEssences(pd);
                                     pd.getMainClass().applyStats();
                                 }
                             }
@@ -71,7 +73,6 @@ public class JoinLeaveEvent implements Listener {
                 GlowUtils.clearWhenForbidden(p);
             }
         }.runTaskTimer(RotMC.getInstance(), 1L, 60L);
-
     }
 
     @EventHandler
@@ -79,8 +80,10 @@ public class JoinLeaveEvent implements Listener {
 
         PlayerData pd = RotMC.getPlayerData(e.getPlayer());
 
-        if(pd.task != null)
+        if(pd.task != null) {
             pd.task.cancel();
+            pd.task = null;
+        }
 
         /* Removing old essences */
         ArrayList<EssenceType> etToRemove = new ArrayList<>();
@@ -94,6 +97,7 @@ public class JoinLeaveEvent implements Listener {
         }
         /*  */
 
+        RotMC.getInstance().getSqlManager().update(e.getPlayer(), null);
         RotMC.getInstance().getPlayerDataManager().unregisterPlayerData(e.getPlayer());
     }
 

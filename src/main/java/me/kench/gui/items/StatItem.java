@@ -24,7 +24,7 @@ public class StatItem extends ItemStack {
                 float healthGemStat = stats.getHealth(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).health, true, true);
                 float healthItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).health;
 
-                meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.RED + s + ChatColor.translateAlternateColorCodes('&',"&7▸ " + ChatColor.WHITE + "+" + (stats.getHealth(stats.health, true, false) + healthItemStat + healthGemStat)));
+                meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.RED + s + ChatColor.translateAlternateColorCodes('&',"&7▸ " + ChatColor.WHITE + "+" + (stats.getHealth(stats.health, false, false) + healthItemStat + healthGemStat)));
 
                 String vh = "&e" + (int) stats.health;
 
@@ -33,7 +33,7 @@ public class StatItem extends ItemStack {
                 }
 
                 meta.setLore(Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vh + "&7/&6" + stats.getCap(pc.getData().getName(), "Health") + "&7) = &c" + stats.getDodge(stats.health, true, false)),
+                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vh + "&7/&6" + stats.getCap(pc.getData().getName(), "Health") + "&7) = &c" + stats.getHealth(stats.health, false, false)),
                         ChatColor.translateAlternateColorCodes('&',"&7From Item Stats: " + ChatColor.RED + healthItemStat),
                         ChatColor.translateAlternateColorCodes('&',"&7From Gems: " + ChatColor.RED + healthGemStat)
                         ));
@@ -53,7 +53,7 @@ public class StatItem extends ItemStack {
                 }
 
                 meta.setLore(Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + va + "&7/&6" + stats.getCap(pc.getData().getName(), "Attack") + "&7) = &b" + stats.getDodge(stats.attack, true, false) + "%"),
+                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + va + "&7/&6" + stats.getCap(pc.getData().getName(), "Attack") + "&7) = &b" + stats.getAttack(stats.attack, true, false) + "%"),
                         ChatColor.translateAlternateColorCodes('&',"&7From Item Stats: " + ChatColor.AQUA + attackItemStat + "%"),
                         ChatColor.translateAlternateColorCodes('&',"&7From Gems: " + ChatColor.AQUA + attackGemStat + "%")
                 ));
@@ -73,7 +73,7 @@ public class StatItem extends ItemStack {
                 }
 
                 meta.setLore(Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vd + "&7/&6" + stats.getCap(pc.getData().getName(), "Defense") + "&7) = &9" + stats.getDodge(stats.defense, true, false) + "%"),
+                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vd + "&7/&6" + stats.getCap(pc.getData().getName(), "Defense") + "&7) = &9" + stats.getDefense(stats.defense, true, false) + "%"),
                         ChatColor.translateAlternateColorCodes('&',"&7From Item Stats: " + ChatColor.BLUE + defenseItemStat + "%"),
                         ChatColor.translateAlternateColorCodes('&',"&7From Gems: " + ChatColor.BLUE + defenseGemStat + "%")
                 ));
@@ -93,7 +93,7 @@ public class StatItem extends ItemStack {
                 }
 
                 meta.setLore(Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vs + "&7/&6" + stats.getCap(pc.getData().getName(), "Speed") + "&7) = &a" + stats.getDodge(stats.speed, true, false) + "%"),
+                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vs + "&7/&6" + stats.getCap(pc.getData().getName(), "Speed") + "&7) = &a" + stats.getSpeed(stats.speed, true, false) + "%"),
                         ChatColor.translateAlternateColorCodes('&',"&7From Item Stats: " + ChatColor.GREEN + speedItemStat + "%"),
                         ChatColor.translateAlternateColorCodes('&',"&7From Gems: " + ChatColor.GREEN + speedGemStat + "%")
                 ));

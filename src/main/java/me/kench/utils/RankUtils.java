@@ -1,6 +1,7 @@
 package me.kench.utils;
 
 import me.kench.RotMC;
+import me.kench.game.GameClass;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import org.bukkit.ChatColor;
@@ -10,22 +11,19 @@ public class RankUtils {
 
     public static int getCharacterRank(Player p, String classname) {
 
-        int rank;
+        int rank = 0;
 
-        try {
-            rank = RotMC.getInstance().getPlayerDataConfig().config.getInt(p.getUniqueId().toString() + ".rank" + classname);
-        } catch (NullPointerException e) {
-            rank = 0;
-        }
+        for (PlayerClass playerClass : RotMC.getPlayerData(p).getClasses()) {
+            GameClass gameClass = playerClass.getGameClass();
 
-        for(PlayerClass pc : RotMC.getInstance().getSqlManager().getPlayerClasses(p)) {
-            if(pc.getData().getName().equalsIgnoreCase(classname)) {
-
-                int newrank = RankUtils.getRankFromFame(pc);
-                if(newrank > rank) rank = newrank;
-
+            if (gameClass.getName().equalsIgnoreCase(classname)) {
+                return getRankFromFame(playerClass);
             }
+
         }
+
+        String key = "rank"+classname.substring(0, 1).toUpperCase()+classname.substring(1).toLowerCase();
+        rank = Math.max(rank, RotMC.getInstance().getSqlManager().getValueOrDefaultFromDatabase(p, key, Integer.class, 0));
 
         return rank;
     }
@@ -66,7 +64,7 @@ public class RankUtils {
     }
 
     public static ChatColor getStarColor(PlayerData pd) {
-        switch (getOverallRank(pd.getPlayer())/5) {
+        switch ((int) Math.floor(getOverallRank(pd.getPlayer())/5D)) {
             case 1:
                 return ChatColor.WHITE;
             case 2:

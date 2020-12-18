@@ -20,14 +20,6 @@
             </resource>
         </resources>
 
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>2.10</version>
-            </extension>
-        </extensions>
-
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -61,49 +53,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <echo>ANT TASK - copying files....</echo>
-                                <copy todir="../TestServer16_4/plugins" overwrite="true" flatten="true">
-                                    <fileset dir="${basedir}" includes="*.bat" >
-                                        <include name="target/*jar-with-dependencies.jar" />
-                                    </fileset>
-                                </copy>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>upload-assembly</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>upload-single</goal>
-                        </goals>
-                        <configuration>
-                            <serverId>local</serverId> <!-- references the server declaration -->
-                            <fromFile>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</fromFile>
-                            <url>ftp://127.0.0.1/</url>
-                            <toFile>${project.build.finalName}-jar-with-dependencies.jar</toFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -126,9 +75,21 @@
             <url>https://repo.glaremasters.me/repository/public/</url>
         </repository>
 
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>me.glaremasters</groupId>

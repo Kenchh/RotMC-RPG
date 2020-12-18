@@ -88,7 +88,7 @@ public class LevelProgression {
 
         p.setLevel(pc.getLevel());
 
-        if(pc.getLevel() == 20) {
+        if(pc.getLevel() >= 20) {
             p.setExp(1);
         } else {
             p.setExp(getLevelProgressPercentage(pc));
@@ -107,7 +107,7 @@ public class LevelProgression {
 
         float percentage = ((100 / ((float) range)) * xpInLevelRange);
 
-        return (percentage / 100);
+        return Math.min(1, (percentage / 100));
     }
 
     public int getMinXP(int level) {
