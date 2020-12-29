@@ -21,15 +21,6 @@ public class RotMC_Item extends SubCommand {
 
         Player p = (Player) sender;
 
-        PlayerClass pc;
-
-        try {
-            pc = RotMC.getPlayerData(p).getMainClass();
-        } catch (NullPointerException e) {
-            p.sendMessage(ChatColor.RED + "You need to have a class selected!");
-            return true;
-        }
-
         if(p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR) return true;
 
         GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());

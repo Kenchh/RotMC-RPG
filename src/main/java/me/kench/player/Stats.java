@@ -2,17 +2,20 @@ package me.kench.player;
 
 public class Stats {
 
+    /*
     public static float healthMaxCap = 30F * 2F;
     public static float attackMaxCap = 1.5F;
     public static float defenseMaxCap = 1.70F / 2F;
     public static float speedMaxCap = 1.50F;
     public static float dodgeMaxCap = 60F;
+     */
 
     public float health = 0;
     public float attack = 0;
     public float defense = 0;
     public float speed = 0;
     public float dodge = 0;
+    public float vitality = 0;
 
     public Stats() {
     }
@@ -20,7 +23,7 @@ public class Stats {
     public float getHealth(float level, boolean visual, boolean gem) {
         if(gem) {
             if (!visual) {
-                return level;
+                return level / 2F;
             } else {
                 return level / 2F;
             }
@@ -28,7 +31,7 @@ public class Stats {
             if (!visual) {
                 return level / 2F;
             } else {
-                return level;
+                return level / 2F;
             }
         }
     }
@@ -82,6 +85,22 @@ public class Stats {
     }
 
     public float getDodge(float level, boolean visual, boolean gem) {
+        if(gem) {
+            if (!visual) {
+                return (level / 100F) / 2F;
+            } else {
+                return level / 2F;
+            }
+        } else {
+            if (!visual) {
+                return level / 100F / 2F;
+            } else {
+                return level / 2F;
+            }
+        }
+    }
+
+    public float getVitality(float level, boolean visual, boolean gem) {
         if(gem) {
             if (!visual) {
                 return (level / 100F) / 2F;
@@ -203,6 +222,8 @@ public class Stats {
                         return ((double) 15*multiplier);
                     case "Dodge":
                         return ((double) 20*multiplier);
+                    case "Vitality":
+                        return ((double) 35*multiplier);
                 }
             case "Necromancer":
                 switch (stat) {
@@ -215,6 +236,8 @@ public class Stats {
                     case "Speed":
                         return ((double) 15*multiplier);
                     case "Dodge":
+                        return ((double) 20*multiplier);
+                    case "Vitality":
                         return ((double) 20*multiplier);
                 }
             case "Warrior":
@@ -229,6 +252,8 @@ public class Stats {
                         return ((double) 20*multiplier);
                     case "Dodge":
                         return ((double) 15*multiplier);
+                    case "Vitality":
+                        return ((double) 30*multiplier);
                 }
             case "Huntress":
                 switch (stat) {
@@ -242,6 +267,8 @@ public class Stats {
                         return ((double) 35*multiplier);
                     case "Dodge":
                         return ((double) 15*multiplier);
+                    case "Vitality":
+                        return ((double) 25*multiplier);
                 }
             case "Assassin":
                 switch (stat) {
@@ -255,6 +282,8 @@ public class Stats {
                         return ((double) 30*multiplier);
                     case "Dodge":
                         return ((double) 35*multiplier);
+                    case "Vitality":
+                        return ((double) 25*multiplier);
                 }
             case "Rogue":
                 switch (stat) {
@@ -267,6 +296,8 @@ public class Stats {
                     case "Speed":
                         return ((double) 35*multiplier);
                     case "Dodge":
+                        return ((double) 30*multiplier);
+                    case "Vitality":
                         return ((double) 30*multiplier);
                 }
         }

@@ -84,9 +84,11 @@ public class DamageEvent implements Listener {
 
             float attackAll = pd.getMainClass().attackAllStat;
 
+            /*
             if(attackAll > Stats.attackMaxCap) {
                 attackAll = Stats.attackMaxCap;
             }
+             */
 
             e.setDamage(e.getDamage() + e.getDamage() * attackAll);
 
@@ -120,15 +122,19 @@ public class DamageEvent implements Listener {
 
             float dodgeAll = pd.getMainClass().dodgeAllStat;
 
+            /*
             if(dodgeAll > Stats.dodgeMaxCap) {
                 dodgeAll = Stats.dodgeMaxCap;
             }
+             */
 
             float defenseAll = pd.getMainClass().defenseAllStat;
 
+            /*
             if(defenseAll > Stats.defenseMaxCap) {
                 defenseAll = Stats.defenseMaxCap;
             }
+             */
 
             double dmg = damage - damage*defenseAll;
 

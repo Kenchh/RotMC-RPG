@@ -15,9 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerClass {
 
@@ -65,7 +63,7 @@ public class PlayerClass {
                     stats.health += 1F;
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max health!");
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " health");
+                    //Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " health");
                 }
                 break;
             case "Attack":
@@ -74,7 +72,7 @@ public class PlayerClass {
                     stats.attack += 1F;
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max attack!");
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " attack");
+                    //Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " attack");
                 }
                 break;
             case "Defense":
@@ -83,7 +81,7 @@ public class PlayerClass {
                     player.sendMessage(ChatColor.GREEN + "Your defense stat has increased by " + GemType.DEFENSE.getPrefix() + "1!");
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max defense!");
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " defense");
+                    //Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " defense");
                 }
                 break;
             case "Speed":
@@ -92,7 +90,7 @@ public class PlayerClass {
                     player.sendMessage(ChatColor.GREEN + "Your speed stat has increased by " + GemType.SPEED.getPrefix() + "1!");
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max speed!");
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " speed");
+                    //Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " speed");
                 }
                 break;
             case "Dodge":
@@ -101,7 +99,16 @@ public class PlayerClass {
                     player.sendMessage(ChatColor.GREEN + "Your evasion stat has increased by " + GemType.DODGE.getPrefix() + "1!");
                 } else {
                     player.sendMessage(ChatColor.RED + "You already have max dodge!");
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " evasion");
+                    //Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " evasion");
+                }
+                break;
+            case "Vitality":
+                if (stats.vitality < stats.getCap(getData().getName(), s)) {
+                    stats.vitality += 1F;
+                    player.sendMessage(ChatColor.GREEN + "Your vitality stat has increased by " + GemType.VITALITY.getPrefix() + "1!");
+                } else {
+                    player.sendMessage(ChatColor.RED + "You already have max vitality!");
+                    //Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " evasion");
                 }
                 break;
         }
@@ -293,23 +300,39 @@ public class PlayerClass {
 
         float speedAll = speedPlayerStat + speedItemStat + speedGemStat;
 
+        /*
         if(speedAll > Stats.speedMaxCap) {
             speedAll = Stats.speedMaxCap;
         }
+         */
 
         player.setWalkSpeed(0.2F + 0.2F*speedAll);
 
         float healthPlayerStat = stats.getHealth(stats.health, false, false);
         float healthGemStat = stats.getHealth(ItemUtils.getOverallGemStatsFromEquipment(player).health, false, true);
-        float healthItemStat = ItemUtils.getOverallItemStatsFromEquipment(player).health * 2;
+        float healthItemStat = ItemUtils.getOverallItemStatsFromEquipment(player).health;
 
         float healthAll = healthPlayerStat + healthItemStat + healthGemStat;
 
+        /*
         if(healthAll > Stats.healthMaxCap) {
             healthAll = Stats.healthMaxCap;
         }
+         */
 
-        player.setMaxHealth(20 + healthAll);
+        List<String> leather = Arrays.asList("HUNTRESS", "ASSASSIN", "ROGUE");
+        List<String> robe = Arrays.asList("NECROMANCER");
+        List<String> heavy = Arrays.asList("WARRIOR", "KNIGHT");
+
+
+        if(leather.contains(gameClass.getName().toUpperCase()))
+            player.setMaxHealth(20 + healthAll);
+
+        if(robe.contains(gameClass.getName().toUpperCase()))
+            player.setMaxHealth(16 + healthAll);
+
+        if(heavy.contains(gameClass.getName().toUpperCase()))
+            player.setMaxHealth(24 + healthAll);
 
         float attackPlayerStat = stats.getAttack(stats.attack, false, false);
         float attackGemStat = stats.getAttack(ItemUtils.getOverallGemStatsFromEquipment(player).attack, false, true);

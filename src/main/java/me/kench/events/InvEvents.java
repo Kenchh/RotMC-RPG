@@ -68,6 +68,12 @@ public class InvEvents implements Listener {
     }
 
     private void extract(InventoryClickEvent e, Player p, ItemStack item) {
+
+        if(!e.getView().getTitle().equalsIgnoreCase("Crafting") || e.getInventory().getHolder() != p) {
+            p.sendMessage(ChatColor.RED + "You can only extract from your inventory!");
+            return;
+        }
+
         if(isGameItem(item)) {
 
             GameItem gameItem = new GameItem(item);
@@ -85,7 +91,6 @@ public class InvEvents implements Listener {
             p.openInventory(new ExtractorGUI(p, gameItem, extractor).getInv());
 
         }
-        return;
     }
 
     private void mythicDust(InventoryClickEvent e, Player p, ItemStack item) {

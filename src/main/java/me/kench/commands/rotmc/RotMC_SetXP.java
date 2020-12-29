@@ -2,6 +2,7 @@ package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
+import me.kench.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,14 +28,16 @@ public class RotMC_SetXP extends SubCommand {
 
         int amount = Integer.parseInt(args[2]);
 
-        if(RotMC.getPlayerData(tp).getMainClass() == null) {
+        PlayerData pd = RotMC.getPlayerData(tp);
+
+        if(pd.getMainClass() == null) {
             if(sender instanceof Player)
                 sender.sendMessage(ChatColor.RED + "Error: This player does not have a class selected.");
             return true;
         }
 
         sender.sendMessage(ChatColor.GREEN + tp.getName() + "'s xp has been set to " + ChatColor.GOLD + amount + ChatColor.GREEN + "!");
-        RotMC.getPlayerData(tp).getMainClass().setXp(amount);
+        pd.getMainClass().setXp(amount);
         return true;
     }
 

@@ -24,7 +24,7 @@ public class StatItem extends ItemStack {
                 float healthGemStat = stats.getHealth(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).health, true, true);
                 float healthItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).health;
 
-                meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.RED + s + ChatColor.translateAlternateColorCodes('&',"&7▸ " + ChatColor.WHITE + "+" + (stats.getHealth(stats.health, false, false) + healthItemStat + healthGemStat)));
+                meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.RED + s + ChatColor.translateAlternateColorCodes('&',"&7▸ " + ChatColor.WHITE + "+" + (stats.getHealth(stats.health, true, false) + healthItemStat + healthGemStat)));
 
                 String vh = "&e" + (int) stats.health;
 
@@ -33,7 +33,7 @@ public class StatItem extends ItemStack {
                 }
 
                 meta.setLore(Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vh + "&7/&6" + stats.getCap(pc.getData().getName(), "Health") + "&7) = &c" + stats.getHealth(stats.health, false, false)),
+                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vh + "&7/&6" + stats.getCap(pc.getData().getName(), "Health") + "&7) = &c" + stats.getHealth(stats.health, true, false)),
                         ChatColor.translateAlternateColorCodes('&',"&7From Item Stats: " + ChatColor.RED + healthItemStat),
                         ChatColor.translateAlternateColorCodes('&',"&7From Gems: " + ChatColor.RED + healthGemStat)
                         ));
@@ -119,6 +119,26 @@ public class StatItem extends ItemStack {
                 ));
 
                 meta.setCustomModelData(204);
+                break;
+            case "Vitality":
+                float vitalityGemStat = stats.getDodge(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).vitality, true, true);
+                float vitalityItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).vitality;
+
+                meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.YELLOW + "Vitality" + ChatColor.translateAlternateColorCodes('&',"&7▸ " + ChatColor.WHITE + "+" + (stats.getDodge(stats.vitality, true, false) + vitalityItemStat + vitalityGemStat)));
+
+                String vv = "&e" + (int) stats.vitality;
+
+                if(stats.vitality >= pc.getLevel()) {
+                    vv.replace("&e","&6");
+                }
+
+                meta.setLore(Arrays.asList(
+                        ChatColor.translateAlternateColorCodes('&',"&7From Potions: (" + vv + "&7/&d" + stats.getCap(pc.getData().getName(), "Vitality") + "&7) = &d" + stats.getDodge(stats.vitality, true, false)),
+                        ChatColor.translateAlternateColorCodes('&',"&7From Item Stats: " + ChatColor.LIGHT_PURPLE + vitalityItemStat + "%"),
+                        ChatColor.translateAlternateColorCodes('&',"&7From Gems: " + ChatColor.LIGHT_PURPLE + vitalityGemStat + "%")
+                ));
+
+                meta.setCustomModelData(206);
                 break;
         }
 

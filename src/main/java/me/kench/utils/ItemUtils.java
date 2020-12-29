@@ -72,6 +72,7 @@ public class ItemUtils {
                     overallStats.defense += itemstats.defense;
                     overallStats.speed += itemstats.speed;
                     overallStats.dodge += itemstats.dodge;
+                    overallStats.vitality += itemstats.vitality;
                 }
             }
         }
@@ -101,6 +102,9 @@ public class ItemUtils {
                             break;
                         case DODGE:
                             stats.dodge += level;
+                            break;
+                        case VITALITY:
+                            stats.vitality += level;
                             break;
                     }
                 }
@@ -320,6 +324,9 @@ public class ItemUtils {
                     case DODGE:
                         overallStats.dodge += g.getLevel();
                         break;
+                    case VITALITY:
+                        overallStats.vitality += g.getLevel();
+                        break;
                 }
             }
         }
@@ -344,6 +351,9 @@ public class ItemUtils {
                         break;
                     case DODGE:
                         overallStats.dodge += g.getLevel();
+                        break;
+                    case VITALITY:
+                        overallStats.vitality += g.getLevel();
                         break;
                 }
             }
@@ -371,6 +381,9 @@ public class ItemUtils {
                         case DODGE:
                             overallStats.dodge += g.getLevel();
                             break;
+                        case VITALITY:
+                            overallStats.vitality += g.getLevel();
+                            break;
                     }
                 }
             }
@@ -391,6 +404,8 @@ public class ItemUtils {
                 return new Stats().getSpeed(level, visual, true);
             case DODGE:
                 return new Stats().getDodge(level, visual, true);
+            case VITALITY:
+                return new Stats().getVitality(level, visual, true);
         }
         return -1;
     }

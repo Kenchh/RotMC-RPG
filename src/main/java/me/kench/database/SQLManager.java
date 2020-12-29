@@ -234,6 +234,7 @@ public class SQLManager {
                     stats.defense = (float) stat.getDouble("defense");
                     stats.speed = (float) stat.getDouble("speed");
                     stats.dodge = (float) stat.getDouble("dodge");
+                    stats.vitality = (float) stat.getDouble("vitality");
 
                     if (classuuid != null && GameClass != null && xp != -1 && level != -1) {
                         PlayerClass pc = new PlayerClass(classuuid, Bukkit.getPlayer(p.getUniqueId()), GameClass, xp, level, stats);
@@ -303,6 +304,7 @@ public class SQLManager {
                     stats.defense = (float) stat.getDouble("defense");
                     stats.speed = (float) stat.getDouble("speed");
                     stats.dodge = (float) stat.getDouble("dodge");
+                    stats.vitality = (float) stat.getDouble("vitality");
 
                 }
 
@@ -596,7 +598,8 @@ public class SQLManager {
                                             put("attack", pc.getStats().attack).
                                             put("defense", pc.getStats().defense).
                                             put("speed", pc.getStats().speed).
-                                            put("dodge", pc.getStats().dodge)
+                                            put("dodge", pc.getStats().dodge).
+                                            put("vitality", pc.getStats().vitality)
 
                                     ).
                                     put("inv", JsonParser.toBase64(p))
@@ -615,7 +618,8 @@ public class SQLManager {
                                             put("attack", pc.getStats().attack).
                                             put("defense", pc.getStats().defense).
                                             put("speed", pc.getStats().speed).
-                                            put("dodge", pc.getStats().dodge)
+                                            put("dodge", pc.getStats().dodge).
+                                            put("vitality", pc.getStats().vitality)
 
                                     ).
                                     put("inv", getInventory(p.getUniqueId(), pc.getUuid()))
@@ -634,7 +638,8 @@ public class SQLManager {
                                         put("attack", pc.getStats().attack).
                                         put("defense", pc.getStats().defense).
                                         put("speed", pc.getStats().speed).
-                                        put("dodge", pc.getStats().dodge)
+                                        put("dodge", pc.getStats().dodge).
+                                        put("vitality", pc.getStats().vitality)
 
                                 ).
                                 put("inv", getInventory(p.getUniqueId(), pc.getUuid()))

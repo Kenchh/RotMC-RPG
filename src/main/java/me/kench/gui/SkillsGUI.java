@@ -42,11 +42,12 @@ public class SkillsGUI implements Listener {
             inv.setItem(i, black);
         }
 
-        inv.setItem(4, new StatItem(pc, "Attack"));
-        inv.setItem(6+9*2, new StatItem(pc, "Defense"));
-        inv.setItem(4+9*2, new StatItem(pc, "Health"));
+        inv.setItem(2, new StatItem(pc, "Attack"));
+        inv.setItem(6, new StatItem(pc, "Defense"));
+        inv.setItem(6+9*2, new StatItem(pc, "Health"));
         inv.setItem(2+9*2, new StatItem(pc, "Speed"));
-        inv.setItem(4+9*4, new StatItem(pc, "Dodge"));
+        inv.setItem(2+9*4, new StatItem(pc, "Dodge"));
+        inv.setItem(6+9*4, new StatItem(pc, "Vitality"));
 
     }
 

@@ -2,6 +2,7 @@ package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
+import me.kench.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,10 +28,12 @@ public class RotMC_GiveSlot extends SubCommand {
 
         int amount = Integer.parseInt(args[2]);
 
-        if(RotMC.getPlayerData(tp).maxSlots + amount > 36) {
-            RotMC.getPlayerData(tp).maxSlots = 36;
+        PlayerData pd = RotMC.getPlayerData(tp);
+
+        if(pd.maxSlots + amount > 36) {
+            pd.maxSlots = 36;
         } else {
-            RotMC.getPlayerData(tp).maxSlots += amount;
+            pd.maxSlots += amount;
         }
 
         RotMC.getInstance().getSqlManager().update(tp, null);

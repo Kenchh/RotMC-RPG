@@ -8,7 +8,8 @@ public enum GemType {
     ATTACK("Diamond of Attack", ChatColor.AQUA.toString(), 300),
     DEFENSE("Sapphire of Defense", ChatColor.BLUE.toString(), 320),
     SPEED("Emerald of Speed", ChatColor.GREEN.toString(), 310),
-    DODGE("Crystal of Evasion", ChatColor.YELLOW.toString(), 330);
+    DODGE("Crystal of Evasion", ChatColor.YELLOW.toString(), 330),
+    VITALITY("Topaz of Vitality", ChatColor.LIGHT_PURPLE.toString(), 350);
 
     public String getName() {
         return name;

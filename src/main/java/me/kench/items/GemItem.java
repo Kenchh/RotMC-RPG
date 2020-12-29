@@ -45,7 +45,7 @@ public class GemItem {
 
                 String value = "+" + ItemUtils.getValueFromGemType(gem.getType(), gem.getLevel(), true);
 
-                if(gem.getType() != GemType.HEALTH) value += "%";
+                if(gem.getType() != GemType.HEALTH && gem.getType() != GemType.VITALITY) value += "%";
 
                 lore.set(line, s.replace("YYY", gemtype.substring(0, 1).toUpperCase() + gemtype.substring(1).toLowerCase()).replace("ZZZ", value));
             }
