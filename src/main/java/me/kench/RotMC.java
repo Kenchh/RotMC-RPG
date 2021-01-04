@@ -4,6 +4,7 @@ import me.kench.commands.*;
 import me.kench.commands.subcommand.SubCommandManager;
 import me.kench.config.MySQLConfig;
 import me.kench.database.ConnectionPoolManager;
+import me.kench.database.DataManager;
 import me.kench.events.*;
 import me.kench.gui.*;
 import me.kench.papi.GlowPlaceHolder;
@@ -36,6 +37,7 @@ public class RotMC extends JavaPlugin {
     private static PlayerDataManager playerDataManager;
     private static LevelProgression levelProgression;
     private static SubCommandManager subCommandManager;
+    private DataManager dataManager;
 
     RegisteredServiceProvider<LuckPerms> provider;
 
@@ -45,9 +47,10 @@ public class RotMC extends JavaPlugin {
 
         provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 
-        MySQLConfig sqlConfig = new MySQLConfig();
-        ConnectionPoolManager pool = new ConnectionPoolManager(sqlConfig.hostname, sqlConfig.port, sqlConfig.username, sqlConfig.password, sqlConfig.database);
-        sqlManager = new SQLManager(pool, "playerdata");
+//        MySQLConfig sqlConfig = new MySQLConfig();
+//        ConnectionPoolManager pool = new ConnectionPoolManager(sqlConfig.hostname, sqlConfig.port, sqlConfig.username, sqlConfig.password, sqlConfig.database);
+//        sqlManager = new SQLManager(pool, "playerdata");
+        dataManager = new DataManager(this);
 
         playerDataManager = new PlayerDataManager();
         levelProgression = new LevelProgression();

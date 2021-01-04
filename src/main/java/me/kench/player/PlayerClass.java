@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -23,6 +24,7 @@ public class PlayerClass {
     private Player player;
     private GameClass gameClass;
     public boolean selected;
+    public Inventory inventory;
 
     int xp = 0;
     int level = 1;
