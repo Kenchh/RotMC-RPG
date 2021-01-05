@@ -1,5 +1,7 @@
 package me.kench;
 
+import co.aikar.taskchain.TaskChain;
+import co.aikar.taskchain.TaskChainFactory;
 import me.kench.commands.*;
 import me.kench.commands.subcommand.SubCommandManager;
 import me.kench.config.MySQLConfig;
@@ -26,13 +28,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Collections;
 
 public class RotMC extends JavaPlugin {
-
     private static RotMC instance;
-
-    public static RotMC getInstance() {
-        return instance;
-    }
-
+    private static TaskChainFactory taskChainFactory;
+    // TODO: why are most of these (below) static?
     private static SQLManager sqlManager;
     private static PlayerDataManager playerDataManager;
     private static LevelProgression levelProgression;
@@ -44,14 +42,8 @@ public class RotMC extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
         provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-
-//        MySQLConfig sqlConfig = new MySQLConfig();
-//        ConnectionPoolManager pool = new ConnectionPoolManager(sqlConfig.hostname, sqlConfig.port, sqlConfig.username, sqlConfig.password, sqlConfig.database);
-//        sqlManager = new SQLManager(pool, "playerdata");
         dataManager = new DataManager(this);
-
         playerDataManager = new PlayerDataManager();
         levelProgression = new LevelProgression();
         subCommandManager = new SubCommandManager();
@@ -71,7 +63,6 @@ public class RotMC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ExtractorGUI(), this);
         getServer().getPluginManager().registerEvents(new InteractEvent(), this);
         getServer().getPluginManager().registerEvents(new GlowGUI(), this);
-
         getServer().getPluginManager().registerEvents(new JoinLeaveEvent(), this);
         getServer().getPluginManager().registerEvents(new ChatEvent(), this);
         getServer().getPluginManager().registerEvents(new DamageEvent(), this);
@@ -80,45 +71,44 @@ public class RotMC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DeathEvent(), this);
 
         for(Player p : Bukkit.getOnlinePlayers()) {
-
             RotMC.getInstance().getPlayerDataManager().registerPlayerData(p);
 
-            if(RotMC.getPlayerData(p).getMainClass() != null) {
-
+            if (RotMC.getPlayerData(p).getMainClass() != null) {
                 PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
                 RotMC.getInstance().getLevelProgression().displayLevelProgression(p);
                 p.sendMessage(ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + pc.getData().getName() + " " + ChatColor.GOLD + pc.getLevel());
                 pc.applyStats();
-
             } else {
                 p.openInventory(new CreateClassGUI(RotMC.getPlayerData(p)).getInv());
             }
         }
 
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new GlowPlaceHolder().register();
             new StarPlaceHolder().register();
         }
 
-
         getServer().getPluginManager().registerEvents(new ArmorListener(Collections.emptyList()), this);
-        try{
+
+        try {
             //Better way to check for this? Only in 1.13.1+?
             Class.forName("org.bukkit.event.block.BlockDispenseArmorEvent");
             getServer().getPluginManager().registerEvents(new DispenserArmorListener(), this);
-        }catch(Exception ignored){}
-
+        } catch (Exception ignored) {}
     }
 
     public SQLManager getSqlManager() {
         return sqlManager;
     }
+
     public LevelProgression getLevelProgression() {
         return levelProgression;
     }
+
     public SubCommandManager getSubCommandManager() {
         return subCommandManager;
     }
+
     public PlayerDataManager getPlayerDataManager() {
         return playerDataManager;
     }
@@ -133,4 +123,15 @@ public class RotMC extends JavaPlugin {
         return playerDataManager.getPlayerData(offlinePlayer);
     }
 
+    public static RotMC getInstance() {
+        return instance;
+    }
+
+    public static <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+
+    public static <T> TaskChain<T> newSharedChain(String name) {
+        return taskChainFactory.newSharedChain(name);
+    }
 }
