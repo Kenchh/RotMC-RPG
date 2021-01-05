@@ -70,6 +70,10 @@
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+        <repository>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -131,6 +135,12 @@
             <groupId>net.luckperms</groupId>
             <artifactId>api</artifactId>
             <version>5.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>taskchain-bukkit</artifactId>
+            <version>3.7.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
