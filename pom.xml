@@ -80,15 +80,14 @@
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>LATEST</version>
+            <version>7.0.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.glaremasters</groupId>
-            <artifactId>glares-repo</artifactId>
-            <version>3.5.5.5</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/guilds.jar</systemPath>
+            <artifactId>guilds</artifactId>
+            <version>3.5.5.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
