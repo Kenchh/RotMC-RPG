@@ -1,104 +1,68 @@
 package me.kench.events;
 
 import me.kench.RotMC;
+import me.kench.database.playerdata.PlayerDataDam;
+import me.kench.gui.CreateClassGUI;
 import me.kench.items.stats.EssenceType;
 import me.kench.player.PlayerClass;
-import me.kench.gui.CreateClassGUI;
-import me.kench.player.PlayerData;
-import me.kench.utils.GlowUtils;
-import me.kench.utils.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 
 public class JoinLeaveEvent implements Listener {
-
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
 
-        Player p = e.getPlayer();
-        
-        RotMC.getInstance().getPlayerDataManager().registerPlayerData(p);
+        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                .loadSafe(player.getUniqueId())
+                .syncLast(data -> {
+                    PlayerClass selectedClass = data.getSelectedClass();
 
-        if(RotMC.getPlayerData(p).getMainClass() != null) {
-            PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
+                    if (selectedClass != null) {
+                        RotMC.getInstance().getLevelProgression().displayLevelProgression(player, selectedClass);
 
-            RotMC.getInstance().getLevelProgression().displayLevelProgression(p);
+                        // TODO: display components
+                        player.sendMessage(ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + selectedClass.getData().getName() + " " + ChatColor.GOLD + selectedClass.getLevel());
 
-            p.sendMessage(  ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + pc.getData().getName() + " " + ChatColor.GOLD + pc.getLevel());
-
-            pc.applyStats();
-
-            RotMC.getInstance().getSqlManager().update(p, null);
-
-            RotMC.getPlayerData(p).assignPerms();
-
-        } else {
-
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    p.openInventory(new CreateClassGUI(RotMC.getPlayerData(p)).getInv());
-                }
-            }.runTaskLater(RotMC.getInstance(), 20L);
-
-        }
-
-        PlayerData pd = RotMC.getPlayerData(p);
-
-        pd.task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (pd != null) {
-                    if (pd.getMainClass() != null) {
-                        new BukkitRunnable() {
-                            final Player pp = p;
-                            @Override
-                            public void run() {
-                                if(pp != null && pd.getMainClass() != null) {
-                                    pd.getMainClass().tickEssences(pd);
-                                    pd.getMainClass().applyStats();
-                                }
-                            }
-                        }.runTaskLater(RotMC.getInstance(), 1L);
+                        selectedClass.applyStats();
+                        data.ensureClassPermissions();
+                    } else {
+                        player.openInventory(new CreateClassGUI(data).getInv());
                     }
-                }
 
-                GlowUtils.clearWhenForbidden(p);
-            }
-        }.runTaskTimer(RotMC.getInstance(), 1L, 60L);
+                    data.startTicker();
+                })
+                .execute();
     }
 
     @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
+    public void onLeave(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
 
-        PlayerData pd = RotMC.getPlayerData(e.getPlayer());
+        PlayerDataDam dam = RotMC.getInstance().getDataManager().getAccessor().getPlayerData();
 
-        if(pd.task != null) {
-            pd.task.cancel();
-            pd.task = null;
-        }
+        dam.loadSafe(player.getUniqueId())
+                .syncLast(data -> {
+                    ArrayList<EssenceType> etToRemove = new ArrayList<>();
 
-        /* Removing old essences */
-        ArrayList<EssenceType> etToRemove = new ArrayList<>();
-        for(EssenceType et : pd.activeEssences.keySet()) {
-            etToRemove.add(et);
-            pd.activeEssences.get(et).cancel();
-        }
+                    for (EssenceType et : data.getActiveEssences().keySet()) {
+                        etToRemove.add(et);
+                        data.getActiveEssences().get(et).cancel();
+                    }
 
-        for(EssenceType et : etToRemove) {
-            pd.activeEssences.remove(et);
-        }
-        /*  */
+                    for (EssenceType et : etToRemove) {
+                        data.getActiveEssences().remove(et);
+                    }
 
-        RotMC.getInstance().getSqlManager().update(e.getPlayer(), null);
-        RotMC.getInstance().getPlayerDataManager().unregisterPlayerData(e.getPlayer());
+                    data.cancelTicker();
+                })
+                .async(() -> dam.invalidate(player.getUniqueId()))
+                .execute();
     }
-
 }

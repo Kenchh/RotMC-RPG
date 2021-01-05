@@ -4,20 +4,20 @@ author: FreakzBoy
 
 main: me.kench.RotMC
 api-version: 1.15
-softdepend: [PlaceholderAPI, LuckPerms, Guilds, WorldGuard]
+softdepend: [ PlaceholderAPI, LuckPerms, Guilds, WorldGuard ]
 
 commands:
   glow:
     description: Opens Glow-GUI
-    aliases: [glowgui, glows]
+    aliases: [ glowgui, glows ]
   gtop:
     description: Used to display guilds-fame related stuff
   ftop:
     description: Used to display class-fame related stuff
-    aliases: [f, fames, fame]
+    aliases: [ f, fames, fame ]
   stats:
     description: Used to display your stats
-    aliases: [stat, skill, skills]
+    aliases: [ stat, skill, skills ]
   class:
     description: Used to select your class
     aliases: classes

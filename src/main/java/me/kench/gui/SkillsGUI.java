@@ -1,8 +1,8 @@
 package me.kench.gui;
 
 import me.kench.RotMC;
-import me.kench.player.PlayerClass;
 import me.kench.gui.items.StatItem;
+import me.kench.player.PlayerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,7 +23,7 @@ public class SkillsGUI implements Listener {
     }
 
     public SkillsGUI(Player p) {
-        inv = Bukkit.createInventory(null, 5*9, "Stats");
+        inv = Bukkit.createInventory(null, 5 * 9, "Stats");
 
         PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
 
@@ -38,16 +38,16 @@ public class SkillsGUI implements Listener {
         red.setItemMeta(redmeta);
 
         /* black panes */
-        for(int i=0;i<inv.getSize();i++) {
+        for (int i = 0; i < inv.getSize(); i++) {
             inv.setItem(i, black);
         }
 
         inv.setItem(2, new StatItem(pc, "Attack"));
         inv.setItem(6, new StatItem(pc, "Defense"));
-        inv.setItem(6+9*2, new StatItem(pc, "Health"));
-        inv.setItem(2+9*2, new StatItem(pc, "Speed"));
-        inv.setItem(2+9*4, new StatItem(pc, "Dodge"));
-        inv.setItem(6+9*4, new StatItem(pc, "Vitality"));
+        inv.setItem(6 + 9 * 2, new StatItem(pc, "Health"));
+        inv.setItem(2 + 9 * 2, new StatItem(pc, "Speed"));
+        inv.setItem(2 + 9 * 4, new StatItem(pc, "Dodge"));
+        inv.setItem(6 + 9 * 4, new StatItem(pc, "Vitality"));
 
     }
 
@@ -57,15 +57,15 @@ public class SkillsGUI implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getView() != null && e.getView().getTitle() != "Stats") {
+        if (e.getView() != null && e.getView().getTitle() != "Stats") {
             return;
         }
 
-        if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
+        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
 
         e.setCancelled(true);
 
-        if(e.getCurrentItem().getType() == Material.BARRIER) {
+        if (e.getCurrentItem().getType() == Material.BARRIER) {
             e.getWhoClicked().closeInventory();
             return;
         }

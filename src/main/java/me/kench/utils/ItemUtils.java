@@ -8,10 +8,8 @@ import me.kench.items.stats.essenceanimations.*;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.player.Stats;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -60,11 +58,11 @@ public class ItemUtils {
         }
         */
 
-        for(ItemStack armor : p.getInventory().getArmorContents()) {
-            if(armor != null && armor.getType() != Material.AIR) {
+        for (ItemStack armor : p.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
 
-                if(gameItem.getStats().stats != null) {
+                if (gameItem.getStats().stats != null) {
                     Stats itemstats = gameItem.getStats().stats;
 
                     overallStats.health += itemstats.health;
@@ -79,12 +77,12 @@ public class ItemUtils {
 
         return overallStats;
     }
-    
+
     public static Stats getItemStatsByLore(List<String> lore) {
         Stats stats = new Stats();
 
-        for(String s : lore) {
-            for(GemType gt : GemType.values()) {
+        for (String s : lore) {
+            for (GemType gt : GemType.values()) {
                 if (s.contains(gt.getPrefix() + TextUtils.constantToName(gt.toString()))) {
                     int level = Integer.parseInt(TextUtils.getLastWord(s, 0).replace("%", "").replace("+", ""));
                     switch (gt) {
@@ -110,7 +108,7 @@ public class ItemUtils {
                 }
             }
         }
-        
+
         return stats;
     }
 
@@ -144,32 +142,32 @@ public class ItemUtils {
     public static ArrayList<EssenceType> getActiveEssences(Player p) {
         ArrayList<EssenceType> essenceTypes = new ArrayList<>();
 
-        if(p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() != Material.AIR) {
+        if (p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() != Material.AIR) {
             GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());
-            if(gameItem.getStats().getEssence() != null) {
+            if (gameItem.getStats().getEssence() != null) {
                 EssenceType essenceType = gameItem.getStats().getEssence().getType();
-                if(!essenceTypes.contains(essenceType)) {
+                if (!essenceTypes.contains(essenceType)) {
                     essenceTypes.add(essenceType);
                 }
             }
         }
 
-        if(p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR) {
+        if (p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR) {
             GameItem gameItem = new GameItem(p.getInventory().getItemInOffHand());
-            if(gameItem.getStats().getEssence() != null) {
+            if (gameItem.getStats().getEssence() != null) {
                 EssenceType essenceType = gameItem.getStats().getEssence().getType();
-                if(!essenceTypes.contains(essenceType)) {
+                if (!essenceTypes.contains(essenceType)) {
                     essenceTypes.add(essenceType);
                 }
             }
         }
 
-        for(ItemStack armor : p.getInventory().getArmorContents()) {
+        for (ItemStack armor : p.getInventory().getArmorContents()) {
 
-            if(armor != null && armor.getType() != Material.AIR) {
+            if (armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
 
-                if(gameItem.getStats().getEssence() != null) {
+                if (gameItem.getStats().getEssence() != null) {
                     EssenceType essenceType = gameItem.getStats().getEssence().getType();
                     if (!essenceTypes.contains(essenceType)) {
                         essenceTypes.add(essenceType);
@@ -184,8 +182,8 @@ public class ItemUtils {
     public static void checkAllowedArmor(Player p) {
 
         int i = 0;
-        for(ItemStack armor : p.getInventory().getArmorContents()) {
-            if(armor != null && armor.getType() != Material.AIR) {
+        for (ItemStack armor : p.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
 
                 PlayerData pd = RotMC.getPlayerData(p);
@@ -216,7 +214,7 @@ public class ItemUtils {
                 boolean foundClass = false;
                 String currentclass = pc.getData().getName();
                 if (gameItem.getGameClasses().isEmpty() == false) {
-                    for(GameClass gameClass : gameItem.getGameClasses()) {
+                    for (GameClass gameClass : gameItem.getGameClasses()) {
                         String className = gameClass.getName();
 
                         if (className.equalsIgnoreCase(currentclass)) {
@@ -226,7 +224,7 @@ public class ItemUtils {
                     }
                 }
 
-                if(!foundClass) {
+                if (!foundClass) {
                     p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
                     throwAwayArmor(armor, p, i);
                     i++;
@@ -239,7 +237,7 @@ public class ItemUtils {
 
     private static void throwAwayArmor(ItemStack armor, Player p, int i) {
         ItemStack armorClone = armor.clone();
-        switch(i) {
+        switch (i) {
             case 3:
                 p.getInventory().setHelmet(null);
                 break;
@@ -254,7 +252,7 @@ public class ItemUtils {
                 break;
         }
 
-        if(fullInv(p)) {
+        if (fullInv(p)) {
             Item itemDropped = p.getWorld().dropItem(p.getLocation(), armorClone);
             itemDropped.setPickupDelay(40);
         } else {
@@ -263,8 +261,8 @@ public class ItemUtils {
     }
 
     private static boolean fullInv(Player p) {
-        for(ItemStack it : p.getInventory().getStorageContents()) {
-            if(it == null) return false;
+        for (ItemStack it : p.getInventory().getStorageContents()) {
+            if (it == null) return false;
         }
         return true;
     }
@@ -288,10 +286,10 @@ public class ItemUtils {
 
          */
 
-        for(ItemStack armor : p.getInventory().getArmorContents()) {
-            if(armor != null && armor.getType() != Material.AIR) {
+        for (ItemStack armor : p.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
-                if(gameItem.getStats().getRune() != null)
+                if (gameItem.getStats().getRune() != null)
                     effects.add(gameItem.getStats().getRune().getType().getPotionEffectType());
             }
         }
@@ -303,10 +301,10 @@ public class ItemUtils {
 
         Stats overallStats = new Stats();
 
-        if(p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() != Material.AIR) {
+        if (p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() != Material.AIR) {
             GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());
 
-            for(Gem g : gameItem.getStats().gems) {
+            for (Gem g : gameItem.getStats().gems) {
                 GemType type = g.getType();
                 switch (type) {
                     case HEALTH:
@@ -331,10 +329,10 @@ public class ItemUtils {
             }
         }
 
-        if(p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR) {
+        if (p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR) {
             GameItem gameItem = new GameItem(p.getInventory().getItemInOffHand());
 
-            for(Gem g : gameItem.getStats().gems) {
+            for (Gem g : gameItem.getStats().gems) {
                 GemType type = g.getType();
                 switch (type) {
                     case HEALTH:
@@ -359,11 +357,11 @@ public class ItemUtils {
             }
         }
 
-        for(ItemStack armor : p.getInventory().getArmorContents()) {
-            if(armor != null && armor.getType() != Material.AIR) {
+        for (ItemStack armor : p.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
 
-                for(Gem g : gameItem.getStats().gems) {
+                for (Gem g : gameItem.getStats().gems) {
                     GemType type = g.getType();
                     switch (type) {
                         case HEALTH:
@@ -393,7 +391,7 @@ public class ItemUtils {
     }
 
     public static float getValueFromGemType(GemType gemType, int level, boolean visual) {
-        switch(gemType) {
+        switch (gemType) {
             case HEALTH:
                 return new Stats().getHealth(level, visual, true);
             case ATTACK:
@@ -413,8 +411,8 @@ public class ItemUtils {
     public static Gem getGemFromString(String s, int indent) {
         int level = TextUtils.getNumberFromRoman(TextUtils.getLastWord(s, indent));
 
-        for(GemType gemType : GemType.values()) {
-            if(s.contains(gemType.getName())) {
+        for (GemType gemType : GemType.values()) {
+            if (s.contains(gemType.getName())) {
                 return new Gem(gemType, level);
             }
         }
@@ -423,8 +421,8 @@ public class ItemUtils {
     }
 
     public static boolean isGem(String line) {
-        for(GemType gemType : GemType.values()) {
-            if(line.contains(gemType.getName())) {
+        for (GemType gemType : GemType.values()) {
+            if (line.contains(gemType.getName())) {
                 return true;
             }
         }
@@ -434,8 +432,8 @@ public class ItemUtils {
 
     public static Rune getRuneFromString(String s, int indent) {
 
-        for(RuneType runeType : RuneType.values()) {
-            if(s.contains(runeType.getName())) {
+        for (RuneType runeType : RuneType.values()) {
+            if (s.contains(runeType.getName())) {
                 return new Rune(runeType);
             }
         }
@@ -444,8 +442,8 @@ public class ItemUtils {
     }
 
     public static boolean isRune(String line) {
-        for(RuneType runeType : RuneType.values()) {
-            if(line.contains(runeType.getName())) {
+        for (RuneType runeType : RuneType.values()) {
+            if (line.contains(runeType.getName())) {
                 return true;
             }
         }
@@ -453,8 +451,8 @@ public class ItemUtils {
     }
 
     public static Essence getEssenceFromString(String s) {
-        for(EssenceType essenceType : EssenceType.values()) {
-            if(s.contains(essenceType.getName())) {
+        for (EssenceType essenceType : EssenceType.values()) {
+            if (s.contains(essenceType.getName())) {
                 return new Essence(essenceType);
             }
         }
@@ -463,8 +461,8 @@ public class ItemUtils {
     }
 
     public static boolean isEssence(String line) {
-        for(EssenceType essenceType : EssenceType.values()) {
-            if(line.contains(essenceType.getName())) {
+        for (EssenceType essenceType : EssenceType.values()) {
+            if (line.contains(essenceType.getName())) {
                 return true;
             }
         }

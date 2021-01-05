@@ -22,31 +22,31 @@ public class Venom extends EssenceAnimation {
     @Override
     public void run() {
 
-        if(ratio >= 0 && ratio < 0.25) {
+        if (ratio >= 0 && ratio < 0.25) {
             offset.setX(offset.getX() + 0.1);
             offset.setY(offset.getY() + 0.03);
             offset.setZ(offset.getZ() - 0.1);
         }
 
-        if(ratio >= 0.25 && ratio < 0.5) {
+        if (ratio >= 0.25 && ratio < 0.5) {
             offset.setX(offset.getX() - 0.1);
             offset.setY(offset.getY() + 0.03);
             offset.setZ(offset.getZ() - 0.1);
         }
 
-        if(ratio >= 0.5 && ratio < 0.75) {
+        if (ratio >= 0.5 && ratio < 0.75) {
             offset.setX(offset.getX() - 0.1);
             offset.setY(offset.getY() - 0.03);
             offset.setZ(offset.getZ() + 0.1);
         }
 
-        if(ratio >= 0.75 && ratio < 1) {
+        if (ratio >= 0.75 && ratio < 1) {
             offset.setX(offset.getX() + 0.1);
             offset.setY(offset.getY() - 0.03);
             offset.setZ(offset.getZ() + 0.1);
         }
 
-        if(ratio == 1) {
+        if (ratio == 1) {
             offset.setX(0);
             offset.setY(0);
             offset.setZ(0);

@@ -21,16 +21,16 @@ public class LevelProgression {
         levelxp.put(1, x + y + z);
 
         /* i = level */
-        for(int i = 2; i <= 19; i++) {
-            levelxp.put(i, x*i*i + y*i + z + levelxp.get(i-1));
+        for (int i = 2; i <= 19; i++) {
+            levelxp.put(i, x * i * i + y * i + z + levelxp.get(i - 1));
         }
 
     }
 
     public boolean hasLeveledUp(Player p, int leveltocomparewith) {
         PlayerData pd = RotMC.getPlayerData(p);
-        
-        if(pd.getMainClass().getLevel() < leveltocomparewith) {
+
+        if (pd.getMainClass().getLevel() < leveltocomparewith) {
             return true;
         }
 
@@ -39,21 +39,14 @@ public class LevelProgression {
     }
 
     public int getXPByLevel(int level) {
-        if(level > 1) {
+        if (level > 1) {
             return levelxp.get(level - 1);
         } else {
             return 0;
         }
     }
 
-    public void displayLevelProgression(Player p) {
-
-        PlayerData pd = RotMC.getPlayerData(p);
-
-        if(pd.getMainClass() == null) return;
-
-        PlayerClass pc = pd.getMainClass();
-
+    public void displayLevelProgression(Player player, PlayerClass selectedClass) {
         /*
         for(ItemStack item : p.getInventory().getContents()) {
             if(item == null || item.getType() == Material.AIR || !item.hasItemMeta() || !item.getItemMeta().hasLore()) continue;
@@ -88,19 +81,18 @@ public class LevelProgression {
         }
         */
 
-        p.setLevel(pc.getLevel());
+        player.setLevel(selectedClass.getLevel());
 
-        if(pc.getLevel() >= 20) {
-            p.setExp(1);
+        if (selectedClass.getLevel() >= 20) {
+            player.setExp(1);
         } else {
-            p.setExp(getLevelProgressPercentage(pc));
+            player.setExp(getLevelProgressPercentage(selectedClass));
         }
-
     }
 
     public float getLevelProgressPercentage(PlayerClass pc) {
 
-        if(pc.getLevel() == 20) {
+        if (pc.getLevel() == 20) {
             return 0F;
         }
 
@@ -113,7 +105,7 @@ public class LevelProgression {
     }
 
     public int getMinXP(int level) {
-        if(level > 1) {
+        if (level > 1) {
             return levelxp.get(level - 1);
         } else {
             return 0;
@@ -121,19 +113,19 @@ public class LevelProgression {
     }
 
     public int getMaxXP(int level) {
-        if(level >= 1 && level < 20) {
+        if (level >= 1 && level < 20) {
             return levelxp.get(level);
         }
         return -1;
     }
 
     public int getLevelByXP(int xp) {
-        for(int level : levelxp.keySet()) {
+        for (int level : levelxp.keySet()) {
 
             int lastcum = 0;
             int newcum = 0;
 
-            if(level == 1) {
+            if (level == 1) {
                 lastcum = 0;
             } else {
                 lastcum = levelxp.get(level - 1);
@@ -141,9 +133,9 @@ public class LevelProgression {
 
             newcum = levelxp.get(level);
 
-            if(xp >= lastcum && xp < newcum) {
+            if (xp >= lastcum && xp < newcum) {
                 return level;
-            } else if(xp >= 26524){
+            } else if (xp >= 26524) {
                 return 20;
             }
 

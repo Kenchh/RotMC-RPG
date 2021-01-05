@@ -6,12 +6,9 @@ import me.kench.player.PlayerData;
 import me.kench.utils.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class DeathEvent implements Listener {
@@ -21,31 +18,31 @@ public class DeathEvent implements Listener {
         Player p = e.getEntity();
         PlayerData pd = RotMC.getPlayerData(p);
 
-        if(pd == null || pd.getMainClass() == null) return;
+        if (pd == null || pd.getMainClass() == null) return;
 
         PlayerClass pc = pd.getMainClass();
 
         int losexp = (int) (((double) pc.getXp()) * -0.2D);
 
-        if(losexp*-1 > pc.getXp()) {
+        if (losexp * -1 > pc.getXp()) {
             losexp = pc.getXp() * -1;
         }
 
         String msg = "";
 
-        if(pd.lastKiller != null && pd.lastKiller.toUpperCase().contains("CUSTOM") == false && pd.lastKiller != "") {
+        if (pd.lastKiller != null && pd.lastKiller.toUpperCase().contains("CUSTOM") == false && pd.lastKiller != "") {
             msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + pd.lastKiller + " &6and lost &e" + (TextUtils.getDecimalFormat().format(losexp * -1)) + " fame.";
         } else {
 
             String name = "custom";
 
-            if(pd.lastDamage != null && pd.lastDamage != "") {
+            if (pd.lastDamage != null && pd.lastDamage != "") {
                 name = pd.lastDamage;
             }
 
             String words[] = name.split("_");
             name = "";
-            for(String word : words) {
+            for (String word : words) {
                 String firstletter = word.substring(0, 1).toUpperCase();
                 String other = word.substring(1);
 
@@ -57,8 +54,8 @@ public class DeathEvent implements Listener {
             msg = "&7[&6Lvl " + pc.getLevel() + " &6" + pc.getData().getName() + "&7] &c" + p.getName() + " &6has died to &c" + name + " &6and lost &e" + (TextUtils.getDecimalFormat().format(losexp * -1)) + " fame.";
         }
 
-        if(losexp < 0) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + (losexp*-1));
+        if (losexp < 0) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + (losexp * -1));
 
             pc.giveXP(losexp, true);
             pc.resetCaps();

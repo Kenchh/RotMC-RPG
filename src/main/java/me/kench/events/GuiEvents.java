@@ -15,9 +15,9 @@ public class GuiEvents implements Listener {
     public void onClose(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
 
-        if(e.getView() != null && e.getView().getTitle() != "Choose your class") return;
+        if (e.getView() != null && e.getView().getTitle() != "Choose your class") return;
 
-        if(RotMC.getPlayerData(p).getMainClass() != null) return;
+        if (RotMC.getPlayerData(p).getMainClass() != null) return;
 
         new BukkitRunnable() {
             @Override
@@ -29,7 +29,8 @@ public class GuiEvents implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if(RotMC.getPlayerData(e.getPlayer()) == null || RotMC.getPlayerData(e.getPlayer()).getMainClass() == null) e.setCancelled(true);
+        if (RotMC.getPlayerData(e.getPlayer()) == null || RotMC.getPlayerData(e.getPlayer()).getMainClass() == null)
+            e.setCancelled(true);
     }
 
 }

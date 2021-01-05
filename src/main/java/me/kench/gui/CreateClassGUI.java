@@ -1,13 +1,13 @@
 package me.kench.gui;
 
 import me.kench.RotMC;
-import me.kench.game.GameClass;
-import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
-import me.kench.player.Stats;
+import me.kench.database.playerdata.PlayerData;
 import me.kench.game.ClassCategory;
+import me.kench.game.GameClass;
 import me.kench.gui.items.ClassCategoryItem;
 import me.kench.gui.items.ClassItem;
+import me.kench.player.PlayerClass;
+import me.kench.player.Stats;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,17 +23,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.UUID;
 
 public class CreateClassGUI implements Listener {
-
-    private PlayerData pd;
+    private PlayerData playerData;
     private Inventory inv;
 
     public CreateClassGUI() {
 
     }
 
-    public CreateClassGUI(PlayerData pd) {
-        this.pd = pd;
-        inv = Bukkit.createInventory(null, 9*6, "Choose your class");
+    public CreateClassGUI(PlayerData playerData) {
+        this.playerData = playerData;
+        inv = Bukkit.createInventory(null, 9 * 6, "Choose your class");
 
         ItemStack red = new ItemStack(Material.BARRIER);
         ItemMeta redmeta = red.getItemMeta();
@@ -51,26 +50,26 @@ public class CreateClassGUI implements Listener {
         blue.setItemMeta(bluemeta);
 
         /* black panes */
-        for(int i=0;i<=9*2-1;i++) {
+        for (int i = 0; i <= 9 * 2 - 1; i++) {
             inv.setItem(i, black);
         }
 
-        for(int i=0;i<28;i+=9) {
-            inv.setItem(i+18, black);
+        for (int i = 0; i < 28; i += 9) {
+            inv.setItem(i + 18, black);
         }
 
-        for(int i=0;i<28;i+=9) {
-            inv.setItem(i+26, black);
+        for (int i = 0; i < 28; i += 9) {
+            inv.setItem(i + 26, black);
         }
 
         /* blue panes */
-        for(int ii=0;ii<4;ii++) {
+        for (int ii = 0; ii < 4; ii++) {
             for (int i = 19 + 9 * ii; i <= 25 + 9 * ii; i++) {
                 inv.setItem(i, blue);
             }
         }
 
-        inv.setItem(0+9*5, red);
+        inv.setItem(0 + 9 * 5, red);
 
         /* categories */
         inv.setItem(1, new ClassCategoryItem(ClassCategory.DAGGER));
@@ -79,12 +78,12 @@ public class CreateClassGUI implements Listener {
         inv.setItem(7, new ClassCategoryItem(ClassCategory.SWORD));
 
         /* classes */
-        inv.setItem(28, new ClassItem(pd.getPlayer(), new GameClass("Rogue")));
-        inv.setItem(30, new ClassItem(pd.getPlayer(), new GameClass("Huntress")));
-        inv.setItem(32, new ClassItem(pd.getPlayer(), new GameClass("Necromancer")));
-        inv.setItem(34, new ClassItem(pd.getPlayer(), new GameClass("Warrior")));
-        inv.setItem(46, new ClassItem(pd.getPlayer(), new GameClass("Assassin")));
-        inv.setItem(52, new ClassItem(pd.getPlayer(), new GameClass("Knight")));
+        inv.setItem(28, new ClassItem(playerData.getPlayer(), new GameClass("Rogue")));
+        inv.setItem(30, new ClassItem(playerData.getPlayer(), new GameClass("Huntress")));
+        inv.setItem(32, new ClassItem(playerData.getPlayer(), new GameClass("Necromancer")));
+        inv.setItem(34, new ClassItem(playerData.getPlayer(), new GameClass("Warrior")));
+        inv.setItem(46, new ClassItem(playerData.getPlayer(), new GameClass("Assassin")));
+        inv.setItem(52, new ClassItem(playerData.getPlayer(), new GameClass("Knight")));
 
     }
 
@@ -93,62 +92,68 @@ public class CreateClassGUI implements Listener {
     }
 
     @EventHandler
-    public void onClick(InventoryClickEvent e) {
-        if(e.getView() == null || e.getView().getTitle() != "Choose your class") {
+    public void onClick(InventoryClickEvent event) {
+        if (!event.getView().getTitle().equals("Choose your class")) {
             return;
         }
 
-        e.setCancelled(true);
+        event.setCancelled(true);
 
-        if(e.getCurrentItem() == null) {
+        if (event.getCurrentItem() == null) {
             return;
         }
 
-        if(e.getCurrentItem().getType() == Material.BARRIER) {
-            e.getWhoClicked().closeInventory();
+        if (event.getCurrentItem().getType() == Material.BARRIER) {
+            event.getWhoClicked().closeInventory();
             return;
         }
 
-        if(e.getCurrentItem().getType() != Material.CARROT_ON_A_STICK || e.getSlot() < 26) {
+        if (event.getCurrentItem().getType() != Material.CARROT_ON_A_STICK || event.getSlot() < 26) {
             return;
         }
 
-        PlayerData pld = RotMC.getPlayerData((Player) e.getWhoClicked());
+        Player player = (Player) event.getWhoClicked();
 
-        switch(e.getSlot()) {
-            case 28:
-                pld.classes.add(new PlayerClass(UUID.randomUUID(), pld.getPlayer(), new GameClass("Rogue"), 0, 1, new Stats()));
-                pld.getPlayer().sendMessage(ChatColor.GREEN + "You have selected Rogue!");
-                break;
-            case 30:
-                pld.classes.add(new PlayerClass(UUID.randomUUID(), pld.getPlayer(), new GameClass("Huntress"), 0, 1, new Stats()));
-                pld.getPlayer().sendMessage(ChatColor.GREEN + "You have selected Huntress!");
-                break;
-            case 32:
-                pld.classes.add(new PlayerClass(UUID.randomUUID(), pld.getPlayer(), new GameClass("Necromancer"), 0, 1, new Stats()));
-                pld.getPlayer().sendMessage(ChatColor.GREEN + "You have selected Necromancer!");
-                break;
-            case 34:
-                pld.classes.add(new PlayerClass(UUID.randomUUID(), pld.getPlayer(), new GameClass("Warrior"), 0, 1, new Stats()));
-                pld.getPlayer().sendMessage(ChatColor.GREEN + "You have selected Warrior!");
-                break;
-            case 46:
-                pld.classes.add(new PlayerClass(UUID.randomUUID(), pld.getPlayer(), new GameClass("Assassin"), 0, 1, new Stats()));
-                pld.getPlayer().sendMessage(ChatColor.GREEN + "You have selected Assassin!");
-                break;
-            case 52:
-                pld.classes.add(new PlayerClass(UUID.randomUUID(), pld.getPlayer(), new GameClass("Knight"), 0, 1, new Stats()));
-                pld.getPlayer().sendMessage(ChatColor.GREEN + "You have selected Knight!");
-                break;
-        }
+        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                .loadSafe(event.getWhoClicked().getUniqueId())
+                .syncLast(data -> {
+                    PlayerClass selected = null;
 
-        pld.selectClass(pld.classes.get(pld.classes.size()-1), true);
+                    switch (event.getSlot()) {
+                        case 28:
+                            selected = new PlayerClass(UUID.randomUUID(), player, new GameClass("Rogue"), 0, 1, new Stats());
+                            break;
+                        case 30:
+                            selected = new PlayerClass(UUID.randomUUID(), player, new GameClass("Huntress"), 0, 1, new Stats());
+                            break;
+                        case 32:
+                            selected = new PlayerClass(UUID.randomUUID(), player, new GameClass("Necromancer"), 0, 1, new Stats());
+                            break;
+                        case 34:
+                            selected = new PlayerClass(UUID.randomUUID(), player, new GameClass("Warrior"), 0, 1, new Stats());
+                            break;
+                        case 46:
+                            selected = new PlayerClass(UUID.randomUUID(), player, new GameClass("Assassin"), 0, 1, new Stats());
+                            break;
+                        case 52:
+                            selected = new PlayerClass(UUID.randomUUID(), player, new GameClass("Knight"), 0, 1, new Stats());
+                            break;
+                    }
 
-        for(int i=0;i<3;i++)
-            pld.getPlayer().playSound(pld.getPlayer().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);
+                    if (selected != null) {
+                        player.sendMessage(String.format(ChatColor.GREEN + "You have selected %s!", selected.getData().getName()));
 
-        e.getWhoClicked().closeInventory();
+                        data.changeSelectedClass(selected.getUuid(), true);
 
+                        for (int i = 0; i < 3; i++) {
+                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "I'm sorry, but an error occurred while selecting your new class. Please report this.");
+                    }
+
+                    event.getWhoClicked().closeInventory();
+                })
+                .execute();
     }
-
 }

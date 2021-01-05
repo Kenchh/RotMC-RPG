@@ -4,18 +4,16 @@ import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import me.kench.commands.*;
 import me.kench.commands.subcommand.SubCommandManager;
-import me.kench.config.MySQLConfig;
-import me.kench.database.ConnectionPoolManager;
 import me.kench.database.DataManager;
+import me.kench.database.SQLManager;
 import me.kench.events.*;
+import me.kench.game.LevelProgression;
+import me.kench.game.PlayerDataManager;
 import me.kench.gui.*;
 import me.kench.papi.GlowPlaceHolder;
 import me.kench.papi.StarPlaceHolder;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
-import me.kench.database.SQLManager;
-import me.kench.game.LevelProgression;
-import me.kench.game.PlayerDataManager;
 import me.kench.utils.armor.ArmorListener;
 import me.kench.utils.armor.DispenserArmorListener;
 import net.luckperms.api.LuckPerms;
@@ -70,7 +68,7 @@ public class RotMC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InvEvents(), this);
         getServer().getPluginManager().registerEvents(new DeathEvent(), this);
 
-        for(Player p : Bukkit.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             RotMC.getInstance().getPlayerDataManager().registerPlayerData(p);
 
             if (RotMC.getPlayerData(p).getMainClass() != null) {
@@ -94,7 +92,12 @@ public class RotMC extends JavaPlugin {
             //Better way to check for this? Only in 1.13.1+?
             Class.forName("org.bukkit.event.block.BlockDispenseArmorEvent");
             getServer().getPluginManager().registerEvents(new DispenserArmorListener(), this);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
     }
 
     public SQLManager getSqlManager() {

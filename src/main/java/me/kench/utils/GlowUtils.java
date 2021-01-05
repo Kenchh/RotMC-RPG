@@ -1,24 +1,24 @@
 package me.kench.utils;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.api.GuildsAPI;
 import me.glaremasters.guilds.guild.Guild;
 import me.kench.RotMC;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class GlowUtils {
 
     public static ChatColor getGlowColor(Player p) {
-        for(Team t : p.getScoreboard().getTeams()) {
-            if(t.hasEntry(p.getName())) {
+        for (Team t : p.getScoreboard().getTeams()) {
+            if (t.hasEntry(p.getName())) {
                 return ChatColor.getByChar(t.getName().replace("GLOW_COLOR_§", ""));
             }
         }
@@ -26,9 +26,9 @@ public class GlowUtils {
     }
 
     public static void clearGlow(Player p) {
-        if(p.isGlowing()) {
+        if (p.isGlowing()) {
             p.setGlowing(false);
-            if(getGlowColor(p) != null) {
+            if (getGlowColor(p) != null) {
                 p.getScoreboard().getTeam("GLOW_COLOR_" + getGlowColor(p).toString()).removeEntry(p.getName());
             }
         }
@@ -38,9 +38,9 @@ public class GlowUtils {
 
         clearGlow(p);
 
-        for(Player pp : Bukkit.getOnlinePlayers()) {
+        for (Player pp : Bukkit.getOnlinePlayers()) {
             Team team = pp.getScoreboard().getTeam("GLOW_COLOR_" + c.toString());
-            if(team == null) {
+            if (team == null) {
                 team = pp.getScoreboard().registerNewTeam("GLOW_COLOR_" + c.toString());
             }
             team.addEntry(p.getName());
@@ -53,9 +53,9 @@ public class GlowUtils {
 
     public static boolean isPermitted(Player p, ChatColor c) {
 
-        if(c == null) return false;
+        if (c == null) return false;
 
-        if(p.hasPermission("rotmc.glow." + c.name().toLowerCase().replace("_", ""))) return true;
+        if (p.hasPermission("rotmc.glow." + c.name().toLowerCase().replace("_", ""))) return true;
 
         ArrayList<ChatColor> topFame = new ArrayList<>();
         topFame.add(ChatColor.GREEN);
@@ -65,7 +65,7 @@ public class GlowUtils {
         topGuildss.add(ChatColor.LIGHT_PURPLE);
         topGuildss.add(ChatColor.DARK_PURPLE);
 
-        if(!topFame.contains(c) && !topGuildss.contains(c)) {
+        if (!topFame.contains(c) && !topGuildss.contains(c)) {
             if (!p.hasPermission("rotmc.glow." + c.name().toLowerCase().replace("_", ""))) {
                 return false;
             } else {
@@ -73,9 +73,9 @@ public class GlowUtils {
             }
         } else {
 
-            if(topFame.contains(c)) {
+            if (topFame.contains(c)) {
                 HashMap<Integer, List<String>> topClasses = RotMC.getInstance().getSqlManager().getTopClasses();
-                if(c == ChatColor.GREEN) {
+                if (c == ChatColor.GREEN) {
                     boolean allow = false;
                     for (int i : topClasses.keySet()) {
 
@@ -89,22 +89,22 @@ public class GlowUtils {
                     }
 
                     return allow;
-                } else if(c == ChatColor.DARK_GREEN) {
+                } else if (c == ChatColor.DARK_GREEN) {
                     if (!topClasses.isEmpty()) {
                         if (topClasses.get(1) != null && topClasses.get(1).get(0) != null && topClasses.get(1).get(0).equalsIgnoreCase(p.getName())) {
                             return true;
                         }
                     }
                 }
-            } else if(topGuildss.contains(c)) {
+            } else if (topGuildss.contains(c)) {
 
                 HashMap<Integer, List<String>> topGuilds = RotMC.getInstance().getSqlManager().getTopGuilds();
-                if(c == ChatColor.LIGHT_PURPLE) {
+                if (c == ChatColor.LIGHT_PURPLE) {
 
                     GuildsAPI guildsAPI = Guilds.getApi();
                     Guild g = guildsAPI.getGuild(p);
 
-                    if(g == null || g.getName() == null) return false;
+                    if (g == null || g.getName() == null) return false;
 
                     boolean allow = false;
                     for (int i : topGuilds.keySet()) {
@@ -119,12 +119,12 @@ public class GlowUtils {
                     }
 
                     return allow;
-                } else if(c == ChatColor.DARK_PURPLE) {
+                } else if (c == ChatColor.DARK_PURPLE) {
 
                     GuildsAPI guildsAPI = Guilds.getApi();
                     Guild g = guildsAPI.getGuild(p);
 
-                    if(g == null || g.getName() == null) return false;
+                    if (g == null || g.getName() == null) return false;
 
                     if (!topGuilds.isEmpty()) {
 
@@ -142,14 +142,14 @@ public class GlowUtils {
     public static void clearWhenForbidden(Player p) {
         ChatColor c = getGlowColor(p);
 
-        if(!isPermitted(p, c)) {
+        if (!isPermitted(p, c)) {
             clearGlow(p);
             return;
         }
     }
 
     public static ChatColor getColorFromMaterial(Material m) {
-        switch(m) {
+        switch (m) {
             case ORANGE_DYE:
                 return ChatColor.GOLD;
             case GRAY_DYE:

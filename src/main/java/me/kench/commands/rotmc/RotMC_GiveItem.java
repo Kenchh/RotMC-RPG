@@ -2,16 +2,12 @@ package me.kench.commands.rotmc;
 
 import me.kench.commands.subcommand.SubCommand;
 import me.kench.items.EssenceItem;
-import me.kench.items.GameItem;
 import me.kench.items.GemItem;
 import me.kench.items.RuneItem;
 import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.GemType;
-import me.kench.items.stats.Rune;
 import me.kench.items.stats.RuneType;
-import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -33,16 +29,16 @@ public class RotMC_GiveItem extends SubCommand {
 
         Player p = (Player) sender;
 
-        if(args[1].equalsIgnoreCase("gem")) {
+        if (args[1].equalsIgnoreCase("gem")) {
 
             boolean exists = false;
             for (GemType gt : GemType.values()) {
-                if(args[2].equalsIgnoreCase(gt.toString())) {
+                if (args[2].equalsIgnoreCase(gt.toString())) {
                     exists = true;
                 }
             }
 
-            if(!exists) {
+            if (!exists) {
                 p.sendMessage(ChatColor.RED + "That gem doesn't exist!");
                 return true;
             }
@@ -65,16 +61,16 @@ public class RotMC_GiveItem extends SubCommand {
             p.getInventory().addItem(gemItem.getItem());
         }
 
-        if(args[1].equalsIgnoreCase("rune")) {
+        if (args[1].equalsIgnoreCase("rune")) {
 
             boolean exists = false;
             for (RuneType rt : RuneType.values()) {
-                if(args[2].equalsIgnoreCase(rt.toString())) {
+                if (args[2].equalsIgnoreCase(rt.toString())) {
                     exists = true;
                 }
             }
 
-            if(!exists) {
+            if (!exists) {
                 p.sendMessage(ChatColor.RED + "That rune doesn't exist!");
                 return true;
             }
@@ -97,16 +93,16 @@ public class RotMC_GiveItem extends SubCommand {
             p.getInventory().addItem(runeItem.getItem());
         }
 
-        if(args[1].equalsIgnoreCase("essence")) {
+        if (args[1].equalsIgnoreCase("essence")) {
 
             boolean exists = false;
             for (EssenceType et : EssenceType.values()) {
-                if(args[2].equalsIgnoreCase(et.toString())) {
+                if (args[2].equalsIgnoreCase(et.toString())) {
                     exists = true;
                 }
             }
 
-            if(!exists) {
+            if (!exists) {
                 p.sendMessage(ChatColor.RED + "That essence doesn't exist!");
                 return true;
             }
@@ -129,11 +125,11 @@ public class RotMC_GiveItem extends SubCommand {
             p.getInventory().addItem(essenceItem.getItem());
         }
 
-        if(args[1].equalsIgnoreCase("mythicdust")) {
+        if (args[1].equalsIgnoreCase("mythicdust")) {
             ItemStack dust = new ItemStack(Material.GLOWSTONE_DUST);
             ItemMeta meta = dust.getItemMeta();
             meta.setDisplayName(ChatColor.LIGHT_PURPLE + "Mythic Dust VI");
-            if(args.length >= 3) {
+            if (args.length >= 3) {
                 meta.setDisplayName(ChatColor.LIGHT_PURPLE + "Mythic Dust " + TextUtils.getRomanFromNumber(Integer.parseInt(args[2])));
             }
             dust.setItemMeta(meta);
@@ -141,7 +137,7 @@ public class RotMC_GiveItem extends SubCommand {
             p.getInventory().addItem(dust);
         }
 
-        if(args[1].equalsIgnoreCase("extractor")) {
+        if (args[1].equalsIgnoreCase("extractor")) {
             ItemStack dust = new ItemStack(Material.BLAZE_POWDER);
             ItemMeta meta = dust.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "Extractor");

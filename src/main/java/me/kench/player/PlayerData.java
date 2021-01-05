@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -74,7 +73,7 @@ public class PlayerData {
 
     public void assignPerms() {
 
-        if(getMainClass() == null) return;
+        if (getMainClass() == null) return;
 
         PlayerClass pc = getMainClass();
         String classname = getMainClass().getData().getName();
@@ -122,22 +121,22 @@ public class PlayerData {
         */
 
         /* Add new Perms */
-        if(classname.equalsIgnoreCase("Knight") || classname.equalsIgnoreCase("Warrior")) {
+        if (classname.equalsIgnoreCase("Knight") || classname.equalsIgnoreCase("Warrior")) {
             newPerms.add("rotmc.weapon.sword");
             newPerms.add("rotmc." + classname.toLowerCase());
         }
 
-        if(classname.equalsIgnoreCase("Rogue") || classname.equalsIgnoreCase("Assassin")) {
+        if (classname.equalsIgnoreCase("Rogue") || classname.equalsIgnoreCase("Assassin")) {
             newPerms.add("rotmc.weapon.dagger");
             newPerms.add("rotmc." + classname.toLowerCase());
         }
 
-        if(classname.equalsIgnoreCase("Huntress")) {
+        if (classname.equalsIgnoreCase("Huntress")) {
             newPerms.add("rotmc.weapon.bow");
             newPerms.add("rotmc." + classname.toLowerCase());
         }
 
-        if(classname.equalsIgnoreCase("Necromancer")) {
+        if (classname.equalsIgnoreCase("Necromancer")) {
             newPerms.add("rotmc.weapon.staff");
             newPerms.add("rotmc." + classname.toLowerCase());
         }
@@ -205,14 +204,14 @@ public class PlayerData {
 
                 User user = RotMC.getInstance().getApi().getUserManager().loadUser(p.getUniqueId()).join();
 
-                for(int i=1;i<=20;i++)
+                for (int i = 1; i <= 20; i++)
                     user.data().remove(Node.builder("rotmc.level.{1-" + i + "}").build());
-                for(String delperm : allPerms) {
+                for (String delperm : allPerms) {
                     user.data().remove(Node.builder(delperm).build());
                 }
 
                 user.data().add(Node.builder("rotmc.level.{1-" + pc.getLevel() + "}").build());
-                for(String addperm : newPerms) {
+                for (String addperm : newPerms) {
                     user.data().add(Node.builder(addperm).build());
                 }
 
@@ -225,7 +224,7 @@ public class PlayerData {
 
     public void selectClass(PlayerClass pclass, boolean newclass) {
 
-        for(PlayerClass pc : classes) {
+        for (PlayerClass pc : classes) {
             pc.selected = false;
         }
 
@@ -237,7 +236,7 @@ public class PlayerData {
 
         assignPerms();
 
-        if(old != null && old.getPlayer() != null) {
+        if (old != null && old.getPlayer() != null) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn " + getPlayer().getName());
         } else {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sudo " + getPlayer().getName() + " rp");
@@ -247,10 +246,10 @@ public class PlayerData {
 
         getPlayer().getInventory().clear();
 
-        if(old != null && old.getPlayer() != null) {
+        if (old != null && old.getPlayer() != null) {
             String inv64 = RotMC.getInstance().getSqlManager().getInventory(p.getUniqueId(), pclass.getUuid());
 
-            if(!(inv64 == null || inv64.equalsIgnoreCase(""))) {
+            if (!(inv64 == null || inv64.equalsIgnoreCase(""))) {
 
                 Inventory inv = JsonParser.fromBase64(inv64);
 
@@ -293,9 +292,9 @@ public class PlayerData {
 
         pclass.applyStats();
 
-        if(newclass) {
+        if (newclass) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ultimatekits:kit " + pclass.getData().getName() + " " + p.getName());
-            if(old == null || old.getPlayer() == null)
+            if (old == null || old.getPlayer() == null)
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + getPlayer().getName() + " starterhealth");
         }
 

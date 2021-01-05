@@ -2,7 +2,6 @@ package me.kench.items.stats.essenceanimations;
 
 import me.kench.RotMC;
 import me.kench.player.PlayerData;
-import me.kench.utils.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -38,12 +37,12 @@ public class Kabiri extends EssenceAnimation {
     public synchronized void cancel() throws IllegalStateException {
 
         ArrayList<Block> toremove = new ArrayList<>();
-        for(Block b : pd.obbyblocks) {
+        for (Block b : pd.obbyblocks) {
             b.getWorld().getBlockAt(b.getLocation()).setType(Material.AIR);
             toremove.add(b);
         }
 
-        for(Block tr : toremove) {
+        for (Block tr : toremove) {
             pd.obbyblocks.remove(tr);
         }
         super.cancel();
@@ -63,7 +62,7 @@ public class Kabiri extends EssenceAnimation {
         blocks.add(bu.getRelative(BlockFace.SOUTH));
         blocks.add(bu.getRelative(BlockFace.WEST));
 
-        if(!(lastX == p.getLocation().getBlockX() && lastY == p.getLocation().getBlockY() && lastZ == p.getLocation().getBlockZ())) {
+        if (!(lastX == p.getLocation().getBlockX() && lastY == p.getLocation().getBlockY() && lastZ == p.getLocation().getBlockZ())) {
 
             for (Block b : blocks) {
                 if (b.getType() == Material.LAVA) {
@@ -88,6 +87,7 @@ public class Kabiri extends EssenceAnimation {
                 int lx = (int) lastX;
                 int ly = (int) lastY;
                 int lz = (int) lastZ;
+
                 @Override
                 public void run() {
 
@@ -100,7 +100,7 @@ public class Kabiri extends EssenceAnimation {
                     lastblocks.add(lastBU.getRelative(BlockFace.SOUTH));
                     lastblocks.add(lastBU.getRelative(BlockFace.WEST));
 
-                    for(Block lastB : lastblocks) {
+                    for (Block lastB : lastblocks) {
 
                         if (sameLoc(lastB.getLocation(), bu.getLocation())) continue;
 
@@ -128,7 +128,7 @@ public class Kabiri extends EssenceAnimation {
     }
 
     private boolean sameLoc(Location loc1, Location loc2) {
-        if(loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ()) return true;
+        if (loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ()) return true;
 
         return false;
     }

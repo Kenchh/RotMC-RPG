@@ -1,7 +1,5 @@
 package me.kench.utils;
 
-import org.bukkit.Bukkit;
-
 import java.text.DecimalFormat;
 
 public class TextUtils {
@@ -11,7 +9,7 @@ public class TextUtils {
 
         String words[] = name.split("_");
         name = "";
-        for(String word : words) {
+        for (String word : words) {
             String firstletter = word.substring(0, 1).toUpperCase();
             String other = word.substring(1);
 
@@ -79,7 +77,7 @@ public class TextUtils {
         for (int i = s.length() - 1 - indent; i >= 0; i--) {
             char c = s.toCharArray()[i];
 
-            if(stopAtNextInvalidChar == false && c == ' ') {
+            if (stopAtNextInvalidChar == false && c == ' ') {
                 continue;
             }
 

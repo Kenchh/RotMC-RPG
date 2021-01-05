@@ -22,27 +22,27 @@ public class RotMC_Invis extends SubCommand {
 
         Player tp = Bukkit.getPlayer(args[1]);
 
-        if(tp == null || !tp.isOnline()) {
-            if(sender instanceof Player)
+        if (tp == null || !tp.isOnline()) {
+            if (sender instanceof Player)
                 sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
             return true;
         }
 
         int amount = Integer.parseInt(args[2]);
 
-        for(Player pp : Bukkit.getOnlinePlayers()) {
+        for (Player pp : Bukkit.getOnlinePlayers()) {
             pp.hidePlayer(tp);
         }
-        tp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20*amount, 0));
+        tp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * amount, 0));
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(Player pp : Bukkit.getOnlinePlayers()) {
+                for (Player pp : Bukkit.getOnlinePlayers()) {
                     pp.showPlayer(tp);
                 }
                 tp.removePotionEffect(PotionEffectType.INVISIBILITY);
             }
-        }.runTaskLater(RotMC.getInstance(), 20*amount);
+        }.runTaskLater(RotMC.getInstance(), 20 * amount);
         return true;
     }
 

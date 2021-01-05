@@ -3,7 +3,6 @@ package me.kench.events;
 import me.kench.RotMC;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
-import me.kench.player.Stats;
 import me.kench.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -28,11 +27,11 @@ public class DamageEvent implements Listener {
 
         PlayerData pd = RotMC.getPlayerData(p);
 
-        if(pd == null) return;
+        if (pd == null) return;
 
         PlayerClass pclass = pd.getMainClass();
 
-        if(pclass == null) return;
+        if (pclass == null) return;
 
         new BukkitRunnable() {
             @Override
@@ -46,14 +45,14 @@ public class DamageEvent implements Listener {
     @EventHandler
     public void onDamaged(EntityDamageEvent e) {
 
-        if(e.isCancelled()) return;
+        if (e.isCancelled()) return;
 
-        if(e.getEntity() instanceof Player) {
-           if(e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-               PlayerData pd = RotMC.getPlayerData((Player) e.getEntity());
-               pd.lastKiller = "";
-               pd.lastDamage = e.getCause().name().toLowerCase();
-           }
+        if (e.getEntity() instanceof Player) {
+            if (e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+                PlayerData pd = RotMC.getPlayerData((Player) e.getEntity());
+                pd.lastKiller = "";
+                pd.lastDamage = e.getCause().name().toLowerCase();
+            }
         }
     }
 
@@ -61,9 +60,9 @@ public class DamageEvent implements Listener {
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent e) {
 
-        if(e.isCancelled()) return;
+        if (e.isCancelled()) return;
 
-        if(e.getDamager() instanceof Player) {
+        if (e.getDamager() instanceof Player) {
             Player p = (Player) e.getDamager();
 
             if (!WorldGuardUtils.wgPvP(p) && e.getEntity() instanceof Player) {
@@ -71,14 +70,14 @@ public class DamageEvent implements Listener {
                 return;
             }
 
-            if(e.getEntity() instanceof Player) {
+            if (e.getEntity() instanceof Player) {
                 e.setCancelled(true);
                 return;
             }
 
             PlayerData pd = RotMC.getPlayerData(p);
 
-            if(pd == null || pd.getMainClass() == null) {
+            if (pd == null || pd.getMainClass() == null) {
                 return;
             }
 
@@ -94,7 +93,7 @@ public class DamageEvent implements Listener {
 
         }
 
-        if(e.getEntity() instanceof Player) {
+        if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
 
             if (!WorldGuardUtils.wgPvP(p) && e.getDamager() instanceof Player) {
@@ -102,7 +101,7 @@ public class DamageEvent implements Listener {
                 return;
             }
 
-            if(e.getDamager() instanceof Player) {
+            if (e.getDamager() instanceof Player) {
                 e.setCancelled(true);
                 return;
             }
@@ -111,7 +110,7 @@ public class DamageEvent implements Listener {
 
             double damage = e.getDamage();
 
-            if(pd == null || pd.getMainClass() == null) {
+            if (pd == null || pd.getMainClass() == null) {
                 return;
             }
 
@@ -136,16 +135,16 @@ public class DamageEvent implements Listener {
             }
              */
 
-            double dmg = damage - damage*defenseAll;
+            double dmg = damage - damage * defenseAll;
 
-            if(random <= dodgeAll) {
+            if (random <= dodgeAll) {
                 p.playSound(p.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1F, 1F);
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + ChatColor.BOLD.toString() + "DODGE"));
                 dmg = 0;
             }
 
             e.setCancelled(true);
-            if(dmg > 0) {
+            if (dmg > 0) {
                 p.damage(dmg);
             }
 

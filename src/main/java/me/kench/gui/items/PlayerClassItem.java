@@ -22,7 +22,7 @@ public class PlayerClassItem extends ItemStack {
 
         String selected = "";
 
-        if(RotMC.getPlayerData(playerClass.getPlayer()).getMainClass().getUuid().equals(playerClass.getUuid())) {
+        if (RotMC.getPlayerData(playerClass.getPlayer()).getMainClass().getUuid().equals(playerClass.getUuid())) {
             selected = ChatColor.GREEN + "" + ChatColor.BOLD + " SELECTED";
         }
 

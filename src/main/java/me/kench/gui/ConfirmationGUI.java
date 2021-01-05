@@ -26,7 +26,7 @@ public class ConfirmationGUI implements Listener {
     public ConfirmationGUI(PlayerClass pc) {
         RotMC.getPlayerData(pc.getPlayer()).clickedClass = pc;
 
-        inv = Bukkit.createInventory(null, 9*3, "Delete this class?");
+        inv = Bukkit.createInventory(null, 9 * 3, "Delete this class?");
 
         ItemStack red = new ItemStack(Material.REDSTONE_BLOCK);
         ItemMeta redmeta = red.getItemMeta();
@@ -38,8 +38,8 @@ public class ConfirmationGUI implements Listener {
         greenmeta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "CONFIRM");
         green.setItemMeta(greenmeta);
 
-        inv.setItem(9+2, red);
-        inv.setItem(9+6, green);
+        inv.setItem(9 + 2, red);
+        inv.setItem(9 + 6, green);
     }
 
     public Inventory getInv() {
@@ -48,27 +48,27 @@ public class ConfirmationGUI implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getView() == null || e.getView().getTitle() != "Delete this class?") {
+        if (e.getView() == null || e.getView().getTitle() != "Delete this class?") {
             return;
         }
 
         e.setCancelled(true);
 
-        if(e.getCurrentItem() == null) return;
+        if (e.getCurrentItem() == null) return;
 
         Player p = (Player) e.getWhoClicked();
 
-        if(e.getCurrentItem().getType() == Material.REDSTONE_BLOCK) {
+        if (e.getCurrentItem().getType() == Material.REDSTONE_BLOCK) {
             p.openInventory(new ClassesGUI(p).getInv());
         }
 
-        if(e.getCurrentItem().getType() == Material.EMERALD_BLOCK) {
+        if (e.getCurrentItem().getType() == Material.EMERALD_BLOCK) {
             PlayerData pd = RotMC.getPlayerData(p);
 
-            for(PlayerClass pc : pd.classes) {
-                if(pc.getUuid().equals(pd.clickedClass.getUuid())) {
+            for (PlayerClass pc : pd.classes) {
+                if (pc.getUuid().equals(pd.clickedClass.getUuid())) {
 
-                    if(pd.currentClass.getUuid().equals(pc.getUuid())) {
+                    if (pd.currentClass.getUuid().equals(pc.getUuid())) {
                         p.sendMessage(ChatColor.RED + "You need to switch to another profile to delete your current one!");
                         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.5F, 1.2F);
                         p.closeInventory();

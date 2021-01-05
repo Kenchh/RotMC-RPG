@@ -10,7 +10,10 @@ import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.armor.ArmorEquipEvent;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -18,13 +21,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class InteractEvent implements Listener {
@@ -35,21 +33,21 @@ public class InteractEvent implements Listener {
 
         PlayerData pd = RotMC.getPlayerData(e.getPlayer());
 
-        for(Block b : pd.goldblocks) {
-            if(sameLoc(b.getLocation(), brokenblock.getLocation()) && brokenblock.getType() == Material.GOLD_BLOCK) {
+        for (Block b : pd.goldblocks) {
+            if (sameLoc(b.getLocation(), brokenblock.getLocation()) && brokenblock.getType() == Material.GOLD_BLOCK) {
                 e.setCancelled(true);
             }
         }
 
-        for(Block b : pd.iceblocks) {
-            if(sameLoc(b.getLocation(), brokenblock.getLocation()) &&
+        for (Block b : pd.iceblocks) {
+            if (sameLoc(b.getLocation(), brokenblock.getLocation()) &&
                     (brokenblock.getType() == Material.ICE || brokenblock.getType() == Material.BLUE_ICE)) {
                 e.setCancelled(true);
             }
         }
 
-        for(Block b : pd.obbyblocks) {
-            if(sameLoc(b.getLocation(), brokenblock.getLocation()) &&
+        for (Block b : pd.obbyblocks) {
+            if (sameLoc(b.getLocation(), brokenblock.getLocation()) &&
                     (brokenblock.getType() == Material.OBSIDIAN || brokenblock.getType() == Material.COAL_BLOCK)) {
                 e.setCancelled(true);
             }
@@ -118,7 +116,7 @@ public class InteractEvent implements Listener {
 
             GameItem gameItem;
 
-            if(pd.gameItem == null || !pd.gameItem.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(meta.getDisplayName())) {
+            if (pd.gameItem == null || !pd.gameItem.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(meta.getDisplayName())) {
                 gameItem = new GameItem(clickedItem);
             } else {
                 gameItem = pd.gameItem;
@@ -141,7 +139,7 @@ public class InteractEvent implements Listener {
             String currentclass = pc.getData().getName();
             if (gameItem.getGameClasses().isEmpty() == false) {
 
-                for(GameClass gameClass : gameItem.getGameClasses()) {
+                for (GameClass gameClass : gameItem.getGameClasses()) {
                     String className = gameClass.getName();
 
                     if (className.equalsIgnoreCase(currentclass)) {
@@ -153,7 +151,7 @@ public class InteractEvent implements Listener {
                 return;
             }
 
-            if(!foundClass) {
+            if (!foundClass) {
                 p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                 return;
@@ -201,7 +199,7 @@ public class InteractEvent implements Listener {
                 boolean foundClass = false;
                 String currentclass = pc.getData().getName();
                 if (gameItem.getGameClasses().isEmpty() == false) {
-                    for(GameClass gameClass : gameItem.getGameClasses()) {
+                    for (GameClass gameClass : gameItem.getGameClasses()) {
                         String className = gameClass.getName();
 
                         if (className.equalsIgnoreCase(currentclass)) {

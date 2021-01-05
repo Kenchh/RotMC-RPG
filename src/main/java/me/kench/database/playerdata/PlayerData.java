@@ -1,16 +1,31 @@
 package me.kench.database.playerdata;
 
+import me.kench.RotMC;
+import me.kench.items.GameItem;
+import me.kench.items.stats.EssenceType;
+import me.kench.items.stats.essenceanimations.EssenceAnimation;
+import me.kench.player.EssenceTicker;
 import me.kench.player.PlayerClass;
+import me.kench.player.RPGClass;
 import me.kench.player.Stats;
+import net.luckperms.api.model.user.User;
+import net.luckperms.api.model.user.UserManager;
+import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitTask;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerData {
+    // Persisted fields
     private final UUID uniqueId;
     private final List<PlayerClass> classes;
     private int maxSlots;
@@ -20,6 +35,19 @@ public class PlayerData {
     private int rankNecromancer;
     private int rankAssassin;
     private int rankRogue;
+
+    // Ephemeral fields
+    private final Map<EssenceType, EssenceAnimation> activeEssences;
+    private final List<Block> goldBlocks;
+    private final List<Block> iceBlocks;
+    private final List<Block> obbyBlocks;
+    private String lastKiller;
+    private String lastDamage;
+    private BukkitTask ticker;
+    private GameItem gameItem;
+    private GameItem extractGameItem;
+    private ItemStack extractor;
+    private PlayerClass clickedClass;
 
     public PlayerData(UUID uniqueId, List<PlayerClass> classes, int maxSlots, int rankHuntress, int rankKnight, int rankWarrior, int rankNecromancer, int rankAssassin, int rankRogue) {
         this.uniqueId = uniqueId;
@@ -31,10 +59,21 @@ public class PlayerData {
         this.rankNecromancer = rankNecromancer;
         this.rankAssassin = rankAssassin;
         this.rankRogue = rankRogue;
+
+        activeEssences = new HashMap<>();
+        goldBlocks = new ArrayList<>();
+        iceBlocks = new ArrayList<>();
+        obbyBlocks = new ArrayList<>();
+        lastKiller = "";
+        lastDamage = "";
     }
 
     public UUID getUniqueId() {
         return uniqueId;
+    }
+
+    public Player getPlayer() {
+        return Bukkit.getPlayer(getUniqueId());
     }
 
     public List<PlayerClass> getClasses() {
@@ -81,19 +120,78 @@ public class PlayerData {
         return classes.stream().filter(it -> it.selected).findFirst().orElse(null);
     }
 
-    public boolean changeSelectedClass(UUID classUniqueId) {
+    public boolean changeSelectedClass(UUID classUniqueId, boolean isNew) {
+        Player player = getPlayer();
+        if (player == null) return false;
+
         PlayerClass newClass = classes.stream().filter(it -> it.getUuid().equals(classUniqueId)).findFirst().orElse(null);
         if (newClass == null) return false;
 
         // Save current inventory before switching classes.
-        Player player = Bukkit.getPlayer(getUniqueId());
-        if (player != null) {
-            PlayerClass currentlySelected = getSelectedClass();
-            currentlySelected.inventory = player.getInventory();
+        PlayerClass currentClass = getSelectedClass();
+        if (currentClass != null) {
+            currentClass.inventory = player.getInventory();
         }
 
         classes.forEach(it -> it.selected = false);
         newClass.selected = true;
+
+        // TODO: this should probably be moved to the call context later
+        RotMC.getInstance().getLevelProgression().displayLevelProgression(player, newClass);
+
+        ensureClassPermissions();
+
+        if (currentClass != null) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn " + getPlayer().getName());
+        } else {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sudo " + getPlayer().getName() + " rp");
+        }
+
+        // Restore saved inventory of new class
+        PlayerInventory playerInventory = player.getInventory();
+        Inventory newClassInventory = newClass.inventory;
+
+        if (newClassInventory != null) {
+            for (int i = 0; i < 36; i++) {
+                ItemStack item = newClassInventory.getContents()[i];
+                if (item != null) {
+                    getPlayer().getInventory().setItem(i, item);
+                }
+            }
+
+            ItemStack offhand = newClassInventory.getContents()[40];
+            if (offhand != null && offhand.getType() != Material.AIR) {
+                playerInventory.setItemInOffHand(offhand);
+            }
+
+            ItemStack helmet = newClassInventory.getContents()[39];
+            if (helmet != null && helmet.getType() != Material.AIR) {
+                playerInventory.setHelmet(helmet);
+            }
+
+            ItemStack chest = newClassInventory.getContents()[38];
+            if (chest != null && chest.getType() != Material.AIR) {
+                playerInventory.setChestplate(chest);
+            }
+
+            ItemStack legs = newClassInventory.getContents()[37];
+            if (legs != null && legs.getType() != Material.AIR) {
+                playerInventory.setLeggings(legs);
+            }
+
+            ItemStack boots = newClassInventory.getContents()[36];
+            if (boots != null && boots.getType() != Material.AIR) {
+                getPlayer().getInventory().setBoots(boots);
+            }
+        }
+
+        newClass.applyStats();
+
+        if (isNew) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ultimatekits:kit " + newClass.getData().getName() + " " + player.getName());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " starterhealth");
+        }
+
         return true;
     }
 
@@ -151,5 +249,107 @@ public class PlayerData {
 
     public void setRankRogue(int rankRogue) {
         this.rankRogue = rankRogue;
+    }
+
+    public Map<EssenceType, EssenceAnimation> getActiveEssences() {
+        return activeEssences;
+    }
+
+    public List<Block> getGoldBlocks() {
+        return goldBlocks;
+    }
+
+    public List<Block> getIceBlocks() {
+        return iceBlocks;
+    }
+
+    public List<Block> getObbyBlocks() {
+        return obbyBlocks;
+    }
+
+    public String getLastKiller() {
+        return lastKiller;
+    }
+
+    public void setLastKiller(String lastKiller) {
+        this.lastKiller = lastKiller;
+    }
+
+    public String getLastDamage() {
+        return lastDamage;
+    }
+
+    public void setLastDamage(String lastDamage) {
+        this.lastDamage = lastDamage;
+    }
+
+    public void startTicker() {
+        cancelTicker();
+        this.ticker = new EssenceTicker(getPlayer()).runTaskTimer(RotMC.getInstance(), 1L, 60L);
+    }
+
+    public void cancelTicker() {
+        if (this.ticker != null && !this.ticker.isCancelled()) {
+            this.ticker.cancel();
+        }
+    }
+
+    public GameItem getGameItem() {
+        return gameItem;
+    }
+
+    public void setGameItem(GameItem gameItem) {
+        this.gameItem = gameItem;
+    }
+
+    public GameItem getExtractGameItem() {
+        return extractGameItem;
+    }
+
+    public void setExtractGameItem(GameItem extractGameItem) {
+        this.extractGameItem = extractGameItem;
+    }
+
+    public ItemStack getExtractor() {
+        return extractor;
+    }
+
+    public void setExtractor(ItemStack extractor) {
+        this.extractor = extractor;
+    }
+
+    public PlayerClass getClickedClass() {
+        return clickedClass;
+    }
+
+    public void setClickedClass(PlayerClass clickedClass) {
+        this.clickedClass = clickedClass;
+    }
+
+    public void ensureClassPermissions() throws IllegalStateException {
+        if (getSelectedClass() == null) return;
+
+        PlayerClass selectedClass = getSelectedClass();
+        RPGClass rpgClass = RPGClass.getByName(selectedClass.getData().getName());
+
+        UserManager lpUserManager = RotMC.getInstance().getApi().getUserManager();
+        User lpUser = lpUserManager.getUser(getUniqueId());
+        if (lpUser == null) {
+            throw new IllegalStateException(String.format("Could not find LuckPerms profile for player with unique ID %s!", getUniqueId()));
+        }
+
+        for (int i = 1; i <= 20; i++) {
+            lpUser.data().remove(Node.builder(String.format("rotmc.level.{1-%d}", i)).build());
+        }
+
+        for (String permission : RPGClass.getAllPermissions()) {
+            lpUser.data().remove(Node.builder(permission).build());
+        }
+
+        for (String permission : rpgClass.getPermissions()) {
+            lpUser.data().add(Node.builder(permission).build());
+        }
+
+        lpUserManager.saveUser(lpUser);
     }
 }

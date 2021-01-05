@@ -26,16 +26,16 @@ public class SubCommandManager {
     }
 
     public boolean getSubCommandAndExecute(CommandSender sender, Command cmd, String label, String[] args) {
-        for(int i=0;i<args.length;i++) {
+        for (int i = 0; i < args.length; i++) {
             SubCommand subCommand = getSubCommandByName(args[i]);
-            if(getSubCommandByName(args[i]) != null && getSubCommandByName(args[i]).getIndex() == i+1) {
+            if (getSubCommandByName(args[i]) != null && getSubCommandByName(args[i]).getIndex() == i + 1) {
 
-                if(subCommand.isPlayeronly() && !(sender instanceof Player)) {
+                if (subCommand.isPlayeronly() && !(sender instanceof Player)) {
                     sender.sendMessage("Only for players!");
                     return true;
                 }
 
-                if(sender instanceof Player && !((Player) sender).hasPermission(subCommand.getPermission())) {
+                if (sender instanceof Player && !((Player) sender).hasPermission(subCommand.getPermission())) {
                     sender.sendMessage(ChatColor.RED + "Insufficient permissions.");
                     return true;
                 }
@@ -49,12 +49,12 @@ public class SubCommandManager {
     }
 
     private SubCommand getSubCommandByName(String name) {
-        for(SubCommand subcmd : subCommands) {
-            if(subcmd.getName().equalsIgnoreCase(name)) {
+        for (SubCommand subcmd : subCommands) {
+            if (subcmd.getName().equalsIgnoreCase(name)) {
                 return subcmd;
             }
-            for(String alias : subcmd.getAliases()) {
-                if(alias.equalsIgnoreCase(name)) {
+            for (String alias : subcmd.getAliases()) {
+                if (alias.equalsIgnoreCase(name)) {
                     return subcmd;
                 }
             }

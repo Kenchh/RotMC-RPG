@@ -25,7 +25,7 @@ public class GlowItem extends ItemStack {
 
         ChatColor c = GlowUtils.getColorFromMaterial(material);
 
-        if(GlowUtils.isPermitted(p, c)) {
+        if (GlowUtils.isPermitted(p, c)) {
             lore.set(0, ChatColor.GREEN + ChatColor.BOLD.toString() + "UNLOCKED");
         } else {
             lore.set(0, ChatColor.RED + ChatColor.BOLD.toString() + "LOCKED");
@@ -35,7 +35,7 @@ public class GlowItem extends ItemStack {
         lore.set(2, ChatColor.YELLOW + "Left-Click to select glow.");
         lore.set(3, ChatColor.YELLOW + "Right-Click to " + ChatColor.RED + "remove" + ChatColor.YELLOW + " glow.");
 
-        if(GlowUtils.getGlowColor(p) != null) {
+        if (GlowUtils.getGlowColor(p) != null) {
             if (GlowUtils.getGlowColor(p).toString().equalsIgnoreCase(GlowUtils.getColorFromMaterial(material).toString())) {
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 meta.addEnchant(Enchantment.DURABILITY, 1, true);

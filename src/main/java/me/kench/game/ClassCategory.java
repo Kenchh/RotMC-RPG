@@ -3,7 +3,7 @@ package me.kench.game;
 import org.bukkit.ChatColor;
 
 public enum ClassCategory {
-    DAGGER,BOW,STAFF,SWORD;
+    DAGGER, BOW, STAFF, SWORD;
 
     public static String getName(ClassCategory category) {
         switch (category) {

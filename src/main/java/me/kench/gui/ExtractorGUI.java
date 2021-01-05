@@ -5,7 +5,9 @@ import me.kench.items.EssenceItem;
 import me.kench.items.GameItem;
 import me.kench.items.GemItem;
 import me.kench.items.RuneItem;
-import me.kench.items.stats.*;
+import me.kench.items.stats.Essence;
+import me.kench.items.stats.Gem;
+import me.kench.items.stats.Rune;
 import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
@@ -32,7 +34,7 @@ public class ExtractorGUI implements Listener {
     }
 
     public ExtractorGUI(Player p, GameItem gameItem, ItemStack extractor) {
-        inv = Bukkit.createInventory(null, 9*3, "Choose an item to extract");
+        inv = Bukkit.createInventory(null, 9 * 3, "Choose an item to extract");
 
         PlayerData pd = RotMC.getPlayerData(p);
         pd.extractGameItem = gameItem;
@@ -43,7 +45,7 @@ public class ExtractorGUI implements Listener {
         redmeta.setDisplayName(ChatColor.RED + "Cancel");
         red.setItemMeta(redmeta);
 
-        inv.setItem(0+9*2, red);
+        inv.setItem(0 + 9 * 2, red);
 
         ItemStack black = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta blackmeta = black.getItemMeta();
@@ -65,7 +67,7 @@ public class ExtractorGUI implements Listener {
         pinkmeta.setDisplayName(" ");
         pink.setItemMeta(pinkmeta);
 
-        for(int i=0; i<gameItem.getStats().gems.size(); i++) {
+        for (int i = 0; i < gameItem.getStats().gems.size(); i++) {
             Gem g = gameItem.getStats().gems.get(i);
 
             ItemStack gem = new ItemStack(Material.CARROT_ON_A_STICK);
@@ -74,10 +76,10 @@ public class ExtractorGUI implements Listener {
             meta.setDisplayName(g.getType().getPrefix() + g.getType().getName() + " " + TextUtils.getRomanFromNumber(g.getLevel()));
             gem.setItemMeta(meta);
 
-            inv.setItem(0+9+1+i, gem);
+            inv.setItem(0 + 9 + 1 + i, gem);
         }
 
-        if(gameItem.getStats().getRune() != null) {
+        if (gameItem.getStats().getRune() != null) {
             Rune r = gameItem.getStats().getRune();
 
             ItemStack rune = new ItemStack(Material.CARROT_ON_A_STICK);
@@ -86,11 +88,11 @@ public class ExtractorGUI implements Listener {
             meta.setDisplayName(r.getType().getPrefix() + r.getType().getName());
             rune.setItemMeta(meta);
 
-            inv.setItem(0+9+1+4, rune);
+            inv.setItem(0 + 9 + 1 + 4, rune);
         }
 
 
-        if(gameItem.getStats().getEssence() != null) {
+        if (gameItem.getStats().getEssence() != null) {
             Essence e = gameItem.getStats().getEssence();
 
             ItemStack essence = new ItemStack(Material.CARROT_ON_A_STICK);
@@ -99,7 +101,7 @@ public class ExtractorGUI implements Listener {
             meta.setDisplayName(e.getType().getPrefix() + e.getType().getName());
             essence.setItemMeta(meta);
 
-            inv.setItem(0+9+1+6, essence);
+            inv.setItem(0 + 9 + 1 + 6, essence);
         }
 
 
@@ -111,33 +113,33 @@ public class ExtractorGUI implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getView() != null && e.getView().getTitle() != "Choose an item to extract") {
+        if (e.getView() != null && e.getView().getTitle() != "Choose an item to extract") {
             return;
         }
 
         e.setCancelled(true);
 
-        if(e.getCurrentItem() == null) return;
+        if (e.getCurrentItem() == null) return;
 
-        if(e.getCurrentItem().getType() == Material.BARRIER) {
+        if (e.getCurrentItem().getType() == Material.BARRIER) {
             e.getWhoClicked().closeInventory();
             return;
         }
 
         ItemStack item = e.getCurrentItem();
 
-        if(!e.getCurrentItem().hasItemMeta() || !e.getCurrentItem().getItemMeta().hasDisplayName()) return;
+        if (!e.getCurrentItem().hasItemMeta() || !e.getCurrentItem().getItemMeta().hasDisplayName()) return;
 
         boolean isGem = ItemUtils.isGem(e.getCurrentItem().getItemMeta().getDisplayName());
         boolean isRune = ItemUtils.isRune(e.getCurrentItem().getItemMeta().getDisplayName());
         boolean isEssence = ItemUtils.isEssence(e.getCurrentItem().getItemMeta().getDisplayName());
 
-        if(!isGem && !isRune && !isEssence) return;
+        if (!isGem && !isRune && !isEssence) return;
 
         Player p = (Player) e.getWhoClicked();
         PlayerData pd = RotMC.getPlayerData(p);
 
-        if(isGem) {
+        if (isGem) {
             ItemMeta meta = item.getItemMeta();
 
             meta.setLore(Arrays.asList(
@@ -151,13 +153,13 @@ public class ExtractorGUI implements Listener {
             gem.successChance = 50;
             gem.update();
 
-            pd.extractGameItem.getStats().gems.remove(e.getSlot()-10);
+            pd.extractGameItem.getStats().gems.remove(e.getSlot() - 10);
             pd.extractGameItem.getStats().gemsockets++;
             pd.extractGameItem.update();
 
-            for(ItemStack it : p.getInventory().getContents()) {
-                if(!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
-                if(it.getItemMeta().getDisplayName().contains("Extractor")) {
+            for (ItemStack it : p.getInventory().getContents()) {
+                if (!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
+                if (it.getItemMeta().getDisplayName().contains("Extractor")) {
                     it.setAmount(it.getAmount() - 1);
                     break;
                 }
@@ -170,7 +172,7 @@ public class ExtractorGUI implements Listener {
             return;
         }
 
-        if(isRune) {
+        if (isRune) {
             ItemMeta meta = item.getItemMeta();
 
             meta.setLore(Arrays.asList(
@@ -188,9 +190,9 @@ public class ExtractorGUI implements Listener {
             pd.extractGameItem.getStats().hasRuneSocket = true;
             pd.extractGameItem.update();
 
-            for(ItemStack it : p.getInventory().getContents()) {
-                if(!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
-                if(it.getItemMeta().getDisplayName().contains("Extractor")) {
+            for (ItemStack it : p.getInventory().getContents()) {
+                if (!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
+                if (it.getItemMeta().getDisplayName().contains("Extractor")) {
                     it.setAmount(it.getAmount() - 1);
                     break;
                 }
@@ -202,7 +204,7 @@ public class ExtractorGUI implements Listener {
             p.closeInventory();
         }
 
-        if(isEssence) {
+        if (isEssence) {
 
             ItemMeta meta = item.getItemMeta();
 
@@ -220,9 +222,9 @@ public class ExtractorGUI implements Listener {
             pd.extractGameItem.getStats().hasEssenceSocket = true;
             pd.extractGameItem.update();
 
-            for(ItemStack it : p.getInventory().getContents()) {
-                if(!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
-                if(it.getItemMeta().getDisplayName().contains("Extractor")) {
+            for (ItemStack it : p.getInventory().getContents()) {
+                if (!it.hasItemMeta() || !it.getItemMeta().hasDisplayName()) continue;
+                if (it.getItemMeta().getDisplayName().contains("Extractor")) {
                     it.setAmount(it.getAmount() - 1);
                     break;
                 }

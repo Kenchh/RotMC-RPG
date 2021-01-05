@@ -23,7 +23,7 @@ public class MySQLConfig {
 
         file = new File(RotMC.getInstance().getDataFolder(), "mysql.yml");
 
-        if(!file.exists()) {
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {

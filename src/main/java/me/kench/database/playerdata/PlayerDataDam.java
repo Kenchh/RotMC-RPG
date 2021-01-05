@@ -1,22 +1,22 @@
 package me.kench.database.playerdata;
 
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
+import co.aikar.taskchain.TaskChain;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.RemovalCause;
+import me.kench.RotMC;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public class PlayerDataDam {
     private final PlayerDataDao dao;
-    private final AsyncLoadingCache<UUID, PlayerData> playerDataCache;
+    private final LoadingCache<UUID, PlayerData> playerDataCache;
 
     public PlayerDataDam(Jdbi jdbi) {
         dao = jdbi.onDemand(PlayerDataDao.class);
         playerDataCache = Caffeine.newBuilder()
-                .expireAfterAccess(15, TimeUnit.MINUTES)
                 .removalListener((UUID uniqueId, PlayerData data, RemovalCause cause) -> {
                     if (data == null) return;
                     dao.save(
@@ -31,24 +31,26 @@ public class PlayerDataDam {
                             data.getRankRogue()
                     );
                 })
-                .buildAsync(dao::load);
+                .build(dao::load);
     }
 
     /**
      * Creates the database table required for operation. Does nothing if the table already exists.
      */
     public void createContainer() {
-        dao.createContainer();
+        RotMC.newChain()
+                .async(dao::createContainer)
+                .execute();
     }
 
     /**
      * Checks if a PlayerData entry exists for the given Player.
      *
      * @param uniqueId the unique id of the Player
-     * @return true or false
+     * @return a {@link TaskChain<Boolean>} to be used in further task execution
      */
-    public boolean exists(UUID uniqueId) {
-        return dao.exists(uniqueId);
+    public TaskChain<Boolean> exists(UUID uniqueId) {
+        return RotMC.newChain().asyncFirst(() -> dao.exists(uniqueId));
     }
 
     /**
@@ -57,8 +59,10 @@ public class PlayerDataDam {
      * @param uniqueId the unique id of the Player
      */
     public void create(UUID uniqueId) {
-        if (exists(uniqueId)) return;
-        dao.create(uniqueId);
+        exists(uniqueId)
+                .abortIf(true)
+                .async(() -> dao.create(uniqueId))
+                .execute();
     }
 
     /**
@@ -66,10 +70,36 @@ public class PlayerDataDam {
      * the data is requested from the database and saved in the cache for fast future requests.
      *
      * @param uniqueId the unique id of the Player
-     * @return a completable operation
+     * @return a {@link TaskChain<PlayerData>} to be used in further task execution
      */
-    public CompletableFuture<PlayerData> load(UUID uniqueId) {
-        return playerDataCache.get(uniqueId);
+    public TaskChain<PlayerData> load(UUID uniqueId) {
+        return RotMC
+                .newChain()
+                .asyncFirst(() -> playerDataCache.get(uniqueId));
+    }
+
+    /**
+     * Exactly the same as {@link #load(UUID)} but aborts further tasks if the data is not found.
+     *
+     * @param uniqueId the unique id of the Player
+     * @return a {@link TaskChain<PlayerData>} to be used in further task execution
+     */
+    public TaskChain<PlayerData> loadSafe(UUID uniqueId) {
+        return load(uniqueId).abortIfNull();
+    }
+
+    /**
+     * Loads the PlayerData for the given Player as in {@link #load(UUID)}, applies a mutator, and then returns the
+     * data to the cache for future lookups.
+     *
+     * @param uniqueId the unique id of the Player
+     * @param mutator  the modifications to apply to the PlayerData
+     */
+    public void modify(UUID uniqueId, Function<PlayerData, PlayerData> mutator) {
+        loadSafe(uniqueId)
+                .async(mutator::apply)
+                .asyncLast(mutated -> playerDataCache.put(uniqueId, mutated))
+                .execute();
     }
 
     /**
@@ -79,6 +109,6 @@ public class PlayerDataDam {
      * @param uniqueId the unique id of the Player
      */
     public void invalidate(UUID uniqueId) {
-        playerDataCache.synchronous().invalidate(uniqueId);
+        playerDataCache.invalidate(uniqueId);
     }
 }

@@ -30,14 +30,13 @@ public class EssenceAnimation extends BukkitRunnable {
 
     @Override
     public void run() {
-        if(ticks < maxticks) {
+        if (ticks < maxticks) {
             ticks++;
         } else {
             ticks = 0;
         }
         ratio = (float) ticks / (float) maxticks;
     }
-
 
 
 }

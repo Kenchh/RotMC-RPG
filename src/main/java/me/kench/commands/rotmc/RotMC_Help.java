@@ -30,7 +30,7 @@ public class RotMC_Help extends SubCommand {
                 ChatColor.GOLD + "/rotmc giveitem <extractor|mythicdust>"
         );
 
-        for(String s : help) {
+        for (String s : help) {
             sender.sendMessage(s);
         }
 

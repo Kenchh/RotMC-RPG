@@ -1,6 +1,5 @@
 package me.kench.items;
 
-import me.kench.RotMC;
 import me.kench.items.stats.Essence;
 import me.kench.items.stats.Gem;
 import me.kench.items.stats.Rune;
@@ -12,10 +11,10 @@ import java.util.Random;
 
 public class Socketing {
 
-    public Socketing (Player p, GameItem gameItem, GemItem gem) {
+    public Socketing(Player p, GameItem gameItem, GemItem gem) {
         int percentage = new Random().nextInt(100) + 1;
 
-        if(percentage <= gem.getSuccessChance()) {
+        if (percentage <= gem.getSuccessChance()) {
             /** success */
             p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1F, 1F);
             gameItem.getStats().gemsockets--;
@@ -34,7 +33,7 @@ public class Socketing {
     public Socketing(Player p, GameItem gameItem, RuneItem rune) {
         int percentage = new Random().nextInt(100) + 1;
 
-        if(percentage <= rune.getSuccessChance()) {
+        if (percentage <= rune.getSuccessChance()) {
             /** success */
             p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1F, 1F);
             gameItem.getStats().hasRuneSocket = false;

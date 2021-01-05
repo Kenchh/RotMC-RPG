@@ -13,7 +13,6 @@ import me.kench.utils.RankUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -145,7 +144,7 @@ public class SQLManager {
             ps.setString(1, uuid.toString());
             rs = ps.executeQuery();
 
-            if(rs.next()) return true;
+            if (rs.next()) return true;
             return false;
 
         } catch (SQLException e) {
@@ -177,7 +176,7 @@ public class SQLManager {
             ps.setString(1, playeruuid.toString());
             rs = ps.executeQuery();
 
-            while(rs.next()) s = rs.getInt("maxslots");
+            while (rs.next()) s = rs.getInt("maxslots");
 
         } catch (NullPointerException e) {
             return s;
@@ -209,13 +208,13 @@ public class SQLManager {
             ps.setString(1, p.getUniqueId().toString());
             rs = ps.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
 
-                if(rs.getString("data") == null) return playerclasses;
+                if (rs.getString("data") == null) return playerclasses;
 
                 JSONArray array = new JSONArray(rs.getString("data"));
 
-                for(int i = 0; i < array.length(); i++) {
+                for (int i = 0; i < array.length(); i++) {
 
                     JSONObject input = array.getJSONObject(i);
 
@@ -238,7 +237,7 @@ public class SQLManager {
 
                     if (classuuid != null && GameClass != null && xp != -1 && level != -1) {
                         PlayerClass pc = new PlayerClass(classuuid, Bukkit.getPlayer(p.getUniqueId()), GameClass, xp, level, stats);
-                        if(selected) pc.selected = true;
+                        if (selected) pc.selected = true;
                         playerclasses.add(pc);
                     }
 
@@ -274,7 +273,7 @@ public class SQLManager {
             ps.setString(1, playeruuid.toString());
             rs = ps.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
 
                 UUID classuuid = null;
                 GameClass GameClass = null;
@@ -282,15 +281,15 @@ public class SQLManager {
                 int level = -1;
                 Stats stats = new Stats();
 
-                if(rs.getString("data") == null) return null;
+                if (rs.getString("data") == null) return null;
 
                 JSONArray array = new JSONArray(rs.getString("data"));
 
-                for(int i = 0; i < array.length(); i++) {
+                for (int i = 0; i < array.length(); i++) {
 
                     JSONObject input = array.getJSONObject(i);
 
-                    if(!input.getBoolean("selected")) continue;
+                    if (!input.getBoolean("selected")) continue;
 
                     classuuid = UUID.fromString(input.getString("uuid"));
                     GameClass = new GameClass(input.getString("GameClass"));
@@ -379,16 +378,16 @@ public class SQLManager {
             ps.setString(1, playeruuid.toString());
             rs = ps.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
 
-                if(rs.getString("data") == null) return null;
+                if (rs.getString("data") == null) return null;
 
                 JSONArray array = new JSONArray(rs.getString("data"));
 
-                for(int i = 0; i < array.length(); i++) {
+                for (int i = 0; i < array.length(); i++) {
                     JSONObject input = array.getJSONObject(i);
 
-                    if(!classuuid.toString().equalsIgnoreCase(input.getString("uuid"))) continue;
+                    if (!classuuid.toString().equalsIgnoreCase(input.getString("uuid"))) continue;
 
                     return input.getString("inv");
                 }
@@ -422,14 +421,14 @@ public class SQLManager {
 
             rs = ps.executeQuery();
 
-            while(rs.next()) {
+            while (rs.next()) {
 
                 String uuid = rs.getString("uuid");
                 JSONArray array = new JSONArray(rs.getString("data"));
 
                 String name = Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
 
-                for(int i = 0; i < array.length(); i++) {
+                for (int i = 0; i < array.length(); i++) {
                     JSONObject input = array.getJSONObject(i);
 
                     String gameclass = input.getString("GameClass");
@@ -441,27 +440,27 @@ public class SQLManager {
             }
 
             /** Sorting **/
-            for(int i=0;i<all.size()-1;i++) {
-                for(int ii=0;ii<all.size()-1;ii++) {
+            for (int i = 0; i < all.size() - 1; i++) {
+                for (int ii = 0; ii < all.size() - 1; ii++) {
                     List<String> data = all.get(ii);
                     int exp = Integer.parseInt(data.get(2));
 
-                    List<String> nextData = all.get(ii+1);
+                    List<String> nextData = all.get(ii + 1);
                     int nextExp = Integer.parseInt(nextData.get(2));
 
-                    if(exp < nextExp) {
+                    if (exp < nextExp) {
                         all.set(ii, nextData);
-                        all.set(ii+1, data);
+                        all.set(ii + 1, data);
                     }
                 }
             }
 
-            for(int i=0;i<10;i++) {
+            for (int i = 0; i < 10; i++) {
 
-                if(i+1 > all.size()) break;
+                if (i + 1 > all.size()) break;
 
                 List<String> data = all.get(i);
-                top10Classes.put(i+1, data);
+                top10Classes.put(i + 1, data);
             }
 
             return top10Classes;
@@ -509,12 +508,11 @@ public class SQLManager {
 
                 JSONArray array = new JSONArray(rs.getString("data"));
 
-                for(int i = 0; i < array.length(); i++) {
+                for (int i = 0; i < array.length(); i++) {
                     JSONObject input = array.getJSONObject(i);
 
                     xp += input.getInt("xp");
                 }
-
 
 
                 int size = all.size();
@@ -537,27 +535,27 @@ public class SQLManager {
         }
 
         /** Sorting **/
-        for(int i=0;i<all.size()-1;i++) {
-            for(int ii=0;ii<all.size()-1;ii++) {
+        for (int i = 0; i < all.size() - 1; i++) {
+            for (int ii = 0; ii < all.size() - 1; ii++) {
                 List<String> data = all.get(ii);
                 int exp = Integer.parseInt(data.get(1));
 
-                List<String> nextData = all.get(ii+1);
+                List<String> nextData = all.get(ii + 1);
                 int nextExp = Integer.parseInt(nextData.get(1));
 
-                if(exp < nextExp) {
+                if (exp < nextExp) {
                     all.set(ii, nextData);
-                    all.set(ii+1, data);
+                    all.set(ii + 1, data);
                 }
             }
         }
 
-        for(int i=0;i<10;i++) {
+        for (int i = 0; i < 10; i++) {
 
-            if(i+1 > all.size()) break;
+            if (i + 1 > all.size()) break;
 
             List<String> data = all.get(i);
-            top10Classes.put(i+1, data);
+            top10Classes.put(i + 1, data);
 
         }
 
@@ -573,7 +571,7 @@ public class SQLManager {
         ArrayList<PlayerClass> updated = new ArrayList<>();
 
         for (PlayerClass pc : pd.classes) {
-            if(pc.getUuid().toString().equals(pd.getMainClass().getUuid().toString())) {
+            if (pc.getUuid().toString().equals(pd.getMainClass().getUuid().toString())) {
                 updated.add(pd.getMainClass());
             } else {
                 updated.add(pc);
@@ -584,7 +582,7 @@ public class SQLManager {
 
         for (PlayerClass pc : pd.classes) {
 
-            if(old != null) {
+            if (old != null) {
                 if (pc.getUuid().toString().equalsIgnoreCase(old.getUuid().toString())) {
                     toUpdate.put(
                             new JSONObject().

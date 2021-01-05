@@ -1,14 +1,9 @@
 package me.kench.items.stats.essenceanimations;
 
 import me.kench.RotMC;
-import me.kench.game.PlayerDataManager;
 import me.kench.player.PlayerData;
-import me.kench.utils.BlockUtils;
-import me.kench.utils.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -42,12 +37,12 @@ public class Ganda extends EssenceAnimation {
     public synchronized void cancel() throws IllegalStateException {
 
         ArrayList<Block> toremove = new ArrayList<>();
-        for(Block b : pd.goldblocks) {
+        for (Block b : pd.goldblocks) {
             b.getWorld().getBlockAt(b.getLocation()).setType(Material.AIR);
             toremove.add(b);
         }
 
-        for(Block tr : toremove) {
+        for (Block tr : toremove) {
             pd.goldblocks.remove(tr);
         }
         super.cancel();
@@ -67,9 +62,9 @@ public class Ganda extends EssenceAnimation {
         blocks.add(bu.getRelative(BlockFace.SOUTH));
         blocks.add(bu.getRelative(BlockFace.WEST));
 
-        if(!(lastX == p.getLocation().getBlockX() && lastY == p.getLocation().getBlockY() && lastZ == p.getLocation().getBlockZ())) {
+        if (!(lastX == p.getLocation().getBlockX() && lastY == p.getLocation().getBlockY() && lastZ == p.getLocation().getBlockZ())) {
 
-            for(Block b : blocks) {
+            for (Block b : blocks) {
                 if (b.getType() == Material.CAVE_AIR || b.getType() == Material.AIR || b.getType() == Material.CAVE_AIR) {
                     b.setType(Material.GOLD_BLOCK);
 
@@ -84,6 +79,7 @@ public class Ganda extends EssenceAnimation {
                 int lx = (int) lastX;
                 int ly = (int) lastY;
                 int lz = (int) lastZ;
+
                 @Override
                 public void run() {
 
@@ -96,9 +92,9 @@ public class Ganda extends EssenceAnimation {
                     lastblocks.add(lastBU.getRelative(BlockFace.SOUTH));
                     lastblocks.add(lastBU.getRelative(BlockFace.WEST));
 
-                    for(Block lastB : lastblocks) {
+                    for (Block lastB : lastblocks) {
 
-                        if(sameLoc(lastB.getLocation(), bu.getLocation())) continue;
+                        if (sameLoc(lastB.getLocation(), bu.getLocation())) continue;
 
                         if (pd.goldblocks.contains(lastB)) {
                             pd.goldblocks.remove(lastB);
@@ -120,7 +116,7 @@ public class Ganda extends EssenceAnimation {
     }
 
     private boolean sameLoc(Location loc1, Location loc2) {
-        if(loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ()) return true;
+        if (loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ()) return true;
 
         return false;
     }

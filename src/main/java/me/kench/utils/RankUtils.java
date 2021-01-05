@@ -22,30 +22,30 @@ public class RankUtils {
 
         }
 
-        String key = "rank"+classname.substring(0, 1).toUpperCase()+classname.substring(1).toLowerCase();
+        String key = "rank" + classname.substring(0, 1).toUpperCase() + classname.substring(1).toLowerCase();
         rank = Math.max(rank, RotMC.getInstance().getSqlManager().getValueOrDefaultFromDatabase(p, key, Integer.class, 0));
 
         return rank;
     }
 
     public static int getRankFromFame(PlayerClass pc) {
-        if(pc.getXp() >= 100000) {
+        if (pc.getXp() >= 100000) {
             return 5;
         }
 
-        if(pc.getXp() >= 50000) {
+        if (pc.getXp() >= 50000) {
             return 4;
         }
 
-        if(pc.getXp() >= 15000) {
+        if (pc.getXp() >= 15000) {
             return 3;
         }
 
-        if(pc.getXp() >= 5000) {
+        if (pc.getXp() >= 5000) {
             return 2;
         }
 
-        if(pc.getXp() >= 1000) {
+        if (pc.getXp() >= 1000) {
             return 1;
         }
 
@@ -64,7 +64,7 @@ public class RankUtils {
     }
 
     public static ChatColor getStarColor(PlayerData pd) {
-        switch ((int) Math.floor(getOverallRank(pd.getPlayer())/5D)) {
+        switch ((int) Math.floor(getOverallRank(pd.getPlayer()) / 5D)) {
             case 1:
                 return ChatColor.WHITE;
             case 2:

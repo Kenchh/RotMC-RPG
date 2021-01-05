@@ -13,7 +13,7 @@ public class RotMCCMD implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(args.length > 0) {
+        if (args.length > 0) {
             return RotMC.getInstance().getSubCommandManager().getSubCommandAndExecute(sender, cmd, label, args);
         } else {
 
@@ -30,7 +30,7 @@ public class RotMCCMD implements CommandExecutor {
                     ChatColor.GOLD + "/rotmc giveitem <extractor|mythicdust>"
             );
 
-            for(String s : help) {
+            for (String s : help) {
                 sender.sendMessage(s);
             }
 

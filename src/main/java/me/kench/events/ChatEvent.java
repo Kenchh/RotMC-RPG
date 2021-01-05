@@ -13,7 +13,7 @@ public class ChatEvent implements Listener {
     public void onChat(AsyncPlayerChatEvent e) {
         PlayerData pd = RotMC.getPlayerData(e.getPlayer());
 
-        if(pd != null && pd.getMainClass() != null) {
+        if (pd != null && pd.getMainClass() != null) {
             PlayerClass pc = pd.getMainClass();
             e.setFormat(e.getFormat().replace("{sap_default_currentlevel}", pc.getLevel() + "").replace("{sap_default_currentprefix}", pc.getData().getName()));
         }

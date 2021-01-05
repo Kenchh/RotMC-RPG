@@ -1,10 +1,7 @@
 package me.kench.commands.rotmc;
 
-import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
 import me.kench.items.GameItem;
-import me.kench.player.PlayerClass;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,37 +18,38 @@ public class RotMC_Item extends SubCommand {
 
         Player p = (Player) sender;
 
-        if(p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR) return true;
+        if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR)
+            return true;
 
         GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());
 
-        if(args[1].equalsIgnoreCase("addsocket")) {
+        if (args[1].equalsIgnoreCase("addsocket")) {
 
-            if(args[2].equalsIgnoreCase("gem")) {
+            if (args[2].equalsIgnoreCase("gem")) {
                 gameItem.getStats().gemsockets++;
             }
 
-            if(args[2].equalsIgnoreCase("rune")) {
+            if (args[2].equalsIgnoreCase("rune")) {
                 gameItem.getStats().hasRuneSocket = true;
             }
 
-            if(args[2].equalsIgnoreCase("essence")) {
+            if (args[2].equalsIgnoreCase("essence")) {
                 gameItem.getStats().hasEssenceSocket = true;
             }
 
         }
 
-        if(args[1].equalsIgnoreCase("removesocket")) {
+        if (args[1].equalsIgnoreCase("removesocket")) {
 
-            if(args[2].equalsIgnoreCase("gem")) {
+            if (args[2].equalsIgnoreCase("gem")) {
                 gameItem.getStats().gemsockets--;
             }
 
-            if(args[2].equalsIgnoreCase("rune")) {
+            if (args[2].equalsIgnoreCase("rune")) {
                 gameItem.getStats().hasRuneSocket = false;
             }
 
-            if(args[2].equalsIgnoreCase("essence")) {
+            if (args[2].equalsIgnoreCase("essence")) {
                 gameItem.getStats().hasEssenceSocket = false;
             }
 

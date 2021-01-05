@@ -2,7 +2,6 @@ package me.kench.items.stats.essenceanimations;
 
 import me.kench.RotMC;
 import me.kench.utils.BlockUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -63,13 +62,13 @@ public class Hadori extends EssenceAnimation {
 
         ArrayList<Location> clocs = BlockUtils.circleLocations(loc, 3, 5);
 
-        for(Location l : clocs) {
+        for (Location l : clocs) {
             Block b = l.getBlock();
 
-            if(!b.getType().isSolid() && !b.isLiquid() && !flowers.contains(b.getType())) {
-                if(suitable.contains(b.getRelative(BlockFace.DOWN).getType())) {
+            if (!b.getType().isSolid() && !b.isLiquid() && !flowers.contains(b.getType())) {
+                if (suitable.contains(b.getRelative(BlockFace.DOWN).getType())) {
 
-                    if(new Random().nextInt(100) >= 20) {
+                    if (new Random().nextInt(100) >= 20) {
                         b.setType(Material.GRASS);
                     } else {
                         Material m = flowers.get(new Random().nextInt(flowers.size()));
@@ -82,14 +81,14 @@ public class Hadori extends EssenceAnimation {
             }
         }
 
-        if(sameLoc(loc)) return;
+        if (sameLoc(loc)) return;
 
         lastloc = loc.clone();
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(!sameLoc(loc)) {
+                if (!sameLoc(loc)) {
                     for (Location l : clocs) {
                         if (suitable.contains(l.getBlock().getType())) {
                             l.getBlock().setType(Material.AIR);

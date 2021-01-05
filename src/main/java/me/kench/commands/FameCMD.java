@@ -1,11 +1,7 @@
 package me.kench.commands;
 
 import me.kench.RotMC;
-import me.kench.game.LevelProgression;
-import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import me.kench.utils.TextUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,14 +17,14 @@ public class FameCMD implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        if(!(sender instanceof Player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage("Only for players!");
             return true;
         }
 
         Player p = (Player) sender;
 
-        if(args.length == 1 || cmd.getName().equalsIgnoreCase("ftop")) {
+        if (args.length == 1 || cmd.getName().equalsIgnoreCase("ftop")) {
             new BukkitRunnable() {
                 @Override
                 public void run() {

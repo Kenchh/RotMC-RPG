@@ -18,7 +18,7 @@ public class WorldGuardUtils {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(lp.getLocation());
-        if (set.testState((RegionAssociable)lp, new StateFlag[] { Flags.PVP })) return true;
+        if (set.testState((RegionAssociable) lp, new StateFlag[]{Flags.PVP})) return true;
         return false;
     }
 

@@ -25,19 +25,19 @@ public class EssenceItem {
     }
 
     public void update() {
-        if(item == null) return;
+        if (item == null) return;
 
         ItemMeta meta = item.getItemMeta();
 
-        if(essence != null)
+        if (essence != null)
             meta.setCustomModelData(essence.getType().getModeldata());
 
         List<String> lore = new ArrayList<>();
-        if(meta.hasLore()) lore = meta.getLore();
+        if (meta.hasLore()) lore = meta.getLore();
 
-        for(int i=0;i<lore.size();i++) {
+        for (int i = 0; i < lore.size(); i++) {
             String s = lore.get(i);
-            if(s.contains("ZZZ")) {
+            if (s.contains("ZZZ")) {
                 String essencetype = essence.getType().toString();
                 lore.set(i, s.replace("ZZZ", essencetype.substring(0, 1).toUpperCase() + essencetype.substring(1).toLowerCase()));
             }
@@ -46,7 +46,7 @@ public class EssenceItem {
         meta.setLore(lore);
         item.setItemMeta(meta);
     }
-    
+
     public Essence getEssence() {
         return essence;
     }

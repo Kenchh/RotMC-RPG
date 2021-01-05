@@ -20,8 +20,8 @@ public class RotMC_SetXP extends SubCommand {
 
         Player tp = Bukkit.getPlayer(args[1]);
 
-        if(tp == null || !tp.isOnline()) {
-            if(sender instanceof Player)
+        if (tp == null || !tp.isOnline()) {
+            if (sender instanceof Player)
                 sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
             return true;
         }
@@ -30,8 +30,8 @@ public class RotMC_SetXP extends SubCommand {
 
         PlayerData pd = RotMC.getPlayerData(tp);
 
-        if(pd.getMainClass() == null) {
-            if(sender instanceof Player)
+        if (pd.getMainClass() == null) {
+            if (sender instanceof Player)
                 sender.sendMessage(ChatColor.RED + "Error: This player does not have a class selected.");
             return true;
         }

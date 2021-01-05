@@ -8,7 +8,6 @@ import me.kench.items.stats.Gem;
 import me.kench.player.PlayerClass;
 import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -27,17 +26,17 @@ public class InvEvents implements Listener {
 
         Player p = (Player) e.getWhoClicked();
 
-        if(e.getClick() == ClickType.SHIFT_RIGHT || e.getClick() == ClickType.SHIFT_LEFT) {
-            if(e.getCurrentItem() != null)
+        if (e.getClick() == ClickType.SHIFT_RIGHT || e.getClick() == ClickType.SHIFT_LEFT) {
+            if (e.getCurrentItem() != null)
                 checkIfArmorPutOn(e, p, e.getCurrentItem(), true);
         } else {
-            if(e.getCursor() != null)
+            if (e.getCursor() != null)
                 checkIfArmorPutOn(e, p, e.getCursor(), false);
         }
 
-        if(!(e.getCursor().hasItemMeta())) return;
-        if(!(e.getCursor().getItemMeta().hasDisplayName())) return;
-        if(e.getCurrentItem() == null) return;
+        if (!(e.getCursor().hasItemMeta())) return;
+        if (!(e.getCursor().getItemMeta().hasDisplayName())) return;
+        if (e.getCurrentItem() == null) return;
 
         boolean isGem = ItemUtils.isGem(e.getCursor().getItemMeta().getDisplayName());
         boolean isRune = ItemUtils.isRune(e.getCursor().getItemMeta().getDisplayName());
@@ -45,20 +44,20 @@ public class InvEvents implements Listener {
         boolean isMythicDust = e.getCursor().getItemMeta().getDisplayName().contains("Mythic Dust");
         boolean isExtractor = e.getCursor().getItemMeta().getDisplayName().contains("Extractor");
 
-        if(!isGem && !isRune && !isEssence && !isMythicDust && !isExtractor) return;
+        if (!isGem && !isRune && !isEssence && !isMythicDust && !isExtractor) return;
 
-        if(e.getClick() != ClickType.LEFT) return;
+        if (e.getClick() != ClickType.LEFT) return;
 
         ItemStack item = e.getCurrentItem();
 
-        if(!(item.hasItemMeta())) return;
+        if (!(item.hasItemMeta())) return;
 
-        if(isExtractor) {
+        if (isExtractor) {
             extract(e, p, item);
             return;
         }
 
-        if(isMythicDust) {
+        if (isMythicDust) {
             mythicDust(e, p, item);
             return;
         }
@@ -69,16 +68,17 @@ public class InvEvents implements Listener {
 
     private void extract(InventoryClickEvent e, Player p, ItemStack item) {
 
-        if(!e.getView().getTitle().equalsIgnoreCase("Crafting") || e.getInventory().getHolder() != p) {
+        if (!e.getView().getTitle().equalsIgnoreCase("Crafting") || e.getInventory().getHolder() != p) {
             p.sendMessage(ChatColor.RED + "You can only extract from your inventory!");
             return;
         }
 
-        if(isGameItem(item)) {
+        if (isGameItem(item)) {
 
             GameItem gameItem = new GameItem(item);
 
-            if(gameItem.getStats().gems.isEmpty() && gameItem.getStats().getRune() == null && gameItem.getStats().getEssence() == null) return;
+            if (gameItem.getStats().gems.isEmpty() && gameItem.getStats().getRune() == null && gameItem.getStats().getEssence() == null)
+                return;
 
             e.setCancelled(true);
 
@@ -100,26 +100,26 @@ public class InvEvents implements Listener {
         boolean isGem = ItemUtils.isGem(item.getItemMeta().getDisplayName());
         boolean isRune = ItemUtils.isRune(item.getItemMeta().getDisplayName());
 
-        if(!isGem && !isRune) return;
+        if (!isGem && !isRune) return;
 
-        if(isGem) {
+        if (isGem) {
 
             e.setCancelled(true);
 
             GemItem gemItem = new GemItem(item);
 
-            if(gemItem.successChance == 100) {
+            if (gemItem.successChance == 100) {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                 return;
             }
 
-            if(gemItem.successChance + mythicDust.getLevel() * 2 >= 100) {
+            if (gemItem.successChance + mythicDust.getLevel() * 2 >= 100) {
                 gemItem.successChance = 100;
             } else {
                 gemItem.successChance += mythicDust.getLevel() * 2;
             }
 
-            if(mythicDust.getLevel() == 6) {
+            if (mythicDust.getLevel() == 6) {
                 gemItem.successChance = 100;
             }
 
@@ -137,24 +137,24 @@ public class InvEvents implements Listener {
             p.closeInventory();
         }
 
-        if(isRune) {
+        if (isRune) {
 
             e.setCancelled(true);
 
             RuneItem runeItem = new RuneItem(item);
 
-            if(runeItem.successChance == 100) {
+            if (runeItem.successChance == 100) {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                 return;
             }
 
-            if(runeItem.successChance + mythicDust.getLevel() * 2 >= 100) {
+            if (runeItem.successChance + mythicDust.getLevel() * 2 >= 100) {
                 runeItem.successChance = 100;
             } else {
                 runeItem.successChance += mythicDust.getLevel() * 2;
             }
 
-            if(mythicDust.getLevel() == 6) {
+            if (mythicDust.getLevel() == 6) {
                 runeItem.successChance = 100;
             }
 
@@ -178,25 +178,26 @@ public class InvEvents implements Listener {
 
     private void checkForSocketing(InventoryClickEvent e, Player p, ItemStack item, boolean isGem, boolean isRune, boolean isEssence) {
 
-        if(isGameItem(item)) {
+        if (isGameItem(item)) {
 
             GameItem gameItem = new GameItem(item);
 
-            if(gameItem.getStats().gemsockets == 0 && gameItem.getStats().hasRuneSocket == false && gameItem.getStats().hasEssenceSocket == false) return;
+            if (gameItem.getStats().gemsockets == 0 && gameItem.getStats().hasRuneSocket == false && gameItem.getStats().hasEssenceSocket == false)
+                return;
 
-            if(isGem) {
+            if (isGem) {
 
-                if(gameItem.getStats().gemsockets <= 0) {
+                if (gameItem.getStats().gemsockets <= 0) {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                     return;
                 } else {
                     e.setCancelled(true);
                 }
 
-                if(!e.getCursor().getItemMeta().hasLore()) return;
+                if (!e.getCursor().getItemMeta().hasLore()) return;
 
-                for(String s : e.getCursor().getItemMeta().getLore()) {
-                    if(s.contains("XXX") || s.contains("YYY") || s.contains("ZZZ")) {
+                for (String s : e.getCursor().getItemMeta().getLore()) {
+                    if (s.contains("XXX") || s.contains("YYY") || s.contains("ZZZ")) {
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                         p.sendMessage(ChatColor.RED + "You need to right click the gem in your main hand to reveal it's success chance before socketing!");
                         return;
@@ -216,19 +217,19 @@ public class InvEvents implements Listener {
                 new Socketing(p, gameItem, gemItem);
             }
 
-            if(isRune) {
+            if (isRune) {
 
-                if(!gameItem.getStats().hasRuneSocket) {
+                if (!gameItem.getStats().hasRuneSocket) {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                     return;
                 } else {
                     e.setCancelled(true);
                 }
 
-                if(!e.getCursor().getItemMeta().hasLore()) return;
+                if (!e.getCursor().getItemMeta().hasLore()) return;
 
-                for(String s : e.getCursor().getItemMeta().getLore()) {
-                    if(s.contains("XXX") || s.contains("YYY") || s.contains("ZZZ")) {
+                for (String s : e.getCursor().getItemMeta().getLore()) {
+                    if (s.contains("XXX") || s.contains("YYY") || s.contains("ZZZ")) {
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                         p.sendMessage(ChatColor.RED + "You need to right click the rune in your main hand to reveal it's success chance before socketing!");
                         return;
@@ -239,9 +240,9 @@ public class InvEvents implements Listener {
                 new Socketing(p, gameItem, runeItem);
             }
 
-            if(isEssence) {
+            if (isEssence) {
 
-                if(!gameItem.getStats().hasEssenceSocket) {
+                if (!gameItem.getStats().hasEssenceSocket) {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                     return;
                 } else {
@@ -264,10 +265,10 @@ public class InvEvents implements Listener {
 
     private void checkIfArmorPutOn(InventoryClickEvent e, Player p, ItemStack item, boolean shift) {
 
-        if(!e.getView().getTitle().contains("Crafting")) return;
+        if (!e.getView().getTitle().contains("Crafting")) return;
 
-        if(isWearable(item)) {
-            if(!shift) {
+        if (isWearable(item)) {
+            if (!shift) {
                 if (e.getSlotType() == InventoryType.SlotType.ARMOR) {
                     GameItem gameItem = new GameItem(item);
 
@@ -291,7 +292,7 @@ public class InvEvents implements Listener {
                     boolean foundClass = false;
                     String currentclass = pc.getData().getName();
                     if (gameItem.getGameClasses().isEmpty() == false) {
-                        for(GameClass gameClass : gameItem.getGameClasses()) {
+                        for (GameClass gameClass : gameItem.getGameClasses()) {
                             String className = gameClass.getName();
 
                             if (className.equalsIgnoreCase(currentclass)) {
@@ -301,7 +302,7 @@ public class InvEvents implements Listener {
                         }
                     }
 
-                    if(!foundClass) {
+                    if (!foundClass) {
                         p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                         e.setCancelled(true);
@@ -332,7 +333,7 @@ public class InvEvents implements Listener {
                     boolean foundClass = false;
                     String currentclass = pc.getData().getName();
                     if (gameItem.getGameClasses().isEmpty() == false) {
-                        for(GameClass gameClass : gameItem.getGameClasses()) {
+                        for (GameClass gameClass : gameItem.getGameClasses()) {
                             String className = gameClass.getName();
 
                             if (className.equalsIgnoreCase(currentclass)) {
@@ -342,7 +343,7 @@ public class InvEvents implements Listener {
                         }
                     }
 
-                    if(!foundClass) {
+                    if (!foundClass) {
                         p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
                         e.setCancelled(true);

@@ -2,12 +2,13 @@ package me.kench.player;
 
 import me.kench.RotMC;
 import me.kench.game.GameClass;
-import me.kench.items.stats.*;
+import me.kench.items.stats.EssenceType;
+import me.kench.items.stats.GemType;
+import me.kench.items.stats.RuneType;
 import me.kench.items.stats.essenceanimations.EssenceAnimation;
 import me.kench.utils.ItemUtils;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -56,8 +57,8 @@ public class PlayerClass {
     }
 
     public void addStat(String s) {
-        String fc = s.substring(0,1).toUpperCase();
-        s = fc+s.substring(1);
+        String fc = s.substring(0, 1).toUpperCase();
+        s = fc + s.substring(1);
         switch (s) {
             case "Health":
                 if (stats.health < stats.getCap(getData().getName(), s)) {
@@ -119,7 +120,7 @@ public class PlayerClass {
     }
 
     public void giveXP(int xp, boolean withoutmultiplier) {
-        if(!withoutmultiplier) {
+        if (!withoutmultiplier) {
             this.xp += xp * getMultiplier();
         } else {
             this.xp += xp;
@@ -131,7 +132,7 @@ public class PlayerClass {
         levelDown(newlevel);
 
         this.level = newlevel;
-        RotMC.getInstance().getLevelProgression().displayLevelProgression(player);
+        RotMC.getInstance().getLevelProgression().displayLevelProgression(player, this);
         RotMC.getInstance().getSqlManager().update(player, null);
     }
 
@@ -147,7 +148,7 @@ public class PlayerClass {
         levelDown(newlevel);
 
         this.level = newlevel;
-        RotMC.getInstance().getLevelProgression().displayLevelProgression(player);
+        RotMC.getInstance().getLevelProgression().displayLevelProgression(player, this);
         RotMC.getInstance().getSqlManager().update(player, null);
     }
 
@@ -162,7 +163,7 @@ public class PlayerClass {
         levelDown(level);
 
         this.level = level;
-        RotMC.getInstance().getLevelProgression().displayLevelProgression(player);
+        RotMC.getInstance().getLevelProgression().displayLevelProgression(player, this);
         RotMC.getInstance().getSqlManager().update(player, null);
     }
 
@@ -175,12 +176,12 @@ public class PlayerClass {
     }
 
     private void levelDown(int newlevel) {
-        if(newlevel < this.level) {
+        if (newlevel < this.level) {
             applyStats();
 
             User user = RotMC.getInstance().getApi().getUserManager().loadUser(player.getUniqueId()).join();
 
-            for(int i=level; i>=newlevel+1; i--) {
+            for (int i = level; i >= newlevel + 1; i--) {
                 user.data().remove(Node.builder("rotmc.level.{1-" + i + "}").build());
             }
 
@@ -193,35 +194,35 @@ public class PlayerClass {
     }
 
     private void levelUp(int newlevel) {
-        if(RotMC.getInstance().getLevelProgression().hasLeveledUp(player, newlevel)) {
+        if (RotMC.getInstance().getLevelProgression().hasLeveledUp(player, newlevel)) {
 
             User user = RotMC.getInstance().getApi().getUserManager().loadUser(player.getUniqueId()).join();
 
-            for(int i=level+1; i<=newlevel; i++) {
+            for (int i = level + 1; i <= newlevel; i++) {
 
-                double hmult = stats.getCap(getData().getName(), "Health", newlevel)/35 / 3.5;
-                double amult = stats.getCap(getData().getName(), "Attack", newlevel)/35 / 3.5;
-                double dmult = stats.getCap(getData().getName(), "Defense", newlevel)/35 / 3.5;
-                double smult = stats.getCap(getData().getName(), "Speed", newlevel)/35 / 3.5;
-                double emult = stats.getCap(getData().getName(), "Dodge", newlevel)/35 / 3.5;
+                double hmult = stats.getCap(getData().getName(), "Health", newlevel) / 35 / 3.5;
+                double amult = stats.getCap(getData().getName(), "Attack", newlevel) / 35 / 3.5;
+                double dmult = stats.getCap(getData().getName(), "Defense", newlevel) / 35 / 3.5;
+                double smult = stats.getCap(getData().getName(), "Speed", newlevel) / 35 / 3.5;
+                double emult = stats.getCap(getData().getName(), "Dodge", newlevel) / 35 / 3.5;
 
-                if((((double) new Random().nextInt(100) + 1)) / 100D <= hmult) {
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= hmult) {
                     addStat("Health");
                 }
 
-                if((((double) new Random().nextInt(100) + 1)) / 100D <= amult) {
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= amult) {
                     addStat("Attack");
                 }
 
-                if((((double) new Random().nextInt(100) + 1)) / 100D <= dmult) {
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= dmult) {
                     addStat("Defense");
                 }
 
-                if((((double) new Random().nextInt(100) + 1)) / 100D <= smult) {
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= smult) {
                     addStat("Speed");
                 }
 
-                if((((double) new Random().nextInt(100) + 1)) / 100D <= emult) {
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= emult) {
                     addStat("Dodge");
                 }
 
@@ -242,8 +243,8 @@ public class PlayerClass {
 
     private double getMultiplier() {
 
-        for(double m=1.5;m>1.0;m-=0.1) {
-            if(player.hasPermission("rotmc.fame.multiplier." + m)) {
+        for (double m = 1.5; m > 1.0; m -= 0.1) {
+            if (player.hasPermission("rotmc.fame.multiplier." + m)) {
                 return m;
             }
         }
@@ -279,26 +280,26 @@ public class PlayerClass {
         // ItemUtils.checkAllowedArmor(player);
 
         ArrayList<PotionEffectType> effects = ItemUtils.getOverallRuneEffects(player);
-        for(PotionEffect pe : player.getActivePotionEffects()) {
+        for (PotionEffect pe : player.getActivePotionEffects()) {
             boolean runeeffect = false;
-            for(RuneType rt : RuneType.values()) {
-                if(rt.getPotionEffectType().getName().equalsIgnoreCase(pe.getType().getName())) {
+            for (RuneType rt : RuneType.values()) {
+                if (rt.getPotionEffectType().getName().equalsIgnoreCase(pe.getType().getName())) {
                     runeeffect = true;
                     break;
                 }
             }
-            if(runeeffect) {
+            if (runeeffect) {
                 if (!effects.contains(pe.getType())) player.removePotionEffect(pe.getType());
             }
         }
 
-        for(PotionEffectType effect : effects) {
+        for (PotionEffectType effect : effects) {
             player.addPotionEffect(new PotionEffect(effect, 10000000, 0));
         }
 
         float speedPlayerStat = stats.getSpeed(stats.speed, false, false);
         float speedGemStat = stats.getSpeed(ItemUtils.getOverallGemStatsFromEquipment(player).speed, false, true);
-        float speedItemStat = ItemUtils.getOverallItemStatsFromEquipment(player).speed/100F;
+        float speedItemStat = ItemUtils.getOverallItemStatsFromEquipment(player).speed / 100F;
 
         float speedAll = speedPlayerStat + speedItemStat + speedGemStat;
 
@@ -308,7 +309,7 @@ public class PlayerClass {
         }
          */
 
-        player.setWalkSpeed(0.2F + 0.2F*speedAll);
+        player.setWalkSpeed(0.2F + 0.2F * speedAll);
 
         float healthPlayerStat = stats.getHealth(stats.health, false, false);
         float healthGemStat = stats.getHealth(ItemUtils.getOverallGemStatsFromEquipment(player).health, false, true);
@@ -327,18 +328,18 @@ public class PlayerClass {
         List<String> heavy = Arrays.asList("WARRIOR", "KNIGHT");
 
 
-        if(leather.contains(gameClass.getName().toUpperCase()))
+        if (leather.contains(gameClass.getName().toUpperCase()))
             player.setMaxHealth(20 + healthAll);
 
-        if(robe.contains(gameClass.getName().toUpperCase()))
+        if (robe.contains(gameClass.getName().toUpperCase()))
             player.setMaxHealth(16 + healthAll);
 
-        if(heavy.contains(gameClass.getName().toUpperCase()))
+        if (heavy.contains(gameClass.getName().toUpperCase()))
             player.setMaxHealth(24 + healthAll);
 
         float attackPlayerStat = stats.getAttack(stats.attack, false, false);
         float attackGemStat = stats.getAttack(ItemUtils.getOverallGemStatsFromEquipment(player).attack, false, true);
-        float attackItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).attack)/100F;
+        float attackItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).attack) / 100F;
 
         attackAllStat = attackPlayerStat + attackGemStat + attackItemStat;
 
@@ -352,7 +353,7 @@ public class PlayerClass {
 
         float defensePlayerStat = stats.getDefense(stats.defense, false, false);
         float defenseGemStat = stats.getDefense(ItemUtils.getOverallGemStatsFromEquipment(player).defense, false, true);
-        float defenseItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).defense)/200F;
+        float defenseItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).defense) / 200F;
 
         defenseAllStat = defensePlayerStat + defenseGemStat + defenseItemStat;
 
