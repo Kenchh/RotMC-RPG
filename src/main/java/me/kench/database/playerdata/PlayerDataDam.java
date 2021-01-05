@@ -57,7 +57,7 @@ public class PlayerDataDam {
      * @param uniqueId the unique id of the Player
      */
     public void create(UUID uniqueId) {
-        if (dao.exists(uniqueId)) return;
+        if (exists(uniqueId)) return;
         dao.create(uniqueId);
     }
 
