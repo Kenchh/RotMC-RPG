@@ -2,6 +2,7 @@ package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
+import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -9,35 +10,38 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class RotMC_SetXP extends SubCommand {
-
     public RotMC_SetXP() {
         super("setxp", 1, "rotmc.admin", false);
     }
 
     @Override
     public boolean execute(CommandSender sender, Command basecmd, String subcmd, String label, String[] args) {
-
-        Player tp = Bukkit.getPlayer(args[1]);
-
-        if (tp == null || !tp.isOnline()) {
-            if (sender instanceof Player)
-                sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
+        Player target = Bukkit.getPlayer(args[1]);
+        if (target == null || !target.isOnline()) {
+            Messaging.sendMessage(sender, "<red>That player does not exist or is not online!");
             return true;
         }
 
-        int amount = Integer.parseInt(args[2]);
-
-        PlayerData pd = RotMC.getPlayerData(tp);
-
-        if (pd.getMainClass() == null) {
-            if (sender instanceof Player)
-                sender.sendMessage(ChatColor.RED + "Error: This player does not have a class selected.");
+        int amount = -1;
+        try {
+            amount = Integer.parseInt(args[2]);
+        } catch (NumberFormatException ignored) {
+            Messaging.sendMessage(sender, "<red>Please enter a number.");
             return true;
         }
 
-        sender.sendMessage(ChatColor.GREEN + tp.getName() + "'s xp has been set to " + ChatColor.GOLD + amount + ChatColor.GREEN + "!");
-        pd.getMainClass().setFame(amount);
+        if (amount < 1) {
+            Messaging.sendMessage(sender, "<red>Please use a positive number.");
+            return true;
+        }
+
+        final int finalAmount = amount;
+        RotMC.getInstance().getDataManager().getPlayerData()
+                .loadSafe(target.getUniqueId())
+                .asyncLast(data -> data.getSelectedClass().setFame(finalAmount))
+                .sync(() -> Messaging.sendMessage(sender, String.format("<green>%s's fame has been set to <gold>%d <green>!", target.getName(), finalAmount)))
+                .execute();
+
         return true;
     }
-
 }

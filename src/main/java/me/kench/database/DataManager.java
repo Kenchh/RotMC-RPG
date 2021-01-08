@@ -4,12 +4,13 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.kench.RotMC;
 import me.kench.config.MySQLConfig;
+import me.kench.database.playerdata.PlayerDataDam;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 public class DataManager implements AutoCloseable {
     private final HikariDataSource hikari;
-    private final DataAccessor accessor;
+    private final PlayerDataDam playerData;
 
     public DataManager(RotMC plugin) {
         MySQLConfig config = new MySQLConfig();
@@ -24,11 +25,11 @@ public class DataManager implements AutoCloseable {
         Jdbi jdbi = Jdbi.create(hikari);
         jdbi.installPlugin(new SqlObjectPlugin());
 
-        accessor = new DataAccessor(jdbi);
+        playerData = new PlayerDataDam(jdbi);
     }
 
-    public DataAccessor getAccessor() {
-        return accessor;
+    public PlayerDataDam getPlayerData() {
+        return playerData;
     }
 
     @Override

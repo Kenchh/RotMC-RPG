@@ -1,5 +1,7 @@
 package me.kench.player;
 
+import java.util.NoSuchElementException;
+
 public enum Stat {
     HEALTH,
     ATTACK,
@@ -31,5 +33,13 @@ public enum Stat {
         }
 
         return -1;
+    }
+
+    public static Stat getByName(String name) {
+        try {
+            return valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 }

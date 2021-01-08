@@ -9,7 +9,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public class ChatEvent implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+        RotMC.getInstance().getDataManager().getPlayerData()
                 .loadSafe(event.getPlayer().getUniqueId())
                 .asyncLast(data -> {
                     PlayerClass selectedClass = data.getSelectedClass();

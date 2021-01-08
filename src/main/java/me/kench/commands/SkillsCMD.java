@@ -7,19 +7,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class SkillsCMD implements CommandExecutor {
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
         if (!(sender instanceof Player)) {
             return true;
         }
 
-        Player p = (Player) sender;
-
-        p.openInventory(new SkillsGUI(p).getInv());
+        Player player = (Player) sender;
+        player.openInventory(new SkillsGUI(player).getInv());
 
         return true;
     }
-
 }

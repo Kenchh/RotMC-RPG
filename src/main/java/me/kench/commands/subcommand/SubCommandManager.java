@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 public class SubCommandManager {
-
     ArrayList<SubCommand> subCommands = new ArrayList<>();
 
     public SubCommandManager() {
@@ -61,5 +60,4 @@ public class SubCommandManager {
         }
         return null;
     }
-
 }

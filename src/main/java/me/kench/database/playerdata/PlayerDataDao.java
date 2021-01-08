@@ -5,6 +5,7 @@ import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.util.List;
 import java.util.UUID;
 
 /*
@@ -26,6 +27,9 @@ public interface PlayerDataDao {
     @SqlQuery("select * from `playerdata` where `uuid` = :uuid limit 1")
     @RegisterRowMapper(PlayerDataRowMapper.class)
     PlayerData load(@Bind("uuid") UUID uniqueId);
+
+    @SqlQuery("select * from `playerdata`")
+    List<PlayerData> loadAll();
 
     @SqlUpdate("update `playerdata` set `data` = :data, `maxslots` = :maxslots, `rankHuntress` = :rankHuntress, `rankKnight` = :rankKnight, `rankWarrior` = :rankWarrior, `rankNecromancer` = :rankNecromancer, `rankAssassin` = :rankAssassin, `rankRogue` = :rankRogue where `uuid` = :uuid")
     void save(@Bind("uuid") UUID uniqueId, @Bind("data") String data, @Bind("maxslots") int maxSlots, @Bind("rankHuntress") int rankHuntress, @Bind("rankKnight") int rankKnight, @Bind("rankWarrior") int rankWarrior, @Bind("rankNecromancer") int rankNecromancer, @Bind("rankAssassin") int rankAssassin, @Bind("rankRogue") int rankRogue);

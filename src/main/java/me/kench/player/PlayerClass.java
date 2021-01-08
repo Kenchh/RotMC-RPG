@@ -6,6 +6,7 @@ import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.GemType;
 import me.kench.items.stats.RuneType;
 import me.kench.items.stats.essenceanimations.EssenceAnimation;
+import me.kench.session.PlayerSession;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.Messaging;
 import me.kench.utils.StatUtils;
@@ -13,7 +14,7 @@ import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -21,22 +22,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.checkerframework.checker.units.qual.A;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PlayerClass {
+public class PlayerClass implements Comparable<PlayerClass> {
     private final UUID playerUniqueId;
     private final UUID uniqueId;
     private final RpgClass rpgClass;
     private final Stats stats;
-    private int fame = 0;
+    private long fame = 0;
     private int level = 1;
     private boolean selected;
     private Inventory inventory;
     private float attackAllStat, dodgeAllStat, defenseAllStat;
 
-    public PlayerClass(UUID playerUniqueId, UUID uniqueId, RpgClass rpgClass, Stats stats, int fame, int level, boolean selected, Inventory inventory) {
+    public PlayerClass(UUID playerUniqueId, UUID uniqueId, RpgClass rpgClass, Stats stats, long fame, int level, boolean selected, Inventory inventory) {
         this.playerUniqueId = playerUniqueId;
         this.uniqueId = uniqueId;
         this.rpgClass = rpgClass;
@@ -49,6 +50,10 @@ public class PlayerClass {
 
     public UUID getPlayerUniqueId() {
         return playerUniqueId;
+    }
+
+    public OfflinePlayer getOfflinePlayer() {
+        return Bukkit.getOfflinePlayer(getPlayerUniqueId());
     }
 
     public Player getPlayer() {
@@ -76,7 +81,7 @@ public class PlayerClass {
         applyStats();
     }
 
-    public int getFame() {
+    public long getFame() {
         return fame;
     }
 
@@ -90,9 +95,9 @@ public class PlayerClass {
         processLevelChange(RotMC.getInstance().getLevelProgression().getLevelByFame(this.fame));
     }
 
-    public void setFame(int fame) {
+    public void setFame(long fame) {
         this.fame = fame;
-        processLevelChange(RotMC.getInstance().getLevelProgression().getFameByLevel(this.fame));
+        processLevelChange(RotMC.getInstance().getLevelProgression().getLevelByFame(this.fame));
     }
 
     public int getLevel() {
@@ -233,25 +238,27 @@ public class PlayerClass {
     }
 
     public void tickEssences(PlayerData data) {
+        PlayerSession session = data.getSession();
+
         List<EssenceType> activeEssences = ItemUtils.getActiveEssences(getPlayer());
         List<EssenceType> etToRemove = new ArrayList<>();
 
-        for (EssenceType essenceType : data.getActiveEssences().keySet()) {
+        for (EssenceType essenceType : session.getActiveEssences().keySet()) {
             if (!activeEssences.contains(essenceType)) {
                 etToRemove.add(essenceType);
-                data.getActiveEssences().get(essenceType).cancel();
+                session.getActiveEssences().get(essenceType).cancel();
             }
         }
 
         for (EssenceType essenceType : etToRemove) {
-            data.getActiveEssences().remove(essenceType);
+            session.getActiveEssences().remove(essenceType);
         }
 
         for (EssenceType essenceType : activeEssences) {
-            if (!data.getActiveEssences().containsKey(essenceType)) {
+            if (!session.getActiveEssences().containsKey(essenceType)) {
                 EssenceAnimation essenceAnimation = ItemUtils.getAnimationFromType(essenceType);
                 if (essenceAnimation != null) {
-                    data.getActiveEssences().put(essenceType, essenceAnimation);
+                    session.getActiveEssences().put(essenceType, essenceAnimation);
                     essenceAnimation.start(getPlayer());
                 }
             }
@@ -330,5 +337,10 @@ public class PlayerClass {
         float defenseGemStat = StatUtils.getDefense(ItemUtils.getOverallGemStatsFromEquipment(player).getStat(Stat.DEFENSE), false, true);
         float defenseItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).getStat(Stat.DEFENSE)) / 200F;
         defenseAllStat = defensePlayerStat + defenseGemStat + defenseItemStat;
+    }
+
+    @Override
+    public int compareTo(@NotNull PlayerClass other) {
+        return Long.compare(getFame(), other.getFame());
     }
 }

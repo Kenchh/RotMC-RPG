@@ -10,6 +10,7 @@ import me.kench.game.LevelProgression;
 import me.kench.gui.*;
 import me.kench.papi.GlowPlaceHolder;
 import me.kench.papi.StarPlaceHolder;
+import me.kench.session.SessionManager;
 import me.kench.utils.armor.ArmorListener;
 import me.kench.utils.armor.DispenserArmorListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -28,6 +29,7 @@ public class RotMC extends JavaPlugin {
     private static SubCommandManager subCommandManager;
     private BukkitAudiences adventure;
     private DataManager dataManager;
+    private SessionManager sessionManager;
 
     RegisteredServiceProvider<LuckPerms> provider;
 
@@ -37,6 +39,7 @@ public class RotMC extends JavaPlugin {
         provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         adventure = BukkitAudiences.create(this);
         dataManager = new DataManager(this);
+        sessionManager = new SessionManager();
         levelProgression = new LevelProgression();
         subCommandManager = new SubCommandManager();
 
@@ -97,6 +100,10 @@ public class RotMC extends JavaPlugin {
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public SessionManager getSessionManager() {
+        return sessionManager;
     }
 
     public LevelProgression getLevelProgression() {

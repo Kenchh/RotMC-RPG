@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class LevelProgression {
     /* Key -> Level; Value -> Fame */
-    public Map<Integer, Integer> levelToFameMap;
+    public Map<Integer, Long> levelToFameMap;
 
     public LevelProgression() {
         // Level progression formula:
@@ -18,33 +18,33 @@ public class LevelProgression {
         // Level 3-20: ((x * currentLevel^2) + (y * currentLevel) + z) + previousLevelFame
 
         levelToFameMap = new HashMap<>();
-        levelToFameMap.put(1, 0);
-        levelToFameMap.put(2, 34);
-        levelToFameMap.put(3, 106);
-        levelToFameMap.put(4, 236);
-        levelToFameMap.put(5, 444);
-        levelToFameMap.put(6, 750);
-        levelToFameMap.put(7, 1174);
-        levelToFameMap.put(8, 1736);
-        levelToFameMap.put(9, 2456);
-        levelToFameMap.put(10, 3354);
-        levelToFameMap.put(11, 4450);
-        levelToFameMap.put(12, 5764);
-        levelToFameMap.put(13, 7316);
-        levelToFameMap.put(14, 9126);
-        levelToFameMap.put(15, 11214);
-        levelToFameMap.put(16, 13600);
-        levelToFameMap.put(17, 16304);
-        levelToFameMap.put(18, 19346);
-        levelToFameMap.put(19, 22746);
-        levelToFameMap.put(20, 26524);
+        levelToFameMap.put(1, 0L);
+        levelToFameMap.put(2, 34L);
+        levelToFameMap.put(3, 106L);
+        levelToFameMap.put(4, 236L);
+        levelToFameMap.put(5, 444L);
+        levelToFameMap.put(6, 750L);
+        levelToFameMap.put(7, 1174L);
+        levelToFameMap.put(8, 1736L);
+        levelToFameMap.put(9, 2456L);
+        levelToFameMap.put(10, 3354L);
+        levelToFameMap.put(11, 4450L);
+        levelToFameMap.put(12, 5764L);
+        levelToFameMap.put(13, 7316L);
+        levelToFameMap.put(14, 9126L);
+        levelToFameMap.put(15, 11214L);
+        levelToFameMap.put(16, 13600L);
+        levelToFameMap.put(17, 16304L);
+        levelToFameMap.put(18, 19346L);
+        levelToFameMap.put(19, 22746L);
+        levelToFameMap.put(20, 26524L);
     }
 
-    public int getLevelByFame(int xp) {
+    public int getLevelByFame(long fame) {
         int level = 1;
 
-        for (Map.Entry<Integer, Integer> entry : levelToFameMap.entrySet()) {
-            if (xp >= entry.getValue()) {
+        for (Map.Entry<Integer, Long> entry : levelToFameMap.entrySet()) {
+            if (fame >= entry.getValue()) {
                 level = entry.getKey();
             }
         }
@@ -52,7 +52,7 @@ public class LevelProgression {
         return level;
     }
 
-    public int getFameByLevel(int level) {
+    public long getFameByLevel(int level) {
         if (level <= 1 || level >= 20) {
             throw new IllegalArgumentException("Level is clamped between 1 and 20.");
         }
@@ -61,7 +61,7 @@ public class LevelProgression {
     }
 
     public void displayLevelProgression(Player player) {
-        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+        RotMC.getInstance().getDataManager().getPlayerData()
                 .loadSafe(player.getUniqueId())
                 .syncLast(data -> {
                     PlayerClass selectedClass = data.getSelectedClass();
@@ -72,7 +72,8 @@ public class LevelProgression {
     }
 
     public float getLevelProgressPercentage(PlayerClass playerClass) {
-        int fame = playerClass.getFame(), level = playerClass.getLevel();
+        long fame = playerClass.getFame();
+        int level = playerClass.getLevel();
 
         if (level == 20) {
             return 0F;
@@ -84,7 +85,7 @@ public class LevelProgression {
         return Math.min(elapsed / range, 1.0F);
     }
 
-    public int getMinimumFame(int level) {
+    public long getMinimumFame(int level) {
         if (level <= 1 || level >= 20) {
             throw new IllegalArgumentException("Level is clamped between 1 and 20.");
         }
@@ -92,7 +93,7 @@ public class LevelProgression {
         return levelToFameMap.get(level);
     }
 
-    public int getMaximumFame(int level) {
+    public long getMaximumFame(int level) {
         if (level <= 1 || level >= 20) {
             throw new IllegalArgumentException("Level is clamped between 1 and 20.");
         }

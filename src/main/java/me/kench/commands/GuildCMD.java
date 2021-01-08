@@ -1,35 +1,37 @@
 package me.kench.commands;
 
 import me.kench.RotMC;
+import me.kench.utils.Messaging;
 import me.kench.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class GuildCMD implements CommandExecutor {
-
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                sender.sendMessage(ChatColor.GOLD + "Top 10 guilds with highest fame");
-
-                // TODO: getTopGuilds
-                HashMap<Integer, List<String>> topGuilds = new HashMap<>();
-                for (int i : topGuilds.keySet()) {
-                    List<String> data = topGuilds.get(i);
-                    sender.sendMessage(ChatColor.YELLOW + "" + i + ". " + data.get(0) + " - " + TextUtils.getDecimalFormat().format(Integer.parseInt(data.get(1))));
-                }
-            }
-        }.runTaskAsynchronously(RotMC.getInstance());
-
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        RotMC.getInstance().getDataManager().getPlayerData()
+                .getTop10Guilds()
+                .syncLast(top10 -> {
+                    Messaging.sendMessage(sender, "<gold>Top 10 Guilds with Highest Fame");
+                    final int[] count = { 1 };
+                    top10.forEach((guild, fame) -> {
+                        Messaging.sendMessage(sender, String.format(
+                                "<yellow>%d. %s - %d",
+                                count[0],
+                                guild.getName(),
+                                fame
+                        ));
+                        count[0]++;
+                    });
+                })
+                .execute();
 
         return true;
     }

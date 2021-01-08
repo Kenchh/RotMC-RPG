@@ -3,6 +3,7 @@ package me.kench.events;
 import me.kench.RotMC;
 import me.kench.database.playerdata.PlayerData;
 import me.kench.player.PlayerClass;
+import me.kench.session.PlayerSession;
 import me.kench.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -16,6 +17,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DamageEvent implements Listener {
@@ -23,7 +25,7 @@ public class DamageEvent implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
 
-        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+        RotMC.getInstance().getDataManager().getPlayerData()
                 .loadSafe(player.getUniqueId())
                 .async(PlayerData::getSelectedClass)
                 .delay(1)
@@ -40,12 +42,14 @@ public class DamageEvent implements Listener {
 
         if (event.getEntity() instanceof Player) {
             if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-                RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
-                        .modify(event.getEntity().getUniqueId(), data -> {
-                            data.setLastKiller("");
-                            data.setLastDamage(event.getCause().name().toLowerCase());
-                            return data;
-                        });
+                RotMC.getInstance().getDataManager().getPlayerData()
+                        .loadSafe(event.getEntity().getUniqueId())
+                        .asyncLast(data -> {
+                            PlayerSession session = data.getSession();
+                            session.setLastKiller("");
+                            session.setLastDamage(event.getCause().name().toLowerCase());
+                        })
+                        .execute();
             }
         }
     }
@@ -67,10 +71,9 @@ public class DamageEvent implements Listener {
                 return;
             }
 
-            RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+            RotMC.getInstance().getDataManager().getPlayerData()
                     .loadSafe(player.getUniqueId())
-                    .async(PlayerData::getSelectedClass)
-                    .async(PlayerClass::getAttackAllStat)
+                    .async(data -> data.getSelectedClass().getAttackAllStat())
                     .syncLast(stat -> event.setDamage(event.getDamage() + event.getDamage() * stat))
                     .execute();
         }
@@ -88,15 +91,12 @@ public class DamageEvent implements Listener {
                 return;
             }
 
-            RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
-                    .modify(player.getUniqueId(), data -> {
-                        data.setLastKiller(event.getDamager().getName());
-                        return data;
-                    });
-
-            RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+            RotMC.getInstance().getDataManager().getPlayerData()
                     .loadSafe(player.getUniqueId())
-                    .async(PlayerData::getSelectedClass)
+                    .async(data -> {
+                        data.getSession().setLastKiller(event.getDamager().getName());
+                        return data.getSelectedClass();
+                    })
                     .syncLast(playerClass -> {
                         double damage = event.getDamage();
                         damage = damage - (damage * playerClass.getDefenseAllStat());

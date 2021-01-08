@@ -15,48 +15,32 @@ public class RotMC_Item extends SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, Command basecmd, String subcmd, String label, String[] args) {
-
-        Player p = (Player) sender;
-
-        if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR)
+        Player senderPlayer = (Player) sender;
+        if (senderPlayer.getInventory().getItemInMainHand().getType() == Material.AIR) {
             return true;
-
-        GameItem gameItem = new GameItem(p.getInventory().getItemInMainHand());
-
-        if (args[1].equalsIgnoreCase("addsocket")) {
-
-            if (args[2].equalsIgnoreCase("gem")) {
-                gameItem.getStats().gemsockets++;
-            }
-
-            if (args[2].equalsIgnoreCase("rune")) {
-                gameItem.getStats().hasRuneSocket = true;
-            }
-
-            if (args[2].equalsIgnoreCase("essence")) {
-                gameItem.getStats().hasEssenceSocket = true;
-            }
-
         }
 
-        if (args[1].equalsIgnoreCase("removesocket")) {
+        GameItem gameItem = new GameItem(senderPlayer.getInventory().getItemInMainHand());
 
+        if (args[1].equalsIgnoreCase("addsocket")) {
+            if (args[2].equalsIgnoreCase("gem")) {
+                gameItem.getStats().gemsockets++;
+            } else if (args[2].equalsIgnoreCase("rune")) {
+                gameItem.getStats().hasRuneSocket = true;
+            } else if (args[2].equalsIgnoreCase("essence")) {
+                gameItem.getStats().hasEssenceSocket = true;
+            }
+        } else if (args[1].equalsIgnoreCase("removesocket")) {
             if (args[2].equalsIgnoreCase("gem")) {
                 gameItem.getStats().gemsockets--;
-            }
-
-            if (args[2].equalsIgnoreCase("rune")) {
+            } else if (args[2].equalsIgnoreCase("rune")) {
                 gameItem.getStats().hasRuneSocket = false;
-            }
-
-            if (args[2].equalsIgnoreCase("essence")) {
+            } else if (args[2].equalsIgnoreCase("essence")) {
                 gameItem.getStats().hasEssenceSocket = false;
             }
-
         }
 
         gameItem.update();
         return true;
     }
-
 }

@@ -2,33 +2,38 @@ package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
+import me.kench.player.Stat;
+import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class RotMC_AddStat extends SubCommand {
-
     public RotMC_AddStat() {
         super("addstat", 1, "rotmc.admin", false, "addstats", "givestat", "givestats");
     }
 
     @Override
     public boolean execute(CommandSender sender, Command basecmd, String subcmd, String label, String[] args) {
-
-        Player tp = Bukkit.getPlayer(args[1]);
-
-        if (tp == null || !tp.isOnline()) {
-            if (sender instanceof Player)
-                sender.sendMessage(ChatColor.RED + "That player does not exist or is not online!");
+        Player target = Bukkit.getPlayer(args[1]);
+        if (target == null || !target.isOnline()) {
+            Messaging.sendMessage(sender, "<red>That player does not exist or is not online!");
             return true;
         }
 
-        RotMC.getPlayerData(tp).getMainClass().addStat(args[2]);
+        Stat stat = Stat.getByName(args[2]);
+        if (stat == null) {
+            Messaging.sendMessage(sender, String.format("<red>Could not find a Stat called \"%s\"", args[2]));
+            return true;
+        }
 
-        if (sender instanceof Player)
-            sender.sendMessage(ChatColor.GREEN + "Added +1 " + args[2] + " to " + tp.getName() + "!");
+        RotMC.getInstance().getDataManager().getPlayerData()
+                .loadSafe(target.getUniqueId())
+                .asyncLast(data -> data.getSelectedClass().addStat(stat))
+                .sync(() -> Messaging.sendMessage(sender, String.format("<green>Added +1 %s to %s!", stat.getName(), target.getName())))
+                .execute();
+
         return true;
     }
 
