@@ -1,7 +1,7 @@
 package me.kench.items.stats.essenceanimations;
 
 import me.kench.RotMC;
-import me.kench.player.PlayerData;
+import me.kench.database.playerdata.PlayerData;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

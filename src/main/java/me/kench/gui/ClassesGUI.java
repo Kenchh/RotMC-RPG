@@ -1,121 +1,56 @@
 package me.kench.gui;
 
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import me.kench.RotMC;
-import me.kench.database.playerdata.PlayerData;
 import me.kench.gui.items.CreateClassItem;
 import me.kench.gui.items.LockedItem;
 import me.kench.gui.items.PlayerClassItem;
+import me.kench.items.ItemBuilder;
 import me.kench.player.PlayerClass;
 import me.kench.utils.RankUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.List;
 
 public class ClassesGUI implements Listener {
-
-    private Inventory inv;
-    private PlayerData playerData;
+    private final StaticPane background;
 
     public ClassesGUI() {
-
+        StaticPane background = new StaticPane(0, 0, 9, 6);
+        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
+        this.background = background;
     }
 
-    public ClassesGUI(Player player) {
-        playerData = RotMC.getPlayerData(player);
+    public void display(Player player) {
+        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                .loadSafe(player.getUniqueId())
+                .syncLast(data -> {
+                    List<PlayerClass> classes = data.getClasses();
 
-        inv = Bukkit.createInventory(null, 6 * 9, RankUtils.getStarColor(playerData) + "✦ " + ChatColor.WHITE + "Select your profile " + RankUtils.getOverallRank(player) + "/30");
+                    ChestGui gui = new ChestGui(
+                            6,
+                            String.format(
+                                    "%s✦ %sSelect your profile %d/30",
+                                    RankUtils.getStarColor(data),
+                                    ChatColor.WHITE,
+                                    data.getOverallRank()
+                            )
+                    );
 
-        ItemStack black = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta blackmeta = black.getItemMeta();
-        blackmeta.setDisplayName(" ");
-        black.setItemMeta(blackmeta);
+                    OutlinePane slots = new OutlinePane(0, 1, 9, 4);
+                    for (int i = 0; i < 36; i++) slots.insertItem(new LockedItem(), i);
+                    for (int i = 0; i < data.getMaxSlots(); i++) slots.insertItem(new CreateClassItem(), i);
+                    for (int i = 0; i < classes.size(); i++) slots.insertItem(new PlayerClassItem(data, classes.get(i)), i);
 
-        for (int i = 0; i < inv.getSize(); i++) {
-            inv.setItem(i, black);
-        }
-
-        for (int i = 0; i < 9 * 4; i++) {
-            inv.setItem(i + 9, new LockedItem());
-        }
-
-        for (int i = 0; i < playerData.getMaxSlots(); i++) {
-            inv.setItem(i + 9, new CreateClassItem());
-        }
-
-        for (int i = 0; i < playerData.getClasses().size(); i++) {
-            PlayerClass pc = playerData.getClasses().get(i);
-            inv.setItem(i + 9, new PlayerClassItem(pc));
-        }
+                    gui.addPane(background);
+                    gui.addPane(slots);
+                    gui.show(player);
+                })
+                .execute();
     }
-
-    public Inventory getInv() {
-        return inv;
-    }
-
-    @EventHandler
-    public void onClick(InventoryClickEvent e) {
-        if (e.getView() == null || !e.getView().getTitle().contains("Select your profile")) {
-            return;
-        }
-
-        e.setCancelled(true);
-
-        Player p = (Player) e.getWhoClicked();
-        PlayerData pd = RotMC.getPlayerData((Player) e.getWhoClicked());
-
-        ItemStack clickeditem = e.getCurrentItem();
-
-        if (clickeditem == null) return;
-
-        if (clickeditem.getType() == Material.WHITE_STAINED_GLASS) {
-            for (int i = 0; i < 3; i++)
-                pd.getPlayer().playSound(pd.getPlayer().getLocation(), Sound.BLOCK_LAVA_POP, 1F, 1.5F);
-            p.openInventory(new CreateClassGUI(pd).getInv());
-            return;
-        }
-
-        if (clickeditem.getType() == Material.CARROT_ON_A_STICK) {
-
-            PlayerClass pc = pd.classes.get(e.getSlot() - 9);
-
-            if (e.getClick() == ClickType.RIGHT) {
-
-                if (pd.currentClass.getUuid().equals(pc.getUuid())) {
-                    p.sendMessage(ChatColor.RED + "You need to switch to another profile to delete your current one!");
-                    p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.5F, 1.2F);
-                    p.closeInventory();
-                    return;
-                }
-
-                p.closeInventory();
-                p.openInventory(new ConfirmationGUI(pc).getInv());
-                for (int i = 0; i < 3; i++)
-                    pd.getPlayer().playSound(pd.getPlayer().getLocation(), Sound.BLOCK_LAVA_POP, 1F, 1.5F);
-                return;
-            }
-
-            if (!pc.getUuid().equals(pd.getMainClass().getUuid())) {
-                pd.selectClass(pc, false);
-                for (int i = 0; i < 3; i++)
-                    pd.getPlayer().playSound(pd.getPlayer().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);
-                p.sendMessage(ChatColor.GREEN + "You have selected " + ChatColor.GOLD + pc.getLevel() + " " + pc.getData().getName() + ChatColor.GREEN + "!");
-                p.closeInventory();
-            } else {
-                p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.5F, 1.2F);
-                p.sendMessage(ChatColor.RED + "You already have this class selected!");
-            }
-
-        }
-
-    }
-
 }

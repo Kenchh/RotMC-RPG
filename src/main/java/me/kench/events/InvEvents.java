@@ -6,7 +6,6 @@ import me.kench.gui.ExtractorGUI;
 import me.kench.items.*;
 import me.kench.items.stats.Gem;
 import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,10 +19,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 public class InvEvents implements Listener {
-
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-
         Player p = (Player) e.getWhoClicked();
 
         if (e.getClick() == ClickType.SHIFT_RIGHT || e.getClick() == ClickType.SHIFT_LEFT) {
@@ -63,7 +60,6 @@ public class InvEvents implements Listener {
         }
 
         checkForSocketing(e, p, item, isGem, isRune, isEssence);
-
     }
 
     private void extract(InventoryClickEvent e, Player p, ItemStack item) {
@@ -264,7 +260,6 @@ public class InvEvents implements Listener {
     }
 
     private void checkIfArmorPutOn(InventoryClickEvent e, Player p, ItemStack item, boolean shift) {
-
         if (!e.getView().getTitle().contains("Crafting")) return;
 
         if (isWearable(item)) {
@@ -368,5 +363,4 @@ public class InvEvents implements Listener {
         return item.getType() == Material.ELYTRA ||
                 typename.contains("HELMET") || typename.contains("CHESTPLATE") || typename.contains("LEGGINGS") || typename.contains("BOOTS");
     }
-
 }

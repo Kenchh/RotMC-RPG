@@ -2,7 +2,6 @@ package me.kench.gui;
 
 import me.kench.RotMC;
 import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -59,27 +58,27 @@ public class ConfirmationGUI implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         if (e.getCurrentItem().getType() == Material.REDSTONE_BLOCK) {
-            p.openInventory(new ClassesGUI(p).getInv());
+            new ClassesGUI().display(p);
+            return;
         }
 
         if (e.getCurrentItem().getType() == Material.EMERALD_BLOCK) {
             PlayerData pd = RotMC.getPlayerData(p);
 
             for (PlayerClass pc : pd.classes) {
-                if (pc.getUuid().equals(pd.clickedClass.getUuid())) {
-
-                    if (pd.currentClass.getUuid().equals(pc.getUuid())) {
+                if (pc.getUniqueId().equals(pd.clickedClass.getUniqueId())) {
+                    if (pd.currentClass.getUniqueId().equals(pc.getUniqueId())) {
                         p.sendMessage(ChatColor.RED + "You need to switch to another profile to delete your current one!");
                         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.5F, 1.2F);
                         p.closeInventory();
                         break;
                     }
 
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + pc.getXp());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + pc.getFame());
                     pd.classes.remove(pc);
                     p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1F, 0.75F);
                     RotMC.getInstance().getSqlManager().update(p, null);
-                    p.openInventory(new ClassesGUI(p).getInv());
+                    new ClassesGUI().display(p);
                     break;
                 }
             }

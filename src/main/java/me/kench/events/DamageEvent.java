@@ -1,8 +1,8 @@
 package me.kench.events;
 
 import me.kench.RotMC;
+import me.kench.database.playerdata.PlayerData;
 import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import me.kench.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -15,141 +15,105 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DamageEvent implements Listener {
-
     @EventHandler
-    public void onRespawn(PlayerRespawnEvent e) {
-        Player p = e.getPlayer();
+    public void onRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
 
-        PlayerData pd = RotMC.getPlayerData(p);
-
-        if (pd == null) return;
-
-        PlayerClass pclass = pd.getMainClass();
-
-        if (pclass == null) return;
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ultimatekits:kit " + pclass.getData().getName() + " " + p.getName());
-            }
-        }.runTaskLater(RotMC.getInstance(), 5L);
-
+        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                .loadSafe(player.getUniqueId())
+                .async(PlayerData::getSelectedClass)
+                .delay(1)
+                .syncLast(playerClass -> Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        String.format("ultimatekits:kit %s %s", playerClass.getRpgClass().getName(), player.getName()))
+                )
+                .execute();
     }
 
     @EventHandler
-    public void onDamaged(EntityDamageEvent e) {
+    public void onDamaged(EntityDamageEvent event) {
+        if (event.isCancelled()) return;
 
-        if (e.isCancelled()) return;
-
-        if (e.getEntity() instanceof Player) {
-            if (e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-                PlayerData pd = RotMC.getPlayerData((Player) e.getEntity());
-                pd.lastKiller = "";
-                pd.lastDamage = e.getCause().name().toLowerCase();
+        if (event.getEntity() instanceof Player) {
+            if (event.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+                RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                        .modify(event.getEntity().getUniqueId(), data -> {
+                            data.setLastKiller("");
+                            data.setLastDamage(event.getCause().name().toLowerCase());
+                            return data;
+                        });
             }
         }
     }
 
-
     @EventHandler
-    public void onDamage(EntityDamageByEntityEvent e) {
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()) return;
 
-        if (e.isCancelled()) return;
+        if (event.getDamager() instanceof Player) {
+            Player player = (Player) event.getDamager();
 
-        if (e.getDamager() instanceof Player) {
-            Player p = (Player) e.getDamager();
-
-            if (!WorldGuardUtils.wgPvP(p) && e.getEntity() instanceof Player) {
-                e.setCancelled(true);
+            if (!WorldGuardUtils.wgPvP(player) && event.getEntity() instanceof Player) {
+                event.setCancelled(true);
                 return;
             }
 
-            if (e.getEntity() instanceof Player) {
-                e.setCancelled(true);
+            if (event.getEntity() instanceof Player) {
+                event.setCancelled(true);
                 return;
             }
 
-            PlayerData pd = RotMC.getPlayerData(p);
-
-            if (pd == null || pd.getMainClass() == null) {
-                return;
-            }
-
-            float attackAll = pd.getMainClass().attackAllStat;
-
-            /*
-            if(attackAll > Stats.attackMaxCap) {
-                attackAll = Stats.attackMaxCap;
-            }
-             */
-
-            e.setDamage(e.getDamage() + e.getDamage() * attackAll);
-
+            RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                    .loadSafe(player.getUniqueId())
+                    .async(PlayerData::getSelectedClass)
+                    .async(PlayerClass::getAttackAllStat)
+                    .syncLast(stat -> event.setDamage(event.getDamage() + event.getDamage() * stat))
+                    .execute();
         }
 
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
 
-            if (!WorldGuardUtils.wgPvP(p) && e.getDamager() instanceof Player) {
-                e.setCancelled(true);
+            if (!WorldGuardUtils.wgPvP(player) && event.getDamager() instanceof Player) {
+                event.setCancelled(true);
                 return;
             }
 
-            if (e.getDamager() instanceof Player) {
-                e.setCancelled(true);
+            if (event.getDamager() instanceof Player) {
+                event.setCancelled(true);
                 return;
             }
 
-            PlayerData pd = RotMC.getPlayerData(p);
+            RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                    .modify(player.getUniqueId(), data -> {
+                        data.setLastKiller(event.getDamager().getName());
+                        return data;
+                    });
 
-            double damage = e.getDamage();
+            RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                    .loadSafe(player.getUniqueId())
+                    .async(PlayerData::getSelectedClass)
+                    .syncLast(playerClass -> {
+                        double damage = event.getDamage();
+                        damage = damage - (damage * playerClass.getDefenseAllStat());
 
-            if (pd == null || pd.getMainClass() == null) {
-                return;
-            }
+                        if (ThreadLocalRandom.current().nextInt(100) + 1 <= playerClass.getDodgeAllStat()) {
+                            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1F, 1F);
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + ChatColor.BOLD.toString() + "DODGE"));
+                            damage = 0;
+                        }
 
-            pd.lastKiller = e.getDamager().getName();
+                        event.setCancelled(true);
 
-            Random r = new Random();
-            int random = r.nextInt(100) + 1;
-
-            float dodgeAll = pd.getMainClass().dodgeAllStat;
-
-            /*
-            if(dodgeAll > Stats.dodgeMaxCap) {
-                dodgeAll = Stats.dodgeMaxCap;
-            }
-             */
-
-            float defenseAll = pd.getMainClass().defenseAllStat;
-
-            /*
-            if(defenseAll > Stats.defenseMaxCap) {
-                defenseAll = Stats.defenseMaxCap;
-            }
-             */
-
-            double dmg = damage - damage * defenseAll;
-
-            if (random <= dodgeAll) {
-                p.playSound(p.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1F, 1F);
-                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + ChatColor.BOLD.toString() + "DODGE"));
-                dmg = 0;
-            }
-
-            e.setCancelled(true);
-            if (dmg > 0) {
-                p.damage(dmg);
-            }
-
+                        if (damage > 0) {
+                            player.damage(damage);
+                        }
+                    })
+                    .execute();
         }
     }
-
-
 }

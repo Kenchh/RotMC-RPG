@@ -1,20 +1,29 @@
 package me.kench.gui.items;
 
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import me.kench.RotMC;
+import me.kench.gui.CreateClassGUI;
+import me.kench.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
-public class CreateClassItem extends ItemStack {
-
+public class CreateClassItem extends GuiItem {
     public CreateClassItem() {
-        this.setType(Material.WHITE_STAINED_GLASS);
-        this.setAmount(1);
+        super(
+                ItemBuilder.create(Material.WHITE_STAINED_GLASS).amount(1).name(ChatColor.GREEN + "" + ChatColor.BOLD + "Create Class").build(),
+                event -> {
+                    Player player = (Player) event.getWhoClicked();
+                    for (int i = 0; i < 3; i++) {
+                        player.playSound(player.getLocation(), Sound.BLOCK_LAVA_POP, 1F, 1.5F);
+                    }
 
-        ItemMeta meta = this.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Create Class");
-
-        this.setItemMeta(meta);
+                    RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                            .loadSafe(player.getUniqueId())
+                            .syncLast(data -> player.openInventory(new CreateClassGUI(data).getInv()))
+                            .execute();
+                }
+        );
     }
-
 }

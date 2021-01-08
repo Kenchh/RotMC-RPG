@@ -2,7 +2,6 @@ package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
-import me.kench.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -37,7 +36,7 @@ public class RotMC_SetXP extends SubCommand {
         }
 
         sender.sendMessage(ChatColor.GREEN + tp.getName() + "'s xp has been set to " + ChatColor.GOLD + amount + ChatColor.GREEN + "!");
-        pd.getMainClass().setXp(amount);
+        pd.getMainClass().setFame(amount);
         return true;
     }
 

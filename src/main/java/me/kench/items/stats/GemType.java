@@ -1,9 +1,9 @@
 package me.kench.items.stats;
 
+import me.kench.player.Stat;
 import org.bukkit.ChatColor;
 
 public enum GemType {
-
     HEALTH("Ruby of Health", ChatColor.RED.toString(), 340),
     ATTACK("Diamond of Attack", ChatColor.AQUA.toString(), 300),
     DEFENSE("Sapphire of Defense", ChatColor.BLUE.toString(), 320),
@@ -33,4 +33,7 @@ public enum GemType {
         this.modeldata = modeldata;
     }
 
+    public static GemType fromStat(Stat stat) {
+        return valueOf(stat.name());
+    }
 }

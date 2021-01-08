@@ -5,7 +5,7 @@ import me.kench.database.playerdata.PlayerDataDam;
 import me.kench.gui.CreateClassGUI;
 import me.kench.items.stats.EssenceType;
 import me.kench.player.PlayerClass;
-import org.bukkit.ChatColor;
+import me.kench.utils.Messaging;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,10 +25,10 @@ public class JoinLeaveEvent implements Listener {
                     PlayerClass selectedClass = data.getSelectedClass();
 
                     if (selectedClass != null) {
-                        RotMC.getInstance().getLevelProgression().displayLevelProgression(player, selectedClass);
+                        RotMC.getInstance().getLevelProgression().displayLevelProgression(player);
 
                         // TODO: display components
-                        player.sendMessage(ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + selectedClass.getData().getName() + " " + ChatColor.GOLD + selectedClass.getLevel());
+                        Messaging.sendMessage(player, String.format("<green>Your current profile: <yellow>%s <gold>%d", selectedClass.getRpgClass().getName(), selectedClass.getLevel()));
 
                         selectedClass.applyStats();
                         data.ensureClassPermissions();
@@ -49,15 +49,15 @@ public class JoinLeaveEvent implements Listener {
 
         dam.loadSafe(player.getUniqueId())
                 .syncLast(data -> {
-                    ArrayList<EssenceType> etToRemove = new ArrayList<>();
+                    ArrayList<EssenceType> essenceTypes = new ArrayList<>();
 
-                    for (EssenceType et : data.getActiveEssences().keySet()) {
-                        etToRemove.add(et);
-                        data.getActiveEssences().get(et).cancel();
+                    for (EssenceType essenceType : data.getActiveEssences().keySet()) {
+                        essenceTypes.add(essenceType);
+                        data.getActiveEssences().get(essenceType).cancel();
                     }
 
-                    for (EssenceType et : etToRemove) {
-                        data.getActiveEssences().remove(et);
+                    for (EssenceType essenceType : essenceTypes) {
+                        data.getActiveEssences().remove(essenceType);
                     }
 
                     data.cancelTicker();

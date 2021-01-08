@@ -1,61 +1,70 @@
 package me.kench.gui.items;
 
-import me.kench.RotMC;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import me.kench.database.playerdata.PlayerData;
+import me.kench.gui.ConfirmationGUI;
+import me.kench.items.ItemBuilder;
 import me.kench.player.PlayerClass;
+import me.kench.player.RpgClass;
+import me.kench.utils.Messaging;
 import me.kench.utils.RankUtils;
 import me.kench.utils.TextUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
-import java.util.Arrays;
+public class PlayerClassItem extends GuiItem {
+    public PlayerClassItem(PlayerData playerData, PlayerClass playerClass) {
+        super(
+                ItemBuilder.create(Material.CARROT_ON_A_STICK)
+                        .name(
+                                TextUtils.parseMini(String.format(
+                                        "<yellow>%s <gold>%d <green>**%s**",
+                                        playerClass.getData().getName(),
+                                        playerClass.getLevel(),
+                                        playerData.getSelectedClass().getUniqueId().equals(playerClass.getUniqueId()) ? "SELECTED" : ""
+                                ))
+                        )
+                        .lore(
+                                TextUtils.parseMini(String.format(
+                                        "<gray>%s Fame <white>%d/5",
+                                        TextUtils.getDecimalFormat().format(playerClass.getFame()),
+                                        RankUtils.getCharacterRank(playerData.getPlayer(), playerClass.getData().getName())
+                                )),
+                                TextUtils.parseMini("<yellow>Left-Click <gray>to select profile."),
+                                TextUtils.parseMini("<yellow>Right-Click <gray>to delete profile.")
+                        )
+                        .modelData(RpgClass.getByName(playerClass.getData().getName()).getCustomModelData())
+                        .build(),
+                event -> {
+                    Player player = (Player) event.getWhoClicked();
 
-public class PlayerClassItem extends ItemStack {
+                    if (event.getClick() == ClickType.RIGHT) {
+                        if (playerData.getSelectedClass().getUniqueId().equals(playerClass.getUniqueId())) {
+                            Messaging.sendMessage(player, "<red>You need to switch to another profile to delete your current one!");
+                            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.5F, 1.2F);
+                            player.closeInventory();
+                            return;
+                        }
 
-    public PlayerClassItem(PlayerClass playerClass) {
-        this.setType(Material.CARROT_ON_A_STICK);
-        this.setAmount(1);
+                        player.closeInventory();
+                        player.openInventory(new ConfirmationGUI(playerClass).getInv());
+                        for (int i = 0; i < 3; i++) player.playSound(player.getLocation(), Sound.BLOCK_LAVA_POP, 1F, 1.5F);
+                        return;
+                    }
 
-        ItemMeta meta = this.getItemMeta();
-        meta.setCustomModelData(0);
-
-        String selected = "";
-
-        if (RotMC.getPlayerData(playerClass.getPlayer()).getMainClass().getUuid().equals(playerClass.getUuid())) {
-            selected = ChatColor.GREEN + "" + ChatColor.BOLD + " SELECTED";
-        }
-
-        meta.setDisplayName(ChatColor.YELLOW + playerClass.getData().getName() + " " + ChatColor.GOLD + "" + playerClass.getLevel() + selected);
-        meta.setLore(Arrays.asList(
-                ChatColor.GRAY + "" + TextUtils.getDecimalFormat().format(playerClass.getXp()) + " Fame "
-                        + ChatColor.WHITE + RankUtils.getCharacterRank(playerClass.getPlayer(), playerClass.getData().getName()) + "/5",
-                ChatColor.YELLOW + "Left-Click" + ChatColor.GRAY + " to select profile.",
-                ChatColor.YELLOW + "Right-Click" + ChatColor.GRAY + " to delete profile."
-        ));
-
-        switch (playerClass.getData().getName()) {
-            case "Knight":
-                meta.setCustomModelData(151);
-                break;
-            case "Necromancer":
-                meta.setCustomModelData(101);
-                break;
-            case "Warrior":
-                meta.setCustomModelData(141);
-                break;
-            case "Huntress":
-                meta.setCustomModelData(111);
-                break;
-            case "Assassin":
-                meta.setCustomModelData(121);
-                break;
-            case "Rogue":
-                meta.setCustomModelData(131);
-                break;
-        }
-
-        this.setItemMeta(meta);
+                    if (!playerClass.getUniqueId().equals(playerData.getSelectedClass().getUniqueId())) {
+                        playerData.changeSelectedClass(playerClass.getUniqueId(), false);
+                        for (int i = 0; i < 3; i++) player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);
+                        Messaging.sendMessage(player, String.format("<green>You have selected <gold>%d %s<green>!", playerClass.getLevel(), playerClass.getData().getName()));
+                        player.closeInventory();
+                    } else {
+                        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.5F, 1.2F);
+                        Messaging.sendMessage(player, "<red>You already have this class selected!");
+                    }
+                }
+        );
     }
 
 }

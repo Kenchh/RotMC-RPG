@@ -2,7 +2,6 @@ package me.kench.events;
 
 import me.kench.RotMC;
 import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import me.kench.utils.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,10 +21,10 @@ public class DeathEvent implements Listener {
 
         PlayerClass pc = pd.getMainClass();
 
-        int losexp = (int) (((double) pc.getXp()) * -0.2D);
+        int losexp = (int) (((double) pc.getFame()) * -0.2D);
 
-        if (losexp * -1 > pc.getXp()) {
-            losexp = pc.getXp() * -1;
+        if (losexp * -1 > pc.getFame()) {
+            losexp = pc.getFame() * -1;
         }
 
         String msg = "";
@@ -57,12 +56,12 @@ public class DeathEvent implements Listener {
         if (losexp < 0) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + p.getName() + " " + (losexp * -1));
 
-            pc.giveXP(losexp, true);
-            pc.resetCaps();
+            pc.giveFame(losexp, true);
+            pc.getStats().zeroStats();
         }
 
         if (pd.getMainClass() != null) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/ultimatekits:kit " + p.getName() + " " + pd.getMainClass().getGameClass().getName().toLowerCase());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/ultimatekits:kit " + p.getName() + " " + pd.getMainClass().getRpgClass().getName().toLowerCase());
         }
 
         e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', msg));

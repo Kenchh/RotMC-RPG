@@ -2,7 +2,6 @@ package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
-import me.kench.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -44,7 +43,7 @@ public class RotMC_GiveXP extends SubCommand {
         if (sender instanceof Player)
             sender.sendMessage(ChatColor.GREEN + tp.getName() + " has received " + ChatColor.GOLD + amount + ChatColor.GREEN + " xp!");
 
-        pd.getMainClass().giveXP(amount, false);
+        pd.getMainClass().giveFame(amount, false);
         return true;
     }
 

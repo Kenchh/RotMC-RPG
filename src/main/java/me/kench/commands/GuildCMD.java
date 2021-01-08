@@ -21,7 +21,8 @@ public class GuildCMD implements CommandExecutor {
             public void run() {
                 sender.sendMessage(ChatColor.GOLD + "Top 10 guilds with highest fame");
 
-                HashMap<Integer, List<String>> topGuilds = RotMC.getInstance().getSqlManager().getTopGuilds();
+                // TODO: getTopGuilds
+                HashMap<Integer, List<String>> topGuilds = new HashMap<>();
                 for (int i : topGuilds.keySet()) {
                     List<String> data = topGuilds.get(i);
                     sender.sendMessage(ChatColor.YELLOW + "" + i + ". " + data.get(0) + " - " + TextUtils.getDecimalFormat().format(Integer.parseInt(data.get(1))));

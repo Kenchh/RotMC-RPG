@@ -7,7 +7,6 @@ import me.kench.items.GameItem;
 import me.kench.items.GemItem;
 import me.kench.items.RuneItem;
 import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.armor.ArmorEquipEvent;
 import org.bukkit.ChatColor;
@@ -26,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class InteractEvent implements Listener {
-
     @EventHandler
     public void onBreak(BlockBreakEvent e) {
         Block brokenblock = e.getBlock();
@@ -61,7 +59,6 @@ public class InteractEvent implements Listener {
 
     @EventHandler
     public void onCancel(ArmorEquipEvent e) {
-
         ItemStack clickedItem = e.getNewArmorPiece();
         Player p = e.getPlayer();
 
@@ -76,7 +73,6 @@ public class InteractEvent implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
-
         Player p = e.getPlayer();
         ItemStack clickedItem = e.getItem();
         if (e.getAction() == Action.PHYSICAL || clickedItem == null || !clickedItem.hasItemMeta()) return;

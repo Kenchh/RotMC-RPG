@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 public class ClassItem extends ItemStack {
-
     public ClassItem(Player p, GameClass gameClass) {
         this.setType(Material.CARROT_ON_A_STICK);
         this.setAmount(1);

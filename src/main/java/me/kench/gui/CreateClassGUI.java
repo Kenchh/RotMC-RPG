@@ -143,7 +143,7 @@ public class CreateClassGUI implements Listener {
                     if (selected != null) {
                         player.sendMessage(String.format(ChatColor.GREEN + "You have selected %s!", selected.getData().getName()));
 
-                        data.changeSelectedClass(selected.getUuid(), true);
+                        data.changeSelectedClass(selected.getUniqueId(), true);
 
                         for (int i = 0; i < 3; i++) {
                             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.2F);

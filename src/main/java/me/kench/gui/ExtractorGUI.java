@@ -8,7 +8,6 @@ import me.kench.items.RuneItem;
 import me.kench.items.stats.Essence;
 import me.kench.items.stats.Gem;
 import me.kench.items.stats.Rune;
-import me.kench.player.PlayerData;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
 import org.bukkit.Bukkit;

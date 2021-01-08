@@ -4,10 +4,7 @@ import me.kench.RotMC;
 import me.kench.items.GameItem;
 import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.essenceanimations.EssenceAnimation;
-import me.kench.player.EssenceTicker;
-import me.kench.player.PlayerClass;
-import me.kench.player.RPGClass;
-import me.kench.player.Stats;
+import me.kench.player.*;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
@@ -88,28 +85,28 @@ public class PlayerData {
 
             // If the class we are currently looking at is currently in use, we need to ensure
             // that the inventory data is fresh.
-            if (clazz.selected) {
+            if (clazz.isSelected()) {
                 Player player = Bukkit.getPlayer(getUniqueId());
                 if (player != null) {
-                    clazz.inventory = player.getInventory();
+                    clazz.setInventory(player.getInventory());
                 }
             }
 
             array.put(new JSONObject()
-                    .put("uuid", clazz.getUuid())
-                    .put("GameClass", clazz.getData().getName())
-                    .put("selected", clazz.selected)
-                    .put("xp", clazz.getXp())
+                    .put("uuid", clazz.getUniqueId())
+                    .put("GameClass", clazz.getRpgClass().getName())
+                    .put("selected", clazz.isSelected())
+                    .put("xp", clazz.getFame())
                     .put("level", clazz.getLevel())
                     .put("stats", new JSONObject()
-                            .put("health", stats.health)
-                            .put("attack", stats.attack)
-                            .put("defense", stats.defense)
-                            .put("speed", stats.speed)
-                            .put("dodge", stats.dodge)
-                            .put("vitality", stats.vitality)
+                            .put("health", stats.getStat(Stat.HEALTH))
+                            .put("attack", stats.getStat(Stat.ATTACK))
+                            .put("defense", stats.getStat(Stat.DEFENSE))
+                            .put("speed", stats.getStat(Stat.SPEED))
+                            .put("dodge", stats.getStat(Stat.DODGE))
+                            .put("vitality", stats.getStat(Stat.VITALITY))
                     )
-                    .put("inv", clazz.inventory)
+                    .put("inv", clazz.getInventory())
             );
         }
 
@@ -117,27 +114,27 @@ public class PlayerData {
     }
 
     public PlayerClass getSelectedClass() {
-        return classes.stream().filter(it -> it.selected).findFirst().orElse(null);
+        return classes.stream().filter(PlayerClass::isSelected).findFirst().orElse(null);
     }
 
     public boolean changeSelectedClass(UUID classUniqueId, boolean isNew) {
         Player player = getPlayer();
         if (player == null) return false;
 
-        PlayerClass newClass = classes.stream().filter(it -> it.getUuid().equals(classUniqueId)).findFirst().orElse(null);
+        PlayerClass newClass = classes.stream().filter(it -> it.getUniqueId().equals(classUniqueId)).findFirst().orElse(null);
         if (newClass == null) return false;
 
         // Save current inventory before switching classes.
         PlayerClass currentClass = getSelectedClass();
         if (currentClass != null) {
-            currentClass.inventory = player.getInventory();
+            currentClass.setInventory(player.getInventory());
         }
 
-        classes.forEach(it -> it.selected = false);
-        newClass.selected = true;
+        classes.forEach(it -> it.setSelected(false));
+        newClass.setSelected(true);
 
         // TODO: this should probably be moved to the call context later
-        RotMC.getInstance().getLevelProgression().displayLevelProgression(player, newClass);
+        RotMC.getInstance().getLevelProgression().displayLevelProgression(player);
 
         ensureClassPermissions();
 
@@ -149,7 +146,7 @@ public class PlayerData {
 
         // Restore saved inventory of new class
         PlayerInventory playerInventory = player.getInventory();
-        Inventory newClassInventory = newClass.inventory;
+        Inventory newClassInventory = newClass.getInventory();
 
         if (newClassInventory != null) {
             for (int i = 0; i < 36; i++) {
@@ -188,7 +185,7 @@ public class PlayerData {
         newClass.applyStats();
 
         if (isNew) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ultimatekits:kit " + newClass.getData().getName() + " " + player.getName());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "ultimatekits:kit " + newClass.getRpgClass().getName() + " " + player.getName());
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mm i give -s " + player.getName() + " starterhealth");
         }
 
@@ -249,6 +246,10 @@ public class PlayerData {
 
     public void setRankRogue(int rankRogue) {
         this.rankRogue = rankRogue;
+    }
+
+    public int getOverallRank() {
+        return getRankHuntress() + getRankKnight() + getRankWarrior() + getRankNecromancer() + getRankAssassin() + getRankRogue();
     }
 
     public Map<EssenceType, EssenceAnimation> getActiveEssences() {
@@ -330,9 +331,9 @@ public class PlayerData {
         if (getSelectedClass() == null) return;
 
         PlayerClass selectedClass = getSelectedClass();
-        RPGClass rpgClass = RPGClass.getByName(selectedClass.getData().getName());
+        RpgClass rpgClass = RpgClass.getByName(selectedClass.getRpgClass().getName());
 
-        UserManager lpUserManager = RotMC.getInstance().getApi().getUserManager();
+        UserManager lpUserManager = RotMC.getInstance().getLuckPerms().getUserManager();
         User lpUser = lpUserManager.getUser(getUniqueId());
         if (lpUser == null) {
             throw new IllegalStateException(String.format("Could not find LuckPerms profile for player with unique ID %s!", getUniqueId()));
@@ -342,7 +343,7 @@ public class PlayerData {
             lpUser.data().remove(Node.builder(String.format("rotmc.level.{1-%d}", i)).build());
         }
 
-        for (String permission : RPGClass.getAllPermissions()) {
+        for (String permission : RpgClass.getAllPermissions()) {
             lpUser.data().remove(Node.builder(permission).build());
         }
 

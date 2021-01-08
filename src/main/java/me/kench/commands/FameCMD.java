@@ -30,7 +30,8 @@ public class FameCMD implements CommandExecutor {
                 public void run() {
                     p.sendMessage(ChatColor.GOLD + "Top 10 characters with highest fame");
 
-                    HashMap<Integer, List<String>> topclasses = RotMC.getInstance().getSqlManager().getTopClasses();
+                    // TODO: getTopClasses
+                    HashMap<Integer, List<String>> topclasses = new HashMap<>();
                     for (int i : topclasses.keySet()) {
                         List<String> data = topclasses.get(i);
                         p.sendMessage(ChatColor.YELLOW + "" + i + ". " + data.get(0) + " - " + ChatColor.GOLD + data.get(1) + " " + TextUtils.getDecimalFormat().format(Integer.parseInt(data.get(2))));

@@ -2,146 +2,101 @@ package me.kench.game;
 
 import me.kench.RotMC;
 import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class LevelProgression {
-
-    /* Key -> Level; Value -> XP */
-    public HashMap<Integer, Integer> levelxp = new HashMap<Integer, Integer>();
+    /* Key -> Level; Value -> Fame */
+    public Map<Integer, Integer> levelToFameMap;
 
     public LevelProgression() {
+        // Level progression formula:
+        // x = 10, y = 8, z = 16
+        // Level 2: (x + y + z) = 34
+        // Level 3-20: ((x * currentLevel^2) + (y * currentLevel) + z) + previousLevelFame
 
-        int x = 10;
-        int y = 8;
-        int z = 16;
-
-        levelxp.put(1, x + y + z);
-
-        /* i = level */
-        for (int i = 2; i <= 19; i++) {
-            levelxp.put(i, x * i * i + y * i + z + levelxp.get(i - 1));
-        }
-
+        levelToFameMap = new HashMap<>();
+        levelToFameMap.put(1, 0);
+        levelToFameMap.put(2, 34);
+        levelToFameMap.put(3, 106);
+        levelToFameMap.put(4, 236);
+        levelToFameMap.put(5, 444);
+        levelToFameMap.put(6, 750);
+        levelToFameMap.put(7, 1174);
+        levelToFameMap.put(8, 1736);
+        levelToFameMap.put(9, 2456);
+        levelToFameMap.put(10, 3354);
+        levelToFameMap.put(11, 4450);
+        levelToFameMap.put(12, 5764);
+        levelToFameMap.put(13, 7316);
+        levelToFameMap.put(14, 9126);
+        levelToFameMap.put(15, 11214);
+        levelToFameMap.put(16, 13600);
+        levelToFameMap.put(17, 16304);
+        levelToFameMap.put(18, 19346);
+        levelToFameMap.put(19, 22746);
+        levelToFameMap.put(20, 26524);
     }
 
-    public boolean hasLeveledUp(Player p, int leveltocomparewith) {
-        PlayerData pd = RotMC.getPlayerData(p);
+    public int getLevelByFame(int xp) {
+        int level = 1;
 
-        if (pd.getMainClass().getLevel() < leveltocomparewith) {
-            return true;
-        }
-
-        return false;
-
-    }
-
-    public int getXPByLevel(int level) {
-        if (level > 1) {
-            return levelxp.get(level - 1);
-        } else {
-            return 0;
-        }
-    }
-
-    public void displayLevelProgression(Player player, PlayerClass selectedClass) {
-        /*
-        for(ItemStack item : p.getInventory().getContents()) {
-            if(item == null || item.getType() == Material.AIR || !item.hasItemMeta() || !item.getItemMeta().hasLore()) continue;
-
-            ItemMeta meta = item.getItemMeta();
-            List<String> lore = meta.getLore();
-
-            int i = 0;
-            for(String s : item.getItemMeta().getLore()) {
-
-                if(s.contains("Player Class:")) {
-                    String gc = TextUtils.getLastWord(s, 0);
-
-                    String tick = pc.getData().getName().equalsIgnoreCase(gc) ? ChatColor.GREEN + ChatColor.BOLD.toString() + "✔" + ChatColor.RESET + ChatColor.GREEN
-                            : ChatColor.RED + ChatColor.BOLD.toString() + "✖" + ChatColor.RESET + ChatColor.RED;
-                    lore.set(i, ChatColor.RESET + tick + " Player Class: " + gc);
-                }
-
-                if(s.contains("Player Level:")) {
-                    String level = TextUtils.getLastWord(s, 1);
-
-                    String tick = pc.getLevel() >= Integer.parseInt(level) ? ChatColor.GREEN + ChatColor.BOLD.toString() + "✔" + ChatColor.RESET + ChatColor.GREEN
-                            : ChatColor.RED + ChatColor.BOLD.toString() + "✖" + ChatColor.RESET + ChatColor.RED;
-                    lore.set(i, ChatColor.RESET + tick + " Player Level: " + level + "+");
-                }
-
-                i++;
+        for (Map.Entry<Integer, Integer> entry : levelToFameMap.entrySet()) {
+            if (xp >= entry.getValue()) {
+                level = entry.getKey();
             }
-
-            meta.setLore(lore);
-            item.setItemMeta(meta);
         }
-        */
 
-        player.setLevel(selectedClass.getLevel());
-
-        if (selectedClass.getLevel() >= 20) {
-            player.setExp(1);
-        } else {
-            player.setExp(getLevelProgressPercentage(selectedClass));
-        }
+        return level;
     }
 
-    public float getLevelProgressPercentage(PlayerClass pc) {
+    public int getFameByLevel(int level) {
+        if (level <= 1 || level >= 20) {
+            throw new IllegalArgumentException("Level is clamped between 1 and 20.");
+        }
 
-        if (pc.getLevel() == 20) {
+        return levelToFameMap.get(level);
+    }
+
+    public void displayLevelProgression(Player player) {
+        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
+                .loadSafe(player.getUniqueId())
+                .syncLast(data -> {
+                    PlayerClass selectedClass = data.getSelectedClass();
+                    player.setLevel(selectedClass.getLevel());
+                    player.setExp(getLevelProgressPercentage(selectedClass));
+                })
+                .execute();
+    }
+
+    public float getLevelProgressPercentage(PlayerClass playerClass) {
+        int fame = playerClass.getFame(), level = playerClass.getLevel();
+
+        if (level == 20) {
             return 0F;
         }
 
-        int range = getMaxXP(pc.getLevel()) - getMinXP(pc.getLevel());
-        int xpInLevelRange = pc.getXp() - getMinXP(pc.getLevel());
+        float elapsed = playerClass.getFame() - getMinimumFame(playerClass.getLevel());
+        float range = getMaximumFame(level) - getMinimumFame(level);
 
-        float percentage = ((100 / ((float) range)) * xpInLevelRange);
-
-        return Math.min(1, (percentage / 100));
+        return Math.min(elapsed / range, 1.0F);
     }
 
-    public int getMinXP(int level) {
-        if (level > 1) {
-            return levelxp.get(level - 1);
-        } else {
-            return 0;
+    public int getMinimumFame(int level) {
+        if (level <= 1 || level >= 20) {
+            throw new IllegalArgumentException("Level is clamped between 1 and 20.");
         }
+
+        return levelToFameMap.get(level);
     }
 
-    public int getMaxXP(int level) {
-        if (level >= 1 && level < 20) {
-            return levelxp.get(level);
+    public int getMaximumFame(int level) {
+        if (level <= 1 || level >= 20) {
+            throw new IllegalArgumentException("Level is clamped between 1 and 20.");
         }
-        return -1;
+
+        return levelToFameMap.get(level + 1) - 1;
     }
-
-    public int getLevelByXP(int xp) {
-        for (int level : levelxp.keySet()) {
-
-            int lastcum = 0;
-            int newcum = 0;
-
-            if (level == 1) {
-                lastcum = 0;
-            } else {
-                lastcum = levelxp.get(level - 1);
-            }
-
-            newcum = levelxp.get(level);
-
-            if (xp >= lastcum && xp < newcum) {
-                return level;
-            } else if (xp >= 26524) {
-                return 20;
-            }
-
-        }
-        return -1;
-    }
-
-
 }

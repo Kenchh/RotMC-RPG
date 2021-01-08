@@ -1,20 +1,12 @@
 package me.kench.gui.items;
 
-import org.bukkit.ChatColor;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import me.kench.items.ItemBuilder;
+import me.kench.utils.TextUtils;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-public class LockedItem extends ItemStack {
-
+public class LockedItem extends GuiItem {
     public LockedItem() {
-        this.setType(Material.IRON_BARS);
-        this.setAmount(1);
-
-        ItemMeta meta = this.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY + "" + ChatColor.BOLD + "Locked");
-
-        this.setItemMeta(meta);
+        super(ItemBuilder.create(Material.IRON_BARS).name(TextUtils.parseMini("<gray>**Locked**")).build());
     }
-
 }

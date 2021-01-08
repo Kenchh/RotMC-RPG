@@ -1,22 +1,21 @@
 package me.kench.events;
 
 import me.kench.RotMC;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 
 public class XPEvent implements Listener {
-
     @EventHandler
-    public void onXPGain(PlayerExpChangeEvent e) {
-        e.setAmount(0);
-        RotMC.getInstance().getLevelProgression().displayLevelProgression(e.getPlayer());
+    public void onExpChange(PlayerExpChangeEvent event) {
+        event.setAmount(0);
+        RotMC.getInstance().getLevelProgression().displayLevelProgression(event.getPlayer());
     }
 
     @EventHandler
-    public void onXPGain(PlayerLevelChangeEvent e) {
-        RotMC.getInstance().getLevelProgression().displayLevelProgression(e.getPlayer());
+    public void onLevelChange(PlayerLevelChangeEvent event) {
+        RotMC.getInstance().getLevelProgression().displayLevelProgression(event.getPlayer());
     }
-
 }

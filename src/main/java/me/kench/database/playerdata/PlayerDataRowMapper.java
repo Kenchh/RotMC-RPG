@@ -1,10 +1,10 @@
 package me.kench.database.playerdata;
 
-import me.kench.game.GameClass;
 import me.kench.player.PlayerClass;
+import me.kench.player.RpgClass;
+import me.kench.player.Stat;
 import me.kench.player.Stats;
 import me.kench.utils.JsonParser;
-import org.bukkit.Bukkit;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.json.JSONArray;
@@ -46,29 +46,23 @@ public class PlayerDataRowMapper implements RowMapper<PlayerData> {
                 JSONObject statsObject = object.getJSONObject("stats");
 
                 Stats stats = new Stats();
-                stats.health = (float) statsObject.getDouble("health");
-                stats.attack = (float) statsObject.getDouble("attack");
-                stats.defense = (float) statsObject.getDouble("defense");
-                stats.speed = (float) statsObject.getDouble("speed");
-                stats.dodge = (float) statsObject.getDouble("dodge");
-                stats.vitality = (float) statsObject.getDouble("vitality");
+                stats.setStat(Stat.HEALTH, (float) statsObject.getDouble("health"));
+                stats.setStat(Stat.ATTACK, (float) statsObject.getDouble("attack"));
+                stats.setStat(Stat.DEFENSE, (float) statsObject.getDouble("defense"));
+                stats.setStat(Stat.SPEED, (float) statsObject.getDouble("speed"));
+                stats.setStat(Stat.DODGE, (float) statsObject.getDouble("dodge"));
+                stats.setStat(Stat.VITALITY, (float) statsObject.getDouble("vitality"));
 
-                PlayerClass clazz = new PlayerClass(
+                classes.add(new PlayerClass(
+                        playerUniqueId,
                         UUID.fromString(object.getString("uuid")),
-                        Bukkit.getPlayer(playerUniqueId),
-                        new GameClass(object.getString("GameClass")),
+                        RpgClass.getByName(object.getString("GameClass")),
+                        stats,
                         object.getInt("xp"),
                         object.getInt("level"),
-                        stats
-                );
-
-                if (object.getBoolean("selected")) {
-                    clazz.selected = true;
-                }
-
-                clazz.inventory = JsonParser.fromBase64(object.getString("inv"));
-
-                classes.add(clazz);
+                        object.getBoolean("selected"),
+                        JsonParser.fromBase64(object.getString("inv"))
+                ));
             }
         }
 

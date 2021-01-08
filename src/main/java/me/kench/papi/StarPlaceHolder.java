@@ -2,7 +2,6 @@ package me.kench.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.kench.RotMC;
-import me.kench.player.PlayerData;
 import me.kench.utils.RankUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

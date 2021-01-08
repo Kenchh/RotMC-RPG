@@ -10,14 +10,11 @@ public class ClassCMD implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
         if (!(sender instanceof Player)) {
             return true;
         }
 
-        Player p = (Player) sender;
-
-        p.openInventory(new ClassesGUI(p).getInv());
+        new ClassesGUI().display((Player) sender);
 
         return true;
     }

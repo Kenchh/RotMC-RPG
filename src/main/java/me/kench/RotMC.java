@@ -5,21 +5,16 @@ import co.aikar.taskchain.TaskChainFactory;
 import me.kench.commands.*;
 import me.kench.commands.subcommand.SubCommandManager;
 import me.kench.database.DataManager;
-import me.kench.database.SQLManager;
 import me.kench.events.*;
 import me.kench.game.LevelProgression;
-import me.kench.game.PlayerDataManager;
 import me.kench.gui.*;
 import me.kench.papi.GlowPlaceHolder;
 import me.kench.papi.StarPlaceHolder;
-import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import me.kench.utils.armor.ArmorListener;
 import me.kench.utils.armor.DispenserArmorListener;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,10 +24,9 @@ public class RotMC extends JavaPlugin {
     private static RotMC instance;
     private static TaskChainFactory taskChainFactory;
     // TODO: why are most of these (below) static?
-    private static SQLManager sqlManager;
-    private static PlayerDataManager playerDataManager;
     private static LevelProgression levelProgression;
     private static SubCommandManager subCommandManager;
+    private BukkitAudiences adventure;
     private DataManager dataManager;
 
     RegisteredServiceProvider<LuckPerms> provider;
@@ -41,8 +35,8 @@ public class RotMC extends JavaPlugin {
     public void onEnable() {
         instance = this;
         provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        adventure = BukkitAudiences.create(this);
         dataManager = new DataManager(this);
-        playerDataManager = new PlayerDataManager();
         levelProgression = new LevelProgression();
         subCommandManager = new SubCommandManager();
 
@@ -67,19 +61,20 @@ public class RotMC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new XPEvent(), this);
         getServer().getPluginManager().registerEvents(new InvEvents(), this);
         getServer().getPluginManager().registerEvents(new DeathEvent(), this);
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            RotMC.getInstance().getPlayerDataManager().registerPlayerData(p);
-
-            if (RotMC.getPlayerData(p).getMainClass() != null) {
-                PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
-                RotMC.getInstance().getLevelProgression().displayLevelProgression(p);
-                p.sendMessage(ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + pc.getData().getName() + " " + ChatColor.GOLD + pc.getLevel());
-                pc.applyStats();
-            } else {
-                p.openInventory(new CreateClassGUI(RotMC.getPlayerData(p)).getInv());
-            }
-        }
+        
+// TODO: remove this; not needed as Players should NOT be online when plugin is enabling.
+//        for (Player p : Bukkit.getOnlinePlayers()) {
+//            RotMC.getInstance().getPlayerDataManager().registerPlayerData(p);
+//
+//            if (RotMC.getPlayerData(p).getMainClass() != null) {
+//                PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
+//                RotMC.getInstance().getLevelProgression().displayLevelProgression(p);
+//                p.sendMessage(ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + pc.getData().getName() + " " + ChatColor.GOLD + pc.getLevel());
+//                pc.applyStats();
+//            } else {
+//                p.openInventory(new CreateClassGUI(RotMC.getPlayerData(p)).getInv());
+//            }
+//        }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new GlowPlaceHolder().register();
@@ -96,12 +91,12 @@ public class RotMC extends JavaPlugin {
         }
     }
 
-    public DataManager getDataManager() {
-        return dataManager;
+    public BukkitAudiences adventure() {
+        return adventure;
     }
 
-    public SQLManager getSqlManager() {
-        return sqlManager;
+    public DataManager getDataManager() {
+        return dataManager;
     }
 
     public LevelProgression getLevelProgression() {
@@ -112,18 +107,8 @@ public class RotMC extends JavaPlugin {
         return subCommandManager;
     }
 
-    public PlayerDataManager getPlayerDataManager() {
-        return playerDataManager;
-    }
-
-    public LuckPerms getApi() {
+    public LuckPerms getLuckPerms() {
         return provider.getProvider();
-    }
-
-    public static PlayerData getPlayerData(Player offlinePlayer) {
-        if (offlinePlayer == null) return null;
-
-        return playerDataManager.getPlayerData(offlinePlayer);
     }
 
     public static RotMC getInstance() {

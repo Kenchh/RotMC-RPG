@@ -1,8 +1,14 @@
 package me.kench.utils;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import java.text.DecimalFormat;
 
 public class TextUtils {
+    public static String parseMini(String format) {
+        return LegacyComponentSerializer.legacyAmpersand().serialize(MiniMessage.markdown().parse(format));
+    }
 
     public static String constantToName(String constant) {
         String name = constant.toString().toLowerCase();

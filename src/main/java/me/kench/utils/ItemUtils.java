@@ -6,7 +6,6 @@ import me.kench.items.GameItem;
 import me.kench.items.stats.*;
 import me.kench.items.stats.essenceanimations.*;
 import me.kench.player.PlayerClass;
-import me.kench.player.PlayerData;
 import me.kench.player.Stats;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -393,17 +392,17 @@ public class ItemUtils {
     public static float getValueFromGemType(GemType gemType, int level, boolean visual) {
         switch (gemType) {
             case HEALTH:
-                return new Stats().getHealth(level, visual, true);
+                return StatUtils.getHealth(level, visual, true);
             case ATTACK:
-                return new Stats().getAttack(level, visual, true);
+                return StatUtils.getAttack(level, visual, true);
             case DEFENSE:
-                return new Stats().getDefense(level, visual, true);
+                return StatUtils.getDefense(level, visual, true);
             case SPEED:
-                return new Stats().getSpeed(level, visual, true);
+                return StatUtils.getSpeed(level, visual, true);
             case DODGE:
-                return new Stats().getDodge(level, visual, true);
+                return StatUtils.getDodge(level, visual, true);
             case VITALITY:
-                return new Stats().getVitality(level, visual, true);
+                return StatUtils.getVitality(level, visual, true);
         }
         return -1;
     }
