@@ -5,16 +5,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class MythicDustItem {
-
-    private ItemStack item;
-    private int level;
+    private final ItemStack item;
+    private final int level;
 
     public MythicDustItem(ItemStack item) {
         this.item = item;
 
         ItemMeta meta = item.getItemMeta();
         level = TextUtils.getNumberFromRoman(TextUtils.getLastWord(meta.getDisplayName(), 0));
-
     }
 
     public int getLevel() {
@@ -24,5 +22,4 @@ public class MythicDustItem {
     public ItemStack getItem() {
         return item;
     }
-
 }

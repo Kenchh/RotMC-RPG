@@ -24,7 +24,7 @@ public class RotMC_Item extends SubCommand {
 
         if (args[1].equalsIgnoreCase("addsocket")) {
             if (args[2].equalsIgnoreCase("gem")) {
-                gameItem.getStats().gemsockets++;
+                gameItem.getStats().gemSockets++;
             } else if (args[2].equalsIgnoreCase("rune")) {
                 gameItem.getStats().hasRuneSocket = true;
             } else if (args[2].equalsIgnoreCase("essence")) {
@@ -32,7 +32,7 @@ public class RotMC_Item extends SubCommand {
             }
         } else if (args[1].equalsIgnoreCase("removesocket")) {
             if (args[2].equalsIgnoreCase("gem")) {
-                gameItem.getStats().gemsockets--;
+                gameItem.getStats().gemSockets--;
             } else if (args[2].equalsIgnoreCase("rune")) {
                 gameItem.getStats().hasRuneSocket = false;
             } else if (args[2].equalsIgnoreCase("essence")) {

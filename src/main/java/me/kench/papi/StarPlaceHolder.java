@@ -25,10 +25,9 @@ public class StarPlaceHolder extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String params) {
-
         if (params.equalsIgnoreCase("color")) {
-            PlayerData pd = RotMC.getPlayerData(player);
-            return ChatColor.GRAY.toString() + RankUtils.getStarColor(pd) + "";
+            // unfortunately sync, but data should already be cached
+            return ChatColor.GRAY.toString() + RankUtils.getStarColor(RotMC.getInstance().getDataManager().getPlayerData().load(player.getUniqueId())) + "";
         }
 
         return "";

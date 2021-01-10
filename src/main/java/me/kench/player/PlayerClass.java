@@ -37,13 +37,42 @@ public class PlayerClass implements Comparable<PlayerClass> {
     private Inventory inventory;
     private float attackAllStat, dodgeAllStat, defenseAllStat;
 
+    /**
+     * Creates a NEW PlayerClass with default data, to later be saved to the database.
+     * @param playerUniqueId the owner's unique id
+     * @param rpgClass the {@link RpgClass} that this PlayerClass represents
+     */
+    public PlayerClass(UUID playerUniqueId, RpgClass rpgClass) {
+        this(
+                playerUniqueId,
+                UUID.randomUUID(),
+                rpgClass,
+                new Stats(),
+                0L,
+                0,
+                false,
+                null
+        );
+    }
+
+    /**
+     * Creates a PlayerClass that was previously saved in the database.
+     * @param playerUniqueId the owner's unique id
+     * @param uniqueId the unique id of this PlayerClass
+     * @param rpgClass the {@link RpgClass} that this PlayerClass represents
+     * @param stats the {@link Stats} of the PlayerClass
+     * @param fame the fame (xp) of the PlayerClass
+     * @param level the level; see {@link LevelProgression}.
+     * @param selected whether or not this PlayerClass is currently selected by the player
+     * @param inventory the inventory of this PlayerClass
+     */
     public PlayerClass(UUID playerUniqueId, UUID uniqueId, RpgClass rpgClass, Stats stats, long fame, int level, boolean selected, Inventory inventory) {
         this.playerUniqueId = playerUniqueId;
         this.uniqueId = uniqueId;
         this.rpgClass = rpgClass;
+        this.stats = stats;
         this.fame = fame;
         this.level = level;
-        this.stats = stats;
         this.selected = selected;
         this.inventory = inventory;
     }
@@ -85,11 +114,11 @@ public class PlayerClass implements Comparable<PlayerClass> {
         return fame;
     }
 
-    public void giveFame(int xp, boolean withoutMultiplier) {
+    public void giveFame(long fame, boolean withoutMultiplier) {
         if (!withoutMultiplier) {
-            this.fame += xp * getMultiplier();
+            this.fame += fame * getMultiplier();
         } else {
-            this.fame += xp;
+            this.fame += fame;
         }
 
         processLevelChange(RotMC.getInstance().getLevelProgression().getLevelByFame(this.fame));
@@ -322,7 +351,6 @@ public class PlayerClass implements Comparable<PlayerClass> {
 
         }
 
-        // Nothing happening down here?
         float attackPlayerStat = StatUtils.getAttack(stats.getStat(Stat.ATTACK), false, false);
         float attackGemStat = StatUtils.getAttack(ItemUtils.getOverallGemStatsFromEquipment(player).getStat(Stat.ATTACK), false, true);
         float attackItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).getStat(Stat.ATTACK)) / 100F;

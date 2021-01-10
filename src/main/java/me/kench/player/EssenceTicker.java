@@ -14,8 +14,8 @@ public class EssenceTicker extends BukkitRunnable {
 
     @Override
     public void run() {
-        RotMC.getInstance().getDataManager().getAccessor().getPlayerData()
-                .loadSafe(player.getUniqueId())
+        RotMC.getInstance().getDataManager().getPlayerData()
+                .chainLoadSafe(player.getUniqueId())
                 .syncLast(data -> {
                     RotMC.newChain()
                             .delay(1)

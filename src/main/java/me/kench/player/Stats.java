@@ -28,7 +28,11 @@ public class Stats {
     }
 
     public void incrementStat(Stat stat) {
-        setStat(stat, getStat(stat) + 1F);
+        incrementStat(stat, 1F);
+    }
+
+    public void incrementStat(Stat stat, float amount) {
+        setStat(stat, getStat(stat) + amount);
     }
 
     public void setStat(Stat stat, float value) {

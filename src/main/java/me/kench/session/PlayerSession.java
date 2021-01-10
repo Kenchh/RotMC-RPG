@@ -24,7 +24,7 @@ public class PlayerSession {
     private final Map<EssenceType, EssenceAnimation> activeEssences;
     private final List<Block> goldBlocks;
     private final List<Block> iceBlocks;
-    private final List<Block> obbyBlocks;
+    private final List<Block> obsidianBlocks;
     private String lastKiller;
     private String lastDamage;
     private BukkitTask ticker;
@@ -39,7 +39,7 @@ public class PlayerSession {
         activeEssences = new HashMap<>();
         goldBlocks = new ArrayList<>();
         iceBlocks = new ArrayList<>();
-        obbyBlocks = new ArrayList<>();
+        obsidianBlocks = new ArrayList<>();
         lastKiller = "";
         lastDamage = "";
     }
@@ -64,8 +64,8 @@ public class PlayerSession {
         return iceBlocks;
     }
 
-    public List<Block> getObbyBlocks() {
-        return obbyBlocks;
+    public List<Block> getObsidianBlocks() {
+        return obsidianBlocks;
     }
 
     public String getLastKiller() {

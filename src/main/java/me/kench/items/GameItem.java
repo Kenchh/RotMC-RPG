@@ -1,7 +1,7 @@
 package me.kench.items;
 
-import me.kench.game.GameClass;
 import me.kench.items.stats.Gem;
+import me.kench.player.RpgClass;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
 import org.bukkit.ChatColor;
@@ -12,93 +12,83 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameItem {
-
-    private ItemStack item;
-    private ArrayList<GameClass> gameClasses = new ArrayList<>();
+    private final ItemStack item;
+    private final GameItemStats stats;
+    private List<RpgClass> rpgClasses;
     private int level;
-
-    private ItemStats stats;
 
     public GameItem(ItemStack item) {
         this.item = item;
-        stats = new ItemStats(this);
+        stats = new GameItemStats(this);
 
         ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
 
-        if (meta.hasDisplayName() && ItemUtils.isGem(meta.getDisplayName())) {
-            return;
+        if (meta.hasDisplayName()) {
+            String displayName = meta.getDisplayName();
+
+            if (ItemUtils.isGem(displayName) || ItemUtils.isRune(displayName) || ItemUtils.isEssence(displayName)) {
+                return;
+            }
         }
 
-        if (meta.hasDisplayName() && ItemUtils.isRune(meta.getDisplayName())) {
-            return;
-        }
-
-        if (meta.hasDisplayName() && ItemUtils.isEssence(meta.getDisplayName())) {
-            return;
-        }
-
-        List<String> lore = new ArrayList<>();
+        List<String> lore = null;
         if (meta.hasLore()) lore = meta.getLore();
+        if (lore == null) lore = new ArrayList<>();
 
-        for (String s : lore) {
-
-            if (s.contains("Class:")) {
-                String classes = s.replace("§eClass:§f ", "");
-
-                for (String gameClass : classes.split(", ")) {
-                    gameClasses.add(new GameClass(gameClass));
+        for (String line : lore) {
+            if (line.contains("Class:")) {
+                String classes = line.replace("§eClass:§f ", "");
+                for (String rpgClass : classes.split(", ")) {
+                    rpgClasses.add(RpgClass.getByName(rpgClass.trim()));
                 }
             }
 
-            if (s.contains("Level:")) {
-                String lvl = TextUtils.getLastNumber(s, 0);
+            if (line.contains("Level:")) {
+                String lvl = TextUtils.getLastNumber(line, 0);
                 level = Integer.parseInt(lvl.replace("+", ""));
             }
 
-            checkForStats(s);
+            if (ItemUtils.isEssence(line)) {
+                stats.setEssence(ItemUtils.getEssenceFromString(line));
+            }
 
+            if (ItemUtils.isRune(line)) {
+                stats.setRune(ItemUtils.getRuneFromString(line, 4));
+            }
+
+            if (ItemUtils.isGem(line)) {
+                stats.addGem(ItemUtils.getGemFromString(line, 4));
+            }
         }
 
         for (int i = 1; i <= lore.size(); i++) {
             String line = lore.get(lore.size() - i);
 
             if (line.contains("Essence Socket")) {
-                stats.hasEssenceSocket = true;
+                stats.setHasEssenceSocket(true);
                 continue;
             }
 
             if (line.contains("Rune Socket")) {
-                stats.hasRuneSocket = true;
+                stats.setHasRuneSocket(true);
                 continue;
             }
 
             if (line.contains("Gem Socket")) {
-                stats.gemsockets++;
-                continue;
+                stats.setGemSockets(stats.getGemSockets() + 1);
             }
         }
 
-        stats.stats = ItemUtils.getItemStatsByLore(lore);
+        stats.setPlayerStatBoost(ItemUtils.getItemStatsByLore(lore));
     }
 
-    private void checkForStats(String s) {
-
-        if (ItemUtils.isEssence(s))
-            stats.setEssence(ItemUtils.getEssenceFromString(s));
-
-        if (ItemUtils.isRune(s))
-            stats.setRune(ItemUtils.getRuneFromString(s, 4));
-
-        if (ItemUtils.isGem(s))
-            stats.addGem(ItemUtils.getGemFromString(s, 4));
-    }
-
-    public ItemStats getStats() {
+    public GameItemStats getStats() {
         return stats;
     }
 
-    public ArrayList<GameClass> getGameClasses() {
-        return gameClasses;
+    public List<RpgClass> getRpgClasses() {
+        return rpgClasses;
     }
 
     public int getLevel() {
@@ -110,7 +100,6 @@ public class GameItem {
     }
 
     public void update() {
-
         if (item == null) return;
 
         ItemMeta meta = item.getItemMeta();
@@ -126,12 +115,12 @@ public class GameItem {
             }
         }
 
-        for (int i = 0; i < stats.gems.size(); i++) {
-            Gem gem = stats.gems.get(i);
+        for (int i = 0; i < stats.getGems().size(); i++) {
+            Gem gem = stats.getGems().get(i);
             lore.add(ChatColor.RESET + ChatColor.GREEN.toString() + "▸ 〘 " + gem.getType().getPrefix() + gem.getType().getName() + " " + TextUtils.getRomanFromNumber(gem.getLevel()) + ChatColor.GREEN.toString() + " 〙");
         }
 
-        for (int i = 0; i < stats.gemsockets; i++) {
+        for (int i = 0; i < stats.getGemSockets(); i++) {
             lore.add(ChatColor.RESET + ChatColor.GREEN.toString() + "▸ 〘 Gem Socket 〙");
         }
 
@@ -139,7 +128,7 @@ public class GameItem {
             lore.add(ChatColor.RESET + ChatColor.AQUA.toString() + "▸ 〘 " + stats.getRune().getType().getPrefix() + stats.getRune().getType().getName() + ChatColor.AQUA.toString() + " 〙");
         }
 
-        if (stats.hasRuneSocket) {
+        if (stats.hasRuneSocket()) {
             lore.add(ChatColor.RESET + ChatColor.AQUA.toString() + "▸ 〘 Rune Socket 〙");
         }
 
@@ -147,7 +136,7 @@ public class GameItem {
             lore.add(ChatColor.RESET + ChatColor.LIGHT_PURPLE.toString() + "▸ 〘 " + stats.getEssence().getType().getPrefix() + stats.getEssence().getType().getName() + ChatColor.LIGHT_PURPLE.toString() + " 〙");
         }
 
-        if (stats.hasEssenceSocket) {
+        if (stats.hasEssenceSocket()) {
             lore.add(ChatColor.RESET + ChatColor.LIGHT_PURPLE.toString() + "▸ 〘 Essence Socket 〙");
         }
 

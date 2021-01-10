@@ -44,7 +44,7 @@ public class RotMC_GiveItem extends SubCommand {
                                     ChatColor.GRAY + "Success Chance:" + ChatColor.GOLD + " " + args[3] + "%",
                                     ChatColor.GRAY + "▸ YYY:" + ChatColor.GOLD + " ZZZ"
                             )
-                            .modelData(GemType.valueOf(args[2].toUpperCase()).getModeldata())
+                            .modelData(GemType.valueOf(args[2].toUpperCase()).getModelData())
                             .build()
             );
 
@@ -69,7 +69,7 @@ public class RotMC_GiveItem extends SubCommand {
                                     ChatColor.GRAY + "Success Chance:" + ChatColor.GOLD + " " + args[3] + "%",
                                     ChatColor.GRAY + "▸ Permanent Effect:" + ChatColor.GOLD + " ZZZ"
                             )
-                            .modelData(RuneType.valueOf(args[2].toUpperCase()).getModeldata())
+                            .modelData(RuneType.valueOf(args[2].toUpperCase()).getModelData())
                             .build()
             );
 
@@ -94,7 +94,7 @@ public class RotMC_GiveItem extends SubCommand {
                                     ChatColor.GRAY + "Success Chance:" + ChatColor.GOLD + " 100%",
                                     ChatColor.GRAY + "▸ Vanity Effect:" + ChatColor.GOLD + " ZZZ"
                             )
-                            .modelData(EssenceType.valueOf(args[2].toUpperCase()).getModeldata())
+                            .modelData(EssenceType.valueOf(args[2].toUpperCase()).getModelData())
                             .build()
             );
 

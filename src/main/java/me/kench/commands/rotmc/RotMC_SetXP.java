@@ -4,7 +4,6 @@ import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,7 +36,7 @@ public class RotMC_SetXP extends SubCommand {
 
         final int finalAmount = amount;
         RotMC.getInstance().getDataManager().getPlayerData()
-                .loadSafe(target.getUniqueId())
+                .chainLoadSafe(target.getUniqueId())
                 .asyncLast(data -> data.getSelectedClass().setFame(finalAmount))
                 .sync(() -> Messaging.sendMessage(sender, String.format("<green>%s's fame has been set to <gold>%d <green>!", target.getName(), finalAmount)))
                 .execute();

@@ -52,7 +52,7 @@ public class RuneItem {
         ItemMeta meta = item.getItemMeta();
 
         if (rune != null)
-            meta.setCustomModelData(rune.getType().getModeldata());
+            meta.setCustomModelData(rune.getType().getModelData());
 
         List<String> lore = new ArrayList<>();
         if (meta.hasLore()) lore = meta.getLore();

@@ -1,7 +1,5 @@
 package me.kench.player;
 
-import java.util.NoSuchElementException;
-
 public enum Stat {
     HEALTH,
     ATTACK,

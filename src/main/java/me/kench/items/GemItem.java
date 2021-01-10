@@ -62,7 +62,7 @@ public class GemItem {
         ItemMeta meta = item.getItemMeta();
 
         if (gem != null)
-            meta.setCustomModelData(gem.getType().getModeldata() + gem.getLevel());
+            meta.setCustomModelData(gem.getType().getModelData() + gem.getLevel());
 
         List<String> lore = new ArrayList<>();
         if (meta.hasLore()) lore = meta.getLore();

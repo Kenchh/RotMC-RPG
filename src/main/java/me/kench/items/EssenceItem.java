@@ -30,7 +30,7 @@ public class EssenceItem {
         ItemMeta meta = item.getItemMeta();
 
         if (essence != null)
-            meta.setCustomModelData(essence.getType().getModeldata());
+            meta.setCustomModelData(essence.getType().getModelData());
 
         List<String> lore = new ArrayList<>();
         if (meta.hasLore()) lore = meta.getLore();

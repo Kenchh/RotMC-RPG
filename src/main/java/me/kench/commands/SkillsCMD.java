@@ -1,6 +1,6 @@
 package me.kench.commands;
 
-import me.kench.gui.SkillsGUI;
+import me.kench.gui.skills.SkillsGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +14,7 @@ public class SkillsCMD implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        player.openInventory(new SkillsGUI(player).getInv());
+        player.openInventory(new SkillsGui(player).getInv());
 
         return true;
     }

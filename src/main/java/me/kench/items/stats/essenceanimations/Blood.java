@@ -24,11 +24,11 @@ public class Blood extends EssenceAnimation {
 
         Location ploc = p.getLocation().clone();
 
-        double xzcords1[] = BlockUtils.getXZCordsFromDegree(ploc, 0.5D, 360D * ((double) ratio));
+        double xzcords1[] = BlockUtils.getXZCoordsFromDegree(ploc, 0.5D, 360D * ((double) ratio));
         Location loc1 = new Location(ploc.getWorld(), xzcords1[0], ploc.getY(), xzcords1[1]);
         p.getWorld().spawnParticle(Particle.REDSTONE, loc1, 0, 0.001, 1, 0, 1, new Particle.DustOptions(Color.RED, 1));
 
-        double xzcords2[] = BlockUtils.getXZCordsFromDegree(ploc, 0.75D, 360D * ((double) ratio));
+        double xzcords2[] = BlockUtils.getXZCoordsFromDegree(ploc, 0.75D, 360D * ((double) ratio));
         Location loc2 = new Location(ploc.getWorld(), xzcords2[0], ploc.getY() + 0.33, xzcords2[1]);
         p.getWorld().spawnParticle(Particle.REDSTONE, loc2, 0, 0.001, 1, 0, 1, new Particle.DustOptions(Color.fromBGR(100, 100, 255), 1));
 

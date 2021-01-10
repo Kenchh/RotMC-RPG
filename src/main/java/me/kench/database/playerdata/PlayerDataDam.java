@@ -76,29 +76,40 @@ public class PlayerDataDam {
      * the data is requested from the database and saved in the cache for fast future requests.
      *
      * @param uniqueId the unique id of the Player
-     * @return a {@link TaskChain<PlayerData>} to be used in further task execution
+     * @return a {@link PlayerData} to be used in further task execution
      */
-    public TaskChain<PlayerData> load(UUID uniqueId) {
-        return RotMC
-                .newChain()
-                .asyncFirst(() -> playerDataCache.get(uniqueId));
+    public PlayerData load(UUID uniqueId) {
+        return playerDataCache.get(uniqueId);
     }
 
     /**
-     * Exactly the same as {@link #load(UUID)} but aborts further tasks if the data is not found.
+     * Loads the PlayerData for the given Player. If it is present in the cache, it is immediately returned; otherwise,
+     * the data is requested from the database and saved in the cache for fast future requests.
      *
      * @param uniqueId the unique id of the Player
      * @return a {@link TaskChain<PlayerData>} to be used in further task execution
      */
-    public TaskChain<PlayerData> loadSafe(UUID uniqueId) {
-        return load(uniqueId).abortIfNull();
+    public TaskChain<PlayerData> chainLoad(UUID uniqueId) {
+        return RotMC
+                .newChain()
+                .asyncFirst(() -> load(uniqueId));
+    }
+
+    /**
+     * Exactly the same as {@link #chainLoad(UUID)} but aborts further tasks if the data is not found.
+     *
+     * @param uniqueId the unique id of the Player
+     * @return a {@link TaskChain<PlayerData>} to be used in further task execution
+     */
+    public TaskChain<PlayerData> chainLoadSafe(UUID uniqueId) {
+        return chainLoad(uniqueId).abortIfNull();
     }
 
     /**
      * Loads a readonly copy of the PlayerData in the database for reporting purposes.
      * Bypasses cache.
      */
-    public TaskChain<List<PlayerData>> loadAll() {
+    public TaskChain<List<PlayerData>> chainLoadAll() {
         return RotMC
                 .newChain()
                 .asyncFirst(() -> Collections.unmodifiableList(dao.loadAll()));
@@ -111,7 +122,7 @@ public class PlayerDataDam {
      * @return A {@link TaskChain<Map<Integer, PlayerClass>>} to be used in further task execution.
      */
     public TaskChain<Map<PlayerClass, Long>> getTop10Classes() {
-        return loadAll()
+        return chainLoadAll()
                 .async(dataObjects -> dataObjects.stream()
                         .flatMap(data -> data.getClasses().stream())
                         .sorted(PlayerClass::compareTo)
@@ -132,7 +143,7 @@ public class PlayerDataDam {
     public TaskChain<Map<Guild, Long>> getTop10Guilds() {
         GuildHandler guilds = Guilds.getApi().getGuildHandler();
 
-        return loadAll()
+        return chainLoadAll()
                 .async(dataObjects -> {
                     Map<Guild, Long> map = new HashMap<>();
 

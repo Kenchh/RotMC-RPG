@@ -11,6 +11,16 @@ public enum GemType {
     DODGE("Crystal of Evasion", ChatColor.YELLOW.toString(), 330),
     VITALITY("Topaz of Vitality", ChatColor.LIGHT_PURPLE.toString(), 350);
 
+    private final String name;
+    private final String prefix;
+    private final int modelData;
+
+    GemType(String name, String prefix, int modelData) {
+        this.name = name;
+        this.prefix = prefix;
+        this.modelData = modelData;
+    }
+
     public String getName() {
         return name;
     }
@@ -19,18 +29,11 @@ public enum GemType {
         return prefix;
     }
 
-    public int getModeldata() {
-        return modeldata;
+    public int getModelData() {
+        return getModelData(0);
     }
-
-    String name;
-    String prefix;
-    int modeldata;
-
-    GemType(String name, String prefix, int modeldata) {
-        this.name = name;
-        this.prefix = prefix;
-        this.modeldata = modeldata;
+    public int getModelData(int level) {
+        return modelData + level;
     }
 
     public static GemType fromStat(Stat stat) {

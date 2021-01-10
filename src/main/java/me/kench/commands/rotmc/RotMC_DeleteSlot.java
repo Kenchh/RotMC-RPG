@@ -4,7 +4,6 @@ import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,7 +36,7 @@ public class RotMC_DeleteSlot extends SubCommand {
 
         final int finalAmount = amount;
         RotMC.getInstance().getDataManager().getPlayerData()
-                .loadSafe(target.getUniqueId())
+                .chainLoadSafe(target.getUniqueId())
                 .asyncLast(data -> data.setMaxSlots(Math.max(data.getMaxSlots() - finalAmount, 2)))
                 .sync(() -> Messaging.sendMessage(sender, String.format("<green>Deleted %d profile slots for %s!", finalAmount, target.getName())))
                 .execute();

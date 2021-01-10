@@ -1,6 +1,6 @@
 package me.kench.commands;
 
-import me.kench.gui.GlowGUI;
+import me.kench.gui.glow.GlowGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +16,7 @@ public class GlowCMD implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        player.openInventory(new GlowGUI(player).getInv());
+        player.openInventory(new GlowGui(player).getInv());
 
         return true;
     }

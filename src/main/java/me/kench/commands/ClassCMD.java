@@ -1,6 +1,6 @@
 package me.kench.commands;
 
-import me.kench.gui.ClassesGUI;
+import me.kench.gui.chooseclass.ChooseClassGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,7 +13,7 @@ public class ClassCMD implements CommandExecutor {
             return true;
         }
 
-        new ClassesGUI().display((Player) sender);
+        new ChooseClassGui().display((Player) sender);
 
         return true;
     }

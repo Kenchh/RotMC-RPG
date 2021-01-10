@@ -234,8 +234,7 @@ public class PlayerData {
     public void ensureClassPermissions() throws IllegalStateException {
         if (getSelectedClass() == null) return;
 
-        PlayerClass selectedClass = getSelectedClass();
-        RpgClass rpgClass = RpgClass.getByName(selectedClass.getRpgClass().getName());
+        RpgClass rpgClass = getSelectedClass().getRpgClass();
 
         UserManager lpUserManager = RotMC.getInstance().getLuckPerms().getUserManager();
         User lpUser = lpUserManager.getUser(getUniqueId());
@@ -243,14 +242,17 @@ public class PlayerData {
             throw new IllegalStateException(String.format("Could not find LuckPerms profile for player with unique ID %s!", getUniqueId()));
         }
 
+        // Remove class level permissions
         for (int i = 1; i <= 20; i++) {
             lpUser.data().remove(Node.builder(String.format("rotmc.level.{1-%d}", i)).build());
         }
 
+        // Remove all possible class permissions
         for (String permission : RpgClass.getAllPermissions()) {
             lpUser.data().remove(Node.builder(permission).build());
         }
 
+        // Add class permissions
         for (String permission : rpgClass.getPermissions()) {
             lpUser.data().add(Node.builder(permission).build());
         }

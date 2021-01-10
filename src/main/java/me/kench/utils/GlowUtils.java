@@ -1,9 +1,11 @@
 package me.kench.utils;
 
+import co.aikar.taskchain.TaskChain;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.api.GuildsAPI;
 import me.glaremasters.guilds.guild.Guild;
 import me.kench.RotMC;
+import me.kench.player.PlayerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,15 +15,16 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GlowUtils {
-
     public static ChatColor getGlowColor(Player p) {
         for (Team t : p.getScoreboard().getTeams()) {
             if (t.hasEntry(p.getName())) {
                 return ChatColor.getByChar(t.getName().replace("GLOW_COLOR_§", ""));
             }
         }
+
         return null;
     }
 
@@ -35,74 +38,70 @@ public class GlowUtils {
     }
 
     public static void setGlow(Player p, ChatColor c) {
-
         clearGlow(p);
 
         for (Player pp : Bukkit.getOnlinePlayers()) {
             Team team = pp.getScoreboard().getTeam("GLOW_COLOR_" + c.toString());
+
             if (team == null) {
                 team = pp.getScoreboard().registerNewTeam("GLOW_COLOR_" + c.toString());
             }
+
             team.addEntry(p.getName());
             team.setDisplayName(c + ChatColor.BOLD.toString() + c);
             team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
             team.setColor(c);
         }
+
         p.setGlowing(true);
     }
 
-    public static boolean isPermitted(Player p, ChatColor c) {
+    public static boolean isPermitted(Player player, ChatColor color) {
+        if (color == null) return false;
 
-        if (c == null) return false;
+        if (player.hasPermission("rotmc.glow." + color.name().toLowerCase().replace("_", ""))) return true;
 
-        if (p.hasPermission("rotmc.glow." + c.name().toLowerCase().replace("_", ""))) return true;
-
-        ArrayList<ChatColor> topFame = new ArrayList<>();
+        List<ChatColor> topFame = new ArrayList<>();
         topFame.add(ChatColor.GREEN);
         topFame.add(ChatColor.DARK_GREEN);
 
-        ArrayList<ChatColor> topGuildss = new ArrayList<>();
-        topGuildss.add(ChatColor.LIGHT_PURPLE);
-        topGuildss.add(ChatColor.DARK_PURPLE);
+        List<ChatColor> topGuilds = new ArrayList<>();
+        topGuilds.add(ChatColor.LIGHT_PURPLE);
+        topGuilds.add(ChatColor.DARK_PURPLE);
 
-        if (!topFame.contains(c) && !topGuildss.contains(c)) {
-            if (!p.hasPermission("rotmc.glow." + c.name().toLowerCase().replace("_", ""))) {
-                return false;
-            } else {
-                return true;
-            }
+        if (!topFame.contains(color) && !topGuilds.contains(color)) {
+            return player.hasPermission("rotmc.glow." + color.name().toLowerCase().replace("_", ""));
         } else {
+            if (topFame.contains(color)) {
+                TaskChain<Map<PlayerClass, Long>> topClasses = RotMC.getInstance().getDataManager().getPlayerData().getTop10Classes();
 
-            if (topFame.contains(c)) {
-                HashMap<Integer, List<String>> topClasses = RotMC.getInstance().getSqlManager().getTopClasses();
-                if (c == ChatColor.GREEN) {
+                if (color == ChatColor.GREEN) {
                     boolean allow = false;
                     for (int i : topClasses.keySet()) {
 
                         if (topClasses.get(i).size() <= 1 || i > 5) break;
 
                         List<String> data = topClasses.get(i);
-                        if (data != null && data.get(0) != null && data.get(0).equalsIgnoreCase(p.getName())) {
+                        if (data != null && data.get(0) != null && data.get(0).equalsIgnoreCase(player.getName())) {
                             allow = true;
                             break;
                         }
                     }
 
                     return allow;
-                } else if (c == ChatColor.DARK_GREEN) {
+                } else if (color == ChatColor.DARK_GREEN) {
                     if (!topClasses.isEmpty()) {
-                        if (topClasses.get(1) != null && topClasses.get(1).get(0) != null && topClasses.get(1).get(0).equalsIgnoreCase(p.getName())) {
+                        if (topClasses.get(1) != null && topClasses.get(1).get(0) != null && topClasses.get(1).get(0).equalsIgnoreCase(player.getName())) {
                             return true;
                         }
                     }
                 }
-            } else if (topGuildss.contains(c)) {
-
+            } else if (topGuilds.contains(color)) {
                 HashMap<Integer, List<String>> topGuilds = RotMC.getInstance().getSqlManager().getTopGuilds();
-                if (c == ChatColor.LIGHT_PURPLE) {
 
+                if (color == ChatColor.LIGHT_PURPLE) {
                     GuildsAPI guildsAPI = Guilds.getApi();
-                    Guild g = guildsAPI.getGuild(p);
+                    Guild g = guildsAPI.getGuild(player);
 
                     if (g == null || g.getName() == null) return false;
 
@@ -119,15 +118,13 @@ public class GlowUtils {
                     }
 
                     return allow;
-                } else if (c == ChatColor.DARK_PURPLE) {
-
+                } else if (color == ChatColor.DARK_PURPLE) {
                     GuildsAPI guildsAPI = Guilds.getApi();
-                    Guild g = guildsAPI.getGuild(p);
+                    Guild g = guildsAPI.getGuild(player);
 
                     if (g == null || g.getName() == null) return false;
 
                     if (!topGuilds.isEmpty()) {
-
                         if (topGuilds.get(1) != null && topGuilds.get(1).get(0) != null && topGuilds.get(1).get(0).equalsIgnoreCase(g.getName())) {
                             return true;
                         }
@@ -154,39 +151,26 @@ public class GlowUtils {
                 return ChatColor.GOLD;
             case GRAY_DYE:
                 return ChatColor.GRAY;
-
             case YELLOW_DYE:
                 return ChatColor.YELLOW;
-
             case WHITE_DYE:
                 return ChatColor.WHITE;
-
             case LIGHT_BLUE_DYE:
                 return ChatColor.AQUA;
-
-
             case LIME_DYE:
                 return ChatColor.GREEN;
-
             case GREEN_DYE:
                 return ChatColor.DARK_GREEN;
-
             case PINK_DYE:
                 return ChatColor.LIGHT_PURPLE;
-
             case PURPLE_DYE:
                 return ChatColor.DARK_PURPLE;
-
-
             case LAPIS_LAZULI:
                 return ChatColor.BLUE;
-
             case BLACK_DYE:
                 return ChatColor.BLACK;
-
         }
 
         return ChatColor.RED;
     }
-
 }

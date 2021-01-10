@@ -4,7 +4,7 @@ import me.kench.player.PlayerClass;
 import me.kench.player.RpgClass;
 import me.kench.player.Stat;
 import me.kench.player.Stats;
-import me.kench.utils.JsonParser;
+import me.kench.utils.InventorySerializer;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.json.JSONArray;
@@ -61,7 +61,7 @@ public class PlayerDataRowMapper implements RowMapper<PlayerData> {
                         object.getInt("xp"),
                         object.getInt("level"),
                         object.getBoolean("selected"),
-                        JsonParser.fromBase64(object.getString("inv"))
+                        InventorySerializer.fromBase64(object.getString("inv"))
                 ));
             }
         }

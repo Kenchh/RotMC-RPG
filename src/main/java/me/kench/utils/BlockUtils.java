@@ -5,14 +5,13 @@ import org.bukkit.Location;
 import java.util.ArrayList;
 
 public class BlockUtils {
-
     public static ArrayList<Location> circleLocations(Location loc, double radius, int iteratecount) {
         ArrayList<Location> cl = new ArrayList<Location>();
 
         for (int degree = 0; degree <= 360; degree += iteratecount) {
 
-            double x = getXZCordsFromDegree(loc, radius, degree)[0];
-            double z = getXZCordsFromDegree(loc, radius, degree)[1];
+            double x = getXZCoordsFromDegree(loc, radius, degree)[0];
+            double z = getXZCoordsFromDegree(loc, radius, degree)[1];
 
             cl.add(new Location(loc.getWorld(), x, loc.getY(), z));
         }
@@ -20,7 +19,7 @@ public class BlockUtils {
         return cl;
     }
 
-    public static double[] getXZCordsFromDegree(Location loc, double radius, double degree) {
+    public static double[] getXZCoordsFromDegree(Location loc, double radius, double degree) {
         double radian = Math.toRadians(degree);
 
         double xMultiplier = Math.cos(radian);
@@ -39,5 +38,4 @@ public class BlockUtils {
 
         return xzCords;
     }
-
 }

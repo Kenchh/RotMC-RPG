@@ -1,11 +1,11 @@
 package me.kench.utils;
 
 import me.kench.RotMC;
-import me.kench.game.GameClass;
 import me.kench.items.GameItem;
 import me.kench.items.stats.*;
 import me.kench.items.stats.essenceanimations.*;
 import me.kench.player.PlayerClass;
+import me.kench.player.Stat;
 import me.kench.player.Stats;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,10 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUtils {
-
-    public static ArrayList<Block> goldblocks = new ArrayList<>();
-    public static ArrayList<Block> iceblocks = new ArrayList<>();
-    public static ArrayList<Block> obbyblocks = new ArrayList<>();
+    public static ArrayList<Block> goldBlocks = new ArrayList<>();
+    public static ArrayList<Block> iceBlocks = new ArrayList<>();
+    public static ArrayList<Block> obsidianBlocks = new ArrayList<>();
 
     public static Stats getOverallItemStatsFromEquipment(Player p) {
         Stats overallStats = new Stats();
@@ -61,15 +60,15 @@ public class ItemUtils {
             if (armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
 
-                if (gameItem.getStats().stats != null) {
-                    Stats itemstats = gameItem.getStats().stats;
+                if (gameItem.getStats().getPlayerStatBoost() != null) {
+                    Stats itemStats = gameItem.getStats().getPlayerStatBoost();
 
-                    overallStats.health += itemstats.health;
-                    overallStats.attack += itemstats.attack;
-                    overallStats.defense += itemstats.defense;
-                    overallStats.speed += itemstats.speed;
-                    overallStats.dodge += itemstats.dodge;
-                    overallStats.vitality += itemstats.vitality;
+                    overallStats.incrementStat(Stat.HEALTH, itemStats.getStat(Stat.HEALTH));
+                    overallStats.incrementStat(Stat.ATTACK, itemStats.getStat(Stat.ATTACK));
+                    overallStats.incrementStat(Stat.DEFENSE, itemStats.getStat(Stat.DEFENSE));
+                    overallStats.incrementStat(Stat.SPEED, itemStats.getStat(Stat.SPEED));
+                    overallStats.incrementStat(Stat.DODGE, itemStats.getStat(Stat.DODGE));
+                    overallStats.incrementStat(Stat.VITALITY, itemStats.getStat(Stat.VITALITY));
                 }
             }
         }

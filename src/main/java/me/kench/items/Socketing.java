@@ -10,15 +10,14 @@ import org.bukkit.entity.Player;
 import java.util.Random;
 
 public class Socketing {
-
     public Socketing(Player p, GameItem gameItem, GemItem gem) {
         int percentage = new Random().nextInt(100) + 1;
 
         if (percentage <= gem.getSuccessChance()) {
             /** success */
             p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1F, 1F);
-            gameItem.getStats().gemsockets--;
-            gameItem.getStats().gems.add(new Gem(gem.getGem().getType(), gem.getGem().getLevel()));
+            gameItem.getStats().decrementGemSockets();
+            gameItem.getStats().getGems().add(new Gem(gem.getGem().getType(), gem.getGem().getLevel()));
             p.sendMessage(ChatColor.GREEN + "Your item has successfully been upgraded!");
             gameItem.update();
         } else {
@@ -36,7 +35,7 @@ public class Socketing {
         if (percentage <= rune.getSuccessChance()) {
             /** success */
             p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1F, 1F);
-            gameItem.getStats().hasRuneSocket = false;
+            gameItem.getStats().setHasRuneSocket(false);
             gameItem.getStats().setRune(new Rune(rune.getRune().getType()));
             p.sendMessage(ChatColor.GREEN + "Your item has successfully been upgraded!");
             gameItem.update();
@@ -51,11 +50,10 @@ public class Socketing {
     public Socketing(Player p, GameItem gameItem, EssenceItem essence) {
 
         p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1F, 1F);
-        gameItem.getStats().hasEssenceSocket = false;
+        gameItem.getStats().setHasEssenceSocket(false);
         gameItem.getStats().setEssence(new Essence(essence.getEssence().getType()));
         p.sendMessage(ChatColor.GREEN + "Your item has successfully been upgraded!");
         gameItem.update();
 
     }
-
 }
