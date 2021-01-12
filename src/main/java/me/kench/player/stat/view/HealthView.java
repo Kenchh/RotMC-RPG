@@ -19,4 +19,9 @@ public class HealthView extends StatView {
     public String getDisplayValue() {
         return String.format("%.1f HP", getStatPoints());
     }
+
+    @Override
+    public StatView merge(StatView... views) {
+        return new HealthView(merge0(views));
+    }
 }

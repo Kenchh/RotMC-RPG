@@ -21,4 +21,9 @@ public class DefenseView extends StatView {
     public String getDisplayValue() {
         return String.format("%.1f%%", getStatPoints());
     }
+
+    @Override
+    public StatView merge(StatView... views) {
+        return new DefenseView(merge0(views));
+    }
 }

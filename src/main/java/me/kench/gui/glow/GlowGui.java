@@ -26,8 +26,8 @@ public class GlowGui {
     public GlowGui() {
         StaticPane background = new StaticPane(0, 0, 9, 6);
 
-        GuiItem blackBg = new GuiItem(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
-        GuiItem pinkBg = new GuiItem(ItemBuilder.create(Material.PINK_STAINED_GLASS_PANE).name(" ").build());
+        GuiItem blackBg = new GuiItem(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build(), event -> event.setCancelled(true));
+        GuiItem pinkBg = new GuiItem(ItemBuilder.create(Material.PINK_STAINED_GLASS_PANE).name(" ").build(), event -> event.setCancelled(true));
 
         int bgY = 0;
         for (int i = 0; i < 9; i++) {

@@ -37,6 +37,8 @@ public class PlayerClassItem extends GuiItem {
                         .modelData(playerClass.getRpgClass().getCustomModelData())
                         .build(),
                 event -> {
+                    event.setCancelled(true);
+
                     Player player = (Player) event.getWhoClicked();
 
                     if (event.getClick() == ClickType.RIGHT) {

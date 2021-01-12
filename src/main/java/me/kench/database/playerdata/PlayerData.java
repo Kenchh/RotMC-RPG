@@ -2,6 +2,7 @@ package me.kench.database.playerdata;
 
 import me.kench.RotMC;
 import me.kench.player.*;
+import me.kench.player.stat.PlayerStats;
 import me.kench.player.stat.Stat;
 import me.kench.player.stat.Stats;
 import me.kench.session.PlayerSession;
@@ -58,7 +59,7 @@ public class PlayerData {
         JSONArray array = new JSONArray();
 
         for (PlayerClass clazz : getClasses()) {
-            Stats stats = clazz.getStats();
+            Stats stats = clazz.getStats().getPotionStats();
 
             // If the class we are currently looking at is currently in use, we need to ensure
             // that the inventory data is fresh.

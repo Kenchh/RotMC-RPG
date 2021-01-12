@@ -24,7 +24,7 @@ public class CreateClassGui {
 
     public CreateClassGui() {
         StaticPane background = new StaticPane(0, 0, 9, 6);
-        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
+        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build(), event -> event.setCancelled(true));
         this.background = background;
 
         StaticPane classCategories = new StaticPane(1, 0, 7, 1);
@@ -35,7 +35,7 @@ public class CreateClassGui {
         this.classCategories = classCategories;
 
         StaticPane classBackground = new StaticPane(1, 2, 7, 4);
-        classBackground.fillWith(ItemBuilder.create(Material.BLUE_STAINED_GLASS_PANE).name(" ").build());
+        classBackground.fillWith(ItemBuilder.create(Material.BLUE_STAINED_GLASS_PANE).name(" ").build(), event -> event.setCancelled(true));
         this.classBackground = classBackground;
 
         StaticPane cancelButton = new StaticPane(0, 5, 1, 1);

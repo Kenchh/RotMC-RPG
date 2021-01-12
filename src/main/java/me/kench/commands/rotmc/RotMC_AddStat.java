@@ -30,7 +30,7 @@ public class RotMC_AddStat extends SubCommand {
 
         RotMC.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(target.getUniqueId())
-                .asyncLast(data -> data.getSelectedClass().addStat(stat))
+                .asyncLast(data -> data.getSelectedClass().addPotionStat(stat))
                 .sync(() -> Messaging.sendMessage(sender, String.format("<green>Added +1 %s to %s!", stat.getName(), target.getName())))
                 .execute();
 

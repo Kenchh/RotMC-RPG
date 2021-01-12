@@ -22,6 +22,8 @@ public class RuneGuiItem extends GuiItem {
                         .modelData(givenRune.getType().getModelData())
                         .build(),
                 event -> {
+                    event.setCancelled(true);
+
                     givenItem.setItem(
                             ItemBuilder.of(givenItem.getItem())
                                     .lore(

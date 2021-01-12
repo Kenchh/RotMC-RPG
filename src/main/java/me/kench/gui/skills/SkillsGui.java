@@ -3,22 +3,15 @@ package me.kench.gui.skills;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import me.kench.RotMC;
-import me.kench.gui.skills.item.StatItem;
+import me.kench.gui.skills.item.SkillsGuiStatItem;
 import me.kench.items.ItemBuilder;
-import me.kench.player.PlayerClass;
+import me.kench.player.stat.PlayerStats;
 import me.kench.player.stat.Stat;
 import me.kench.player.stat.Stats;
 import me.kench.utils.ItemUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class SkillsGui implements Listener {
     private final StaticPane background;
@@ -36,41 +29,23 @@ public class SkillsGui implements Listener {
         RotMC.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(player.getUniqueId())
                 .async(data -> {
-                    PlayerClass selectedClass = data.getSelectedClass();
-                    Stats overallStats = selectedClass.getStats().clone();
-                    overallStats.incrementStats(gemStats, itemStats);
+                    PlayerStats stats = data.getSelectedClass().getStats();
 
                     ChestGui gui = new ChestGui(6, "Stats");
 
                     StaticPane statPane = new StaticPane(2, 0, 5, 5);
-                    statPane.addItem(new StatItem(selectedClass, Stat.ATTACK, overallStats), 2, 0);
-                    statPane.addItem(new StatItem(selectedClass, Stat.SPEED, overallStats), 0, 2);
-                    statPane.addItem(new StatItem(selectedClass, Stat.HEALTH, overallStats), 2, 2);
-                    statPane.addItem(new StatItem(selectedClass, Stat.DEFENSE, overallStats), 4, 2);
-                    statPane.addItem(new StatItem(selectedClass, Stat.EVASION, overallStats), 2, 4);
+                    statPane.addItem(new SkillsGuiStatItem(stats, Stat.ATTACK), 2, 0);
+                    statPane.addItem(new SkillsGuiStatItem(stats, Stat.SPEED), 0, 2);
+                    statPane.addItem(new SkillsGuiStatItem(stats, Stat.HEALTH), 2, 2);
+                    statPane.addItem(new SkillsGuiStatItem(stats, Stat.DEFENSE), 4, 2);
+                    statPane.addItem(new SkillsGuiStatItem(stats, Stat.EVASION), 2, 4);
 
                     gui.addPane(background);
                     gui.addPane(statPane);
 
                     return gui;
                 })
+                .syncLast(gui -> gui.show(player))
                 .execute();
     }
-
-    @EventHandler
-    public void onClick(InventoryClickEvent e) {
-        if (e.getView() != null && e.getView().getTitle() != "Stats") {
-            return;
-        }
-
-        if (e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) return;
-
-        e.setCancelled(true);
-
-        if (e.getCurrentItem().getType() == Material.BARRIER) {
-            e.getWhoClicked().closeInventory();
-            return;
-        }
-    }
-
 }

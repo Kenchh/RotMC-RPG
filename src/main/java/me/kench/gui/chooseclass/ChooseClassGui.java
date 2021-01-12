@@ -21,7 +21,7 @@ public class ChooseClassGui {
 
     public ChooseClassGui() {
         StaticPane background = new StaticPane(0, 0, 9, 6);
-        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
+        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build(), event -> event.setCancelled(true));
         this.background = background;
     }
 

@@ -56,7 +56,7 @@ public class DeathEvent implements Listener {
                         if (loseFame < 0) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "eco give " + player.getName() + " " + (loseFame * -1));
                             selectedClass.giveFame(loseFame, true);
-                            selectedClass.getStats().zeroStats();
+                            selectedClass.getStats().getPotionStats().zeroStats();
                         }
 
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/ultimatekits:kit " + player.getName() + " " + selectedClass.getRpgClass().getName().toLowerCase());

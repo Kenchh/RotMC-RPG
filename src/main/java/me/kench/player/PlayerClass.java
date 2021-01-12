@@ -6,12 +6,14 @@ import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.GemType;
 import me.kench.items.stats.RuneType;
 import me.kench.items.stats.essenceanimations.EssenceAnimation;
+import me.kench.player.stat.PlayerStats;
 import me.kench.player.stat.Stat;
 import me.kench.player.stat.Stats;
 import me.kench.player.stat.view.StatView;
 import me.kench.session.PlayerSession;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.Messaging;
+import me.kench.utils.StatUtils;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
@@ -32,7 +34,7 @@ public class PlayerClass implements Comparable<PlayerClass> {
     private final UUID playerUniqueId;
     private final UUID uniqueId;
     private final RpgClass rpgClass;
-    private final Stats stats;
+    private final PlayerStats stats;
     private long fame = 0;
     private int level = 1;
     private boolean selected;
@@ -62,17 +64,17 @@ public class PlayerClass implements Comparable<PlayerClass> {
      * @param playerUniqueId the owner's unique id
      * @param uniqueId the unique id of this PlayerClass
      * @param rpgClass the {@link RpgClass} that this PlayerClass represents
-     * @param stats the {@link Stats} of the PlayerClass
+     * @param potionStats the {@link Stats} that represents potions / random chance levelUp stats of the PlayerClass
      * @param fame the fame (xp) of the PlayerClass
      * @param level the level; see {@link LevelProgression}.
      * @param selected whether or not this PlayerClass is currently selected by the player
      * @param inventory the inventory of this PlayerClass
      */
-    public PlayerClass(UUID playerUniqueId, UUID uniqueId, RpgClass rpgClass, Stats stats, long fame, int level, boolean selected, Inventory inventory) {
+    public PlayerClass(UUID playerUniqueId, UUID uniqueId, RpgClass rpgClass, Stats potionStats, long fame, int level, boolean selected, Inventory inventory) {
         this.playerUniqueId = playerUniqueId;
         this.uniqueId = uniqueId;
         this.rpgClass = rpgClass;
-        this.stats = stats;
+        this.stats = new PlayerStats(this, potionStats);
         this.fame = fame;
         this.level = level;
         this.selected = selected;
@@ -99,14 +101,16 @@ public class PlayerClass implements Comparable<PlayerClass> {
         return rpgClass;
     }
 
-    public Stats getStats() {
+    public PlayerStats getStats() {
         return stats;
     }
 
-    public void addStat(Stat stat) {
-        if (stats.getStat(stat).getStatPoints() < stats.getCap(getRpgClass(), stat)) {
+    public void addPotionStat(Stat stat) {
+        Stats potionStats = stats.getPotionStats();
+
+        if (potionStats.getStat(stat).getStatPoints() < StatUtils.getCap(getRpgClass(), stat)) {
             Messaging.sendMessage(getPlayer(), String.format("<green>Your %s stat has increased by %s1!", stat.getName(), GemType.fromStat(stat).getPrefix()));
-            stats.incrementStat(stat, 1F);
+            potionStats.incrementStat(stat, 1F);
         }
 
         applyStats();
@@ -214,31 +218,33 @@ public class PlayerClass implements Comparable<PlayerClass> {
             User user = userManager.getUser(getPlayerUniqueId());
             if (user == null) return;
 
+            Stats potionStats = stats.getPotionStats();
+
             for (int i = level + 1; i <= newLevel; i++) {
-                    double healthMultiplier = stats.getCapForLevel(rpgClass, Stat.HEALTH, newLevel) / 35 / 3.5;
-                    double attackMultiplier = stats.getCapForLevel(rpgClass, Stat.ATTACK, newLevel) / 35 / 3.5;
-                    double defenseMultiplier = stats.getCapForLevel(rpgClass, Stat.DEFENSE, newLevel) / 35 / 3.5;
-                    double speedMultiplier = stats.getCapForLevel(rpgClass, Stat.SPEED, newLevel) / 35 / 3.5;
-                    double dodgeMultiplier = stats.getCapForLevel(rpgClass, Stat.EVASION, newLevel) / 35 / 3.5;
+                    double healthMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.HEALTH, newLevel) / 35 / 3.5;
+                    double attackMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.ATTACK, newLevel) / 35 / 3.5;
+                    double defenseMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.DEFENSE, newLevel) / 35 / 3.5;
+                    double speedMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.SPEED, newLevel) / 35 / 3.5;
+                    double dodgeMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.EVASION, newLevel) / 35 / 3.5;
 
                     if ((((double) new Random().nextInt(100) + 1)) / 100D <= healthMultiplier) {
-                        addStat(Stat.HEALTH);
+                        addPotionStat(Stat.HEALTH);
                     }
 
                     if ((((double) new Random().nextInt(100) + 1)) / 100D <= attackMultiplier) {
-                        addStat(Stat.ATTACK);
+                        addPotionStat(Stat.ATTACK);
                     }
 
                     if ((((double) new Random().nextInt(100) + 1)) / 100D <= defenseMultiplier) {
-                        addStat(Stat.DEFENSE);
+                        addPotionStat(Stat.DEFENSE);
                     }
 
                     if ((((double) new Random().nextInt(100) + 1)) / 100D <= speedMultiplier) {
-                        addStat(Stat.SPEED);
+                        addPotionStat(Stat.SPEED);
                     }
 
                     if ((((double) new Random().nextInt(100) + 1)) / 100D <= dodgeMultiplier) {
-                        addStat(Stat.EVASION);
+                        addPotionStat(Stat.EVASION);
                     }
 
                     // TODO: Vitality
@@ -314,9 +320,7 @@ public class PlayerClass implements Comparable<PlayerClass> {
             }
         }
 
-        Stats overallStats = stats.clone();
-        overallStats.incrementStats(ItemUtils.getGemStatsFromEquipment(player));
-        overallStats.incrementStats(ItemUtils.getItemStatsFromEquipment(player));
+        Stats overallStats = stats.getOverallStats();
 
         // Default walk speed is 0.2F
         player.setWalkSpeed(0.2F * overallStats.getStat(Stat.SPEED).getValue());

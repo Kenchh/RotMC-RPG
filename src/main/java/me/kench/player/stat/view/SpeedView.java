@@ -18,4 +18,9 @@ public class SpeedView extends StatView {
     public String getDisplayValue() {
         return String.format("%.1f%%", getStatPoints());
     }
+
+    @Override
+    public StatView merge(StatView... views) {
+        return new SpeedView(merge0(views));
+    }
 }

@@ -22,6 +22,8 @@ public class EssenceGuiItem extends GuiItem {
                         .modelData(givenEssence.getType().getModelData())
                         .build(),
                 event -> {
+                    event.setCancelled(true);
+
                     givenItem.setItem(
                             ItemBuilder.of(givenItem.getItem())
                                     .lore(
