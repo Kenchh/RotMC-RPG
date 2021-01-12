@@ -7,9 +7,6 @@ import me.kench.commands.subcommand.SubCommandManager;
 import me.kench.database.DataManager;
 import me.kench.listener.*;
 import me.kench.player.LevelProgression;
-import me.kench.gui.createclass.CreateClassGui;
-import me.kench.gui.extractor.ExtractorGui;
-import me.kench.gui.glow.GlowGui;
 import me.kench.gui.skills.SkillsGui;
 import me.kench.papi.GlowPlaceHolder;
 import me.kench.papi.StarPlaceHolder;
@@ -19,6 +16,8 @@ import me.kench.utils.armor.DispenserArmorListener;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -46,51 +45,30 @@ public class RotMC extends JavaPlugin {
         levelProgression = new LevelProgression();
         subCommandManager = new SubCommandManager();
 
-        getServer().getPluginCommand("rotmc").setExecutor(new RotMCCMD());
-        getServer().getPluginCommand("class").setExecutor(new ClassCMD());
-        getServer().getPluginCommand("stats").setExecutor(new SkillsCMD());
-        getServer().getPluginCommand("ftop").setExecutor(new FameCMD());
-        getServer().getPluginCommand("gtop").setExecutor(new GuildCMD());
-        getServer().getPluginCommand("glow").setExecutor(new GlowCMD());
+        Server server = getServer();
+        server.getPluginCommand("rotmc").setExecutor(new RotMCCMD());
+        server.getPluginCommand("class").setExecutor(new ClassCMD());
+        server.getPluginCommand("stats").setExecutor(new SkillsCMD());
+        server.getPluginCommand("ftop").setExecutor(new FameCMD());
+        server.getPluginCommand("gtop").setExecutor(new GuildCMD());
+        server.getPluginCommand("glow").setExecutor(new GlowCMD());
 
-        getServer().getPluginManager().registerEvents(new GuiEvents(), this);
-        getServer().getPluginManager().registerEvents(new SkillsGui(), this);
-        getServer().getPluginManager().registerEvents(new ExtractorGui(), this);
-        getServer().getPluginManager().registerEvents(new InteractEvent(), this);
-        getServer().getPluginManager().registerEvents(new GlowGui(), this);
-        getServer().getPluginManager().registerEvents(new JoinLeaveEvent(), this);
-        getServer().getPluginManager().registerEvents(new ChatEvent(), this);
-        getServer().getPluginManager().registerEvents(new DamageEvent(), this);
-        getServer().getPluginManager().registerEvents(new XPEvent(), this);
-        getServer().getPluginManager().registerEvents(new InvEvents(), this);
-        getServer().getPluginManager().registerEvents(new DeathEvent(), this);
-        
-// TODO: remove this; not needed as Players should NOT be online when plugin is enabling.
-//        for (Player p : Bukkit.getOnlinePlayers()) {
-//            RotMC.getInstance().getPlayerDataManager().registerPlayerData(p);
-//
-//            if (RotMC.getPlayerData(p).getMainClass() != null) {
-//                PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
-//                RotMC.getInstance().getLevelProgression().displayLevelProgression(p);
-//                p.sendMessage(ChatColor.GREEN + "Your current profile: " + ChatColor.YELLOW + pc.getData().getName() + " " + ChatColor.GOLD + pc.getLevel());
-//                pc.applyStats();
-//            } else {
-//                p.openInventory(new CreateClassGUI(RotMC.getPlayerData(p)).getInv());
-//            }
-//        }
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(new GuiEvents(), this);
+        pluginManager.registerEvents(new SkillsGui(), this);
+        pluginManager.registerEvents(new InteractEvent(), this);
+        pluginManager.registerEvents(new JoinLeaveEvent(), this);
+        pluginManager.registerEvents(new ChatEvent(), this);
+        pluginManager.registerEvents(new DamageEvent(), this);
+        pluginManager.registerEvents(new XPEvent(), this);
+        pluginManager.registerEvents(new InvEvents(), this);
+        pluginManager.registerEvents(new DeathEvent(), this);
+        pluginManager.registerEvents(new DispenserArmorListener(), this);
+        pluginManager.registerEvents(new ArmorListener(Collections.emptyList()), this);
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (pluginManager.getPlugin("PlaceholderAPI") != null) {
             new GlowPlaceHolder().register();
             new StarPlaceHolder().register();
-        }
-
-        getServer().getPluginManager().registerEvents(new ArmorListener(Collections.emptyList()), this);
-
-        try {
-            //Better way to check for this? Only in 1.13.1+?
-            Class.forName("org.bukkit.event.block.BlockDispenseArmorEvent");
-            getServer().getPluginManager().registerEvents(new DispenserArmorListener(), this);
-        } catch (Exception ignored) {
         }
     }
 

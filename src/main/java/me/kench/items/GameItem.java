@@ -12,14 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameItem {
-    private final ItemStack item;
+    private ItemStack item;
     private final GameItemStats stats;
-    private List<RpgClass> rpgClasses;
+    private final List<RpgClass> rpgClasses;
     private int level;
 
     public GameItem(ItemStack item) {
         this.item = item;
         stats = new GameItemStats(this);
+        rpgClasses = new ArrayList<>();
 
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
@@ -83,6 +84,14 @@ public class GameItem {
         stats.setPlayerStatBoost(ItemUtils.getItemStatsByLore(lore));
     }
 
+    public ItemStack getItem() {
+        return item;
+    }
+
+    public void setItem(ItemStack item) {
+        this.item = item;
+    }
+
     public GameItemStats getStats() {
         return stats;
     }
@@ -142,9 +151,5 @@ public class GameItem {
 
         meta.setLore(lore);
         item.setItemMeta(meta);
-    }
-
-    public ItemStack getItem() {
-        return item;
     }
 }

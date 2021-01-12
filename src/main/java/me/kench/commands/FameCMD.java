@@ -17,7 +17,7 @@ public class FameCMD implements CommandExecutor {
 
         Player senderPlayer = (Player) sender;
         if (args.length == 1 || cmd.getName().equalsIgnoreCase("ftop")) {
-            RotMC.getInstance().getDataManager().getPlayerData().getTop10Classes()
+            RotMC.getInstance().getDataManager().getPlayerData().chainLoadTop10Classes()
                     .syncLast(top10 -> {
                         Messaging.sendMessage(sender, "<gold>Top 10 Characters with Highest Fame");
 

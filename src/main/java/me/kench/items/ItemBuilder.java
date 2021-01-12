@@ -5,18 +5,28 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ItemBuilder {
     private final ItemStack stack;
     private final ItemMeta meta;
 
     private ItemBuilder(Material type) {
-        stack = new ItemStack(type);
+        this(new ItemStack(type));
+    }
+
+    private ItemBuilder(ItemStack stack) {
+        this.stack = stack;
         meta = stack.getItemMeta();
     }
 
     public static ItemBuilder create(Material type) {
         return new ItemBuilder(type);
+    }
+
+    public static ItemBuilder of(ItemStack stack) {
+        return new ItemBuilder(stack);
     }
 
     public ItemBuilder name(String name) {
@@ -36,6 +46,11 @@ public class ItemBuilder {
 
     public ItemBuilder modelData(int modelData) {
         meta.setCustomModelData(modelData);
+        return this;
+    }
+
+    public ItemBuilder applyMeta(Consumer<ItemMeta> metaConsumer) {
+        metaConsumer.accept(meta);
         return this;
     }
 

@@ -50,22 +50,13 @@ public class PlayerDataDam {
     }
 
     /**
-     * Checks if a PlayerData entry exists for the given Player.
-     *
-     * @param uniqueId the unique id of the Player
-     * @return a {@link TaskChain<Boolean>} to be used in further task execution
-     */
-    public TaskChain<Boolean> exists(UUID uniqueId) {
-        return RotMC.newChain().asyncFirst(() -> dao.exists(uniqueId));
-    }
-
-    /**
      * Creates a new PlayerData entry for the given Player, so long as one does not already exist.
      *
      * @param uniqueId the unique id of the Player
      */
     public void create(UUID uniqueId) {
-        exists(uniqueId)
+        RotMC.newChain()
+                .asyncFirst(() -> dao.exists(uniqueId))
                 .abortIf(true)
                 .async(() -> dao.create(uniqueId))
                 .execute();
@@ -82,16 +73,80 @@ public class PlayerDataDam {
         return playerDataCache.get(uniqueId);
     }
 
+
     /**
-     * Loads the PlayerData for the given Player. If it is present in the cache, it is immediately returned; otherwise,
-     * the data is requested from the database and saved in the cache for fast future requests.
+     * Returns a readonly copy of the entire PlayerData table. Should be called from an async context. If needed
+     * from a sync context, use {@link #chainLoadAll()} to go async and show results sync.
+     *
+     * @return a {@link List<PlayerData>}
+     */
+    public List<PlayerData> loadAll() {
+        return Collections.unmodifiableList(dao.loadAll());
+    }
+
+    /**
+     * Returns a readonly copy of the top 10 classes in the PlayerData table. Should be called from an async context.
+     * If needed from a sync context, use {@link #chainLoadTop10Classes()} to go async and show results sync.
+     *
+     * @return a {@link Map} of {@link PlayerClass} to {@link Long} (fame).
+     */
+    public Map<PlayerClass, Long> loadTop10Classes() {
+        return loadAll().stream()
+                .flatMap(data -> data.getClasses().stream())
+                .sorted(PlayerClass::compareTo)
+                .limit(10)
+                .collect(Collectors.toMap(playerClass -> playerClass, PlayerClass::getFame));
+    }
+
+    /**
+     * Returns a readonly copy of the top 10 guilds by first loading all PlayerData and then summing
+     * all the fame for every guild member before finally sorting and limiting the end result.
+     *
+     * @return a {@link Map} of {@link Guild} to {@link Long} (fame).
+     */
+    public Map<Guild, Long> loadTop10Guilds() {
+        GuildHandler guilds = Guilds.getApi().getGuildHandler();
+        Map<Guild, Long> map = new HashMap<>();
+
+        List<PlayerData> all = loadAll();
+
+        guilds.getGuilds().forEach(guild -> {
+            guild.getMembers().forEach(member -> {
+                PlayerData memberData = all.stream()
+                        .filter(data -> data.getUniqueId().equals(member.getUuid()))
+                        .findFirst().orElse(null);
+
+                if (memberData != null) {
+                    final long[] newFame = { 0L };
+
+                    memberData.getClasses().forEach(playerClass -> {
+                        newFame[0] += playerClass.getFame();
+                    });
+
+                    if (map.containsKey(guild)) {
+                        map.put(guild, map.get(guild) + newFame[0]);
+                    } else {
+                        map.put(guild, newFame[0]);
+                    }
+                }
+            });
+        });
+
+        return map.entrySet().stream()
+                .sorted(Comparator.comparingLong(Map.Entry::getValue))
+                .limit(10)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    /**
+     * Exactly the same as {@link #load(UUID)} but forces calling from an async context, and you
+     * can then sync to the main thread to do stuff with the result if necessary.
      *
      * @param uniqueId the unique id of the Player
      * @return a {@link TaskChain<PlayerData>} to be used in further task execution
      */
     public TaskChain<PlayerData> chainLoad(UUID uniqueId) {
-        return RotMC
-                .newChain()
+        return RotMC.newChain()
                 .asyncFirst(() -> load(uniqueId));
     }
 
@@ -106,28 +161,21 @@ public class PlayerDataDam {
     }
 
     /**
-     * Loads a readonly copy of the PlayerData in the database for reporting purposes.
-     * Bypasses cache.
+     * Exactly the same as {@link #loadAll()} but forces calling from an async context, and you
+     * can then sync to the main thread to do stuff with the result if necessary.
      */
     public TaskChain<List<PlayerData>> chainLoadAll() {
         return RotMC
                 .newChain()
-                .asyncFirst(() -> Collections.unmodifiableList(dao.loadAll()));
+                .asyncFirst(this::loadAll);
     }
 
     /**
-     * Loads a readonly copy of the PlayerData in the database, flat maps all the classes together,
-     * sorts them by fame, gets the top 10, and returns it as a TaskChain for further processing.
-     *
-     * @return A {@link TaskChain<Map<Integer, PlayerClass>>} to be used in further task execution.
+     * Exactly the same as {@link #loadTop10Classes()} but forces calling from an async context, and you
+     * can then sync to the main thread to do stuff with the result if necessary.
      */
-    public TaskChain<Map<PlayerClass, Long>> getTop10Classes() {
-        return chainLoadAll()
-                .async(dataObjects -> dataObjects.stream()
-                        .flatMap(data -> data.getClasses().stream())
-                        .sorted(PlayerClass::compareTo)
-                        .limit(10)
-                        .collect(Collectors.toMap(playerClass -> playerClass, PlayerClass::getFame)));
+    public TaskChain<Map<PlayerClass, Long>> chainLoadTop10Classes() {
+        return RotMC.newChain().asyncFirst(this::loadTop10Classes);
     }
 
     /**
@@ -140,40 +188,8 @@ public class PlayerDataDam {
      *
      * @return A {@link TaskChain<Map<Guild, Long>>} to be used in further task execution.
      */
-    public TaskChain<Map<Guild, Long>> getTop10Guilds() {
-        GuildHandler guilds = Guilds.getApi().getGuildHandler();
-
-        return chainLoadAll()
-                .async(dataObjects -> {
-                    Map<Guild, Long> map = new HashMap<>();
-
-                    guilds.getGuilds().forEach(guild -> {
-                        guild.getMembers().forEach(member -> {
-                            PlayerData memberData = dataObjects.stream()
-                                    .filter(data -> data.getUniqueId().equals(member.getUuid()))
-                                    .findFirst().orElse(null);
-
-                            if (memberData != null) {
-                                final long[] newFame = { 0L };
-
-                                memberData.getClasses().forEach(playerClass -> {
-                                    newFame[0] += playerClass.getFame();
-                                });
-
-                                if (map.containsKey(guild)) {
-                                    map.put(guild, map.get(guild) + newFame[0]);
-                                } else {
-                                    map.put(guild, newFame[0]);
-                                }
-                            }
-                        });
-                    });
-
-                    return map.entrySet().stream()
-                            .sorted(Comparator.comparingLong(Map.Entry::getValue))
-                            .limit(10)
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                });
+    public TaskChain<Map<Guild, Long>> chainLoadTop10Guilds() {
+        return RotMC.newChain().asyncFirst(this::loadTop10Guilds);
     }
 
     /**

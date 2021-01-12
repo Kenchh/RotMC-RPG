@@ -29,8 +29,6 @@ public class PlayerSession {
     private String lastDamage;
     private BukkitTask ticker;
     private GameItem gameItem;
-    private GameItem extractGameItem;
-    private ItemStack extractor;
     private PlayerClass clickedClass;
 
     public PlayerSession(UUID uniqueId) {
@@ -101,22 +99,6 @@ public class PlayerSession {
 
     public void setGameItem(GameItem gameItem) {
         this.gameItem = gameItem;
-    }
-
-    public GameItem getExtractGameItem() {
-        return extractGameItem;
-    }
-
-    public void setExtractGameItem(GameItem extractGameItem) {
-        this.extractGameItem = extractGameItem;
-    }
-
-    public ItemStack getExtractor() {
-        return extractor;
-    }
-
-    public void setExtractor(ItemStack extractor) {
-        this.extractor = extractor;
     }
 
     public PlayerClass getClickedClass() {

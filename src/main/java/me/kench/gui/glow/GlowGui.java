@@ -1,135 +1,99 @@
 package me.kench.gui.glow;
 
-import me.kench.gui.glow.item.GlowItem;
+import com.andrebreves.tuple.Tuple2;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import me.glaremasters.guilds.guild.Guild;
+import me.kench.RotMC;
+import me.kench.database.playerdata.PlayerDataDam;
+import me.kench.gui.glow.item.GlowGuiCancelButton;
+import me.kench.gui.glow.item.GlowGuiGlowButton;
+import me.kench.items.ItemBuilder;
+import me.kench.player.PlayerClass;
+import me.kench.utils.GlowType;
 import me.kench.utils.GlowUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-public class GlowGui implements Listener {
+import java.util.Set;
 
-    private Inventory inv;
+public class GlowGui {
+    private final StaticPane background;
+    private final StaticPane cancelButton;
 
     public GlowGui() {
+        StaticPane background = new StaticPane(0, 0, 9, 6);
 
-    }
+        GuiItem blackBg = new GuiItem(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
+        GuiItem pinkBg = new GuiItem(ItemBuilder.create(Material.PINK_STAINED_GLASS_PANE).name(" ").build());
 
-    public GlowGui(Player p) {
-        inv = Bukkit.createInventory(null, 6 * 9, "Select your glow color");
-
-        ItemStack black = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta blackmeta = black.getItemMeta();
-        blackmeta.setDisplayName(" ");
-        black.setItemMeta(blackmeta);
-
-        ItemStack pink = new ItemStack(Material.PINK_STAINED_GLASS_PANE);
-        ItemMeta pinkmeta = pink.getItemMeta();
-        pinkmeta.setDisplayName(" ");
-        pink.setItemMeta(pinkmeta);
-
-        /** DESIGN */
+        int bgY = 0;
         for (int i = 0; i < 9; i++) {
-            inv.setItem(i, black);
-        }
-
-        inv.setItem(9, pink);
-        inv.setItem(17, pink);
-
-        for (int i = 18; i < 27; i++) {
-            inv.setItem(i, black);
-        }
-
-        inv.setItem(27, pink);
-        inv.setItem(35, pink);
-
-        for (int i = 36; i < 45; i++) {
-            inv.setItem(i, black);
-        }
-
-        inv.setItem(45, pink);
-        inv.setItem(53, pink);
-        /** DESIGN */
-
-        /** Glows **/
-        inv.setItem(11, new GlowItem(p, "&c&k!&e[&6Bronze Glow&e]&c&k!", Material.ORANGE_DYE));
-        inv.setItem(12, new GlowItem(p, "&f&k!&8[&7Silver Glow&8]&f&k", Material.GRAY_DYE));
-        inv.setItem(13, new GlowItem(p, "&4&k!&6[&eGold Glow&6]&4&k!", Material.YELLOW_DYE));
-        inv.setItem(14, new GlowItem(p, "&7&k!&8[&fPlatinum Glow&8]&7&k!", Material.WHITE_DYE));
-        inv.setItem(15, new GlowItem(p, "&3&k!&f[&bDiamond Glow&f]&3&k!", Material.LIGHT_BLUE_DYE));
-
-        inv.setItem(11 + 9 * 2, new GlowItem(p, "&2&k!&f[&a#5 Character Glow&f]&2&k!", Material.LIME_DYE));
-        inv.setItem(12 + 9 * 2, new GlowItem(p, "&a&k!&f[&2#1 Character Glow&f]&a&k!", Material.GREEN_DYE));
-        inv.setItem(14 + 9 * 2, new GlowItem(p, "&5&k!&f[&d#3 Guild Glow&f]&5&k!", Material.PINK_DYE));
-        inv.setItem(15 + 9 * 2, new GlowItem(p, "&d&k!&f[&5#1 Guild Glow&f]&d&k!", Material.PURPLE_DYE));
-
-        inv.setItem(12 + 9 * 4, new GlowItem(p, "&0&k!&8[&9Interstellar Glow&8]&0&k!", Material.LAPIS_LAZULI));
-        inv.setItem(14 + 9 * 4, new GlowItem(p, "&0&k!&8[&7S&fh&7a&fd&7o&fw &7G&fl&7o&fw&8]&0&k!", Material.BLACK_DYE));
-
-        ItemStack red = new ItemStack(Material.BARRIER);
-        ItemMeta redmeta = red.getItemMeta();
-        redmeta.setDisplayName(ChatColor.RED + "Exit");
-        red.setItemMeta(redmeta);
-
-        inv.setItem(45, red);
-
-    }
-
-    public Inventory getInv() {
-        return inv;
-    }
-
-    @EventHandler
-    public void onClick(InventoryClickEvent e) {
-        if (e.getView() != null && e.getView().getTitle() != "Select your glow color") {
-            return;
-        }
-
-        e.setCancelled(true);
-
-        Player p = (Player) e.getWhoClicked();
-
-        ItemStack clickeditem = e.getCurrentItem();
-
-        if (clickeditem == null) return;
-
-        if (clickeditem.getType() == Material.BARRIER) {
-            p.closeInventory();
-            return;
-        }
-
-        if (!clickeditem.getType().name().toUpperCase().contains("DYE") && !clickeditem.getType().name().toUpperCase().contains("LAPIS"))
-            return;
-
-        ChatColor c = GlowUtils.getColorFromMaterial(clickeditem.getType());
-
-        if (!GlowUtils.isPermitted(p, c)) {
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-            return;
-        }
-
-        if (e.getClick() == ClickType.RIGHT) {
-            if (GlowUtils.getGlowColor(p) != null && c.name().toLowerCase().equalsIgnoreCase(GlowUtils.getGlowColor(p).name().toLowerCase())) {
-                GlowUtils.clearGlow(p);
-                p.playSound(p.getLocation(), Sound.ENTITY_HORSE_ARMOR, 1F, 1.0F);
+            if (bgY % 2 == 0) {
+                background.addItem(blackBg, i, bgY);
+            } else {
+                background.addItem(pinkBg, 0, bgY);
+                background.addItem(pinkBg, 8, bgY);
+                bgY++;
+                continue;
             }
-        } else {
-            if (GlowUtils.getGlowColor(p) == null || !c.name().toLowerCase().equalsIgnoreCase(GlowUtils.getGlowColor(p).name().toLowerCase())) {
-                GlowUtils.setGlow(p, c);
-                p.playSound(p.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1F, 1.5F);
+
+            if (i == 8) {
+                if (bgY == 4) {
+                    break;
+                } else {
+                    i = 0;
+                    bgY++;
+                }
             }
         }
 
-        p.openInventory(new GlowGui(p).getInv());
+        this.background = background;
 
+        StaticPane cancelButton = new StaticPane(0, 5, 1, 1);
+        cancelButton.addItem(new GlowGuiCancelButton(), 0, 0);
+        this.cancelButton = cancelButton;
     }
 
+    public void display(Player player) {
+        RotMC.getInstance().getDataManager().getPlayerData()
+                .chainLoadSafe(player.getUniqueId())
+                .async(data -> {
+                    ChestGui gui = new ChestGui(6, "Select your glow color");
+
+                    PlayerDataDam dam = RotMC.getInstance().getDataManager().getPlayerData();
+                    Set<PlayerClass> topClasses = dam.loadTop10Classes().keySet();
+                    Set<Guild> topGuilds = dam.loadTop10Guilds().keySet();
+
+                    StaticPane glowPane = new StaticPane(2, 1, 5, 5);
+                    for (GlowType glowType : GlowType.values()) {
+                        Tuple2<Integer, Integer> relativeGuiPosition = glowType.getRelativeGuiPosition();
+
+                        glowPane.addItem(
+                                new GlowGuiGlowButton(
+                                        data,
+                                        glowType,
+                                        GlowUtils.isPermitted(
+                                                data,
+                                                glowType,
+                                                topClasses,
+                                                topGuilds
+                                        )
+                                ),
+                                relativeGuiPosition.v1(),
+                                relativeGuiPosition.v2()
+                        );
+                    }
+
+                    gui.addPane(background);
+                    gui.addPane(glowPane);
+                    gui.addPane(cancelButton);
+
+                    return gui;
+                })
+                .syncLast(gui -> gui.show(player))
+                .execute();
+    }
 }

@@ -24,11 +24,11 @@ public class GlowPlaceHolder extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String params) {
         if (params.equalsIgnoreCase("glowcolor")) {
-            if (GlowUtils.getGlowColor(player) == null) {
+            if (GlowUtils.getGlowType(player) == null) {
                 return "";
             }
 
-            return GlowUtils.getGlowColor(player) + "";
+            return GlowUtils.getGlowType(player) + "";
         }
 
         return "";

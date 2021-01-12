@@ -1,7 +1,10 @@
 package me.kench.gui.skills;
 
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import me.kench.RotMC;
 import me.kench.gui.skills.item.StatItem;
+import me.kench.items.ItemBuilder;
 import me.kench.player.PlayerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,11 +18,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class SkillsGui implements Listener {
-
-    private Inventory inv;
+    private final StaticPane background;
 
     public SkillsGui() {
+        StaticPane background = new StaticPane(0, 0, 9, 6);
+        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
+        this.background = background;
+    }
 
+    public void display(Player player) {
+        RotMC.getInstance().getDataManager().getPlayerData()
+                .chainLoadSafe(player.getUniqueId())
+                .async(data -> {
+                    PlayerClass selectedClass = data.getSelectedClass();
+
+                    ChestGui gui = new ChestGui(6, "Stats");
+
+                    gui.addPane(background);
+
+                    return gui;
+                })
+                .execute();
     }
 
     public SkillsGui(Player p) {

@@ -1,10 +1,10 @@
 package me.kench.utils;
 
-import co.aikar.taskchain.TaskChain;
 import me.glaremasters.guilds.Guilds;
-import me.glaremasters.guilds.api.GuildsAPI;
 import me.glaremasters.guilds.guild.Guild;
 import me.kench.RotMC;
+import me.kench.database.playerdata.PlayerData;
+import me.kench.database.playerdata.PlayerDataDam;
 import me.kench.player.PlayerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,165 +12,148 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GlowUtils {
-    public static ChatColor getGlowColor(Player p) {
-        for (Team t : p.getScoreboard().getTeams()) {
-            if (t.hasEntry(p.getName())) {
-                return ChatColor.getByChar(t.getName().replace("GLOW_COLOR_§", ""));
+    /**
+     * Gets the current {@link GlowType} of the given {@link Player}, or null if the player is not glowing.
+     *
+     * @param targetPlayer the target player
+     * @return the {@link ChatColor} describing the glow, or null if the player is not glowing
+     */
+    public static GlowType getGlowType(Player targetPlayer) {
+        for (Team team : targetPlayer.getScoreboard().getTeams()) {
+            if (team.hasEntry(targetPlayer.getName())) {
+                return GlowType.getByGlowColor(ChatColor.getByChar(team.getName().replace("GLOW_COLOR_§", "")));
             }
         }
 
         return null;
     }
 
-    public static void clearGlow(Player p) {
-        if (p.isGlowing()) {
-            p.setGlowing(false);
-            if (getGlowColor(p) != null) {
-                p.getScoreboard().getTeam("GLOW_COLOR_" + getGlowColor(p).toString()).removeEntry(p.getName());
-            }
-        }
-    }
+    /**
+     * Sets the glow of the given {@link Player} to the glow color specified by the given {@link ChatColor}.
+     *
+     * @param targetPlayer the target player
+     * @param glowColor the desired glow color
+     */
+    public static void setGlow(Player targetPlayer, ChatColor glowColor) {
+        clearGlow(targetPlayer);
 
-    public static void setGlow(Player p, ChatColor c) {
-        clearGlow(p);
-
-        for (Player pp : Bukkit.getOnlinePlayers()) {
-            Team team = pp.getScoreboard().getTeam("GLOW_COLOR_" + c.toString());
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            Team team = onlinePlayer.getScoreboard().getTeam("GLOW_COLOR_" + glowColor.toString());
 
             if (team == null) {
-                team = pp.getScoreboard().registerNewTeam("GLOW_COLOR_" + c.toString());
+                team = onlinePlayer.getScoreboard().registerNewTeam("GLOW_COLOR_" + glowColor.toString());
             }
 
-            team.addEntry(p.getName());
-            team.setDisplayName(c + ChatColor.BOLD.toString() + c);
+            team.addEntry(targetPlayer.getName());
+            team.setDisplayName(glowColor + ChatColor.BOLD.toString() + glowColor);
             team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
-            team.setColor(c);
+            team.setColor(glowColor);
         }
 
-        p.setGlowing(true);
+        targetPlayer.setGlowing(true);
     }
 
-    public static boolean isPermitted(Player player, ChatColor color) {
-        if (color == null) return false;
+    /**
+     * Checks whether the given {@link Player}'s current glow color, if any, is still permitted.
+     *
+     * @param data the given Player's {@link PlayerData}
+     * @return true or false
+     * @apiNote This should ONLY be called from an async context. Sync contexts will cause too much lag.
+     * @implNote If not called from an async context, this method will throw an exception. Seriously. Async.
+     */
+    public static boolean checkPlayerGlowPermitted(PlayerData data) {
+        // TODO: this is really heavy and not desired to run every 3 seconds for every player online. But I tried to fix it a little bit for now.
 
-        if (player.hasPermission("rotmc.glow." + color.name().toLowerCase().replace("_", ""))) return true;
+        if (Bukkit.isPrimaryThread()) {
+            throw new RuntimeException("Tried to call GlowUtils#checkPlayerGlowPermitted from the main game thread. This is a bug.");
+        }
 
-        List<ChatColor> topFame = new ArrayList<>();
-        topFame.add(ChatColor.GREEN);
-        topFame.add(ChatColor.DARK_GREEN);
+        PlayerDataDam dam = RotMC.getInstance().getDataManager().getPlayerData();
+        Set<PlayerClass> topClasses = dam.loadTop10Classes().keySet();
+        Set<Guild> topGuilds = dam.loadTop10Guilds().keySet();
 
-        List<ChatColor> topGuilds = new ArrayList<>();
-        topGuilds.add(ChatColor.LIGHT_PURPLE);
-        topGuilds.add(ChatColor.DARK_PURPLE);
+        return isPermitted(data, getGlowType(data.getPlayer()), topClasses, topGuilds);
+    }
 
-        if (!topFame.contains(color) && !topGuilds.contains(color)) {
-            return player.hasPermission("rotmc.glow." + color.name().toLowerCase().replace("_", ""));
-        } else {
-            if (topFame.contains(color)) {
-                TaskChain<Map<PlayerClass, Long>> topClasses = RotMC.getInstance().getDataManager().getPlayerData().getTop10Classes();
+    /**
+     * Clears the glow of the given {@link Player}.
+     *
+     * @param targetPlayer the target player
+     */
+    public static void clearGlow(Player targetPlayer) {
+        if (targetPlayer.isGlowing()) {
+            targetPlayer.setGlowing(false);
+            if (getGlowType(targetPlayer) != null) {
+                targetPlayer.getScoreboard().getTeam("GLOW_COLOR_" + getGlowType(targetPlayer).toString()).removeEntry(targetPlayer.getName());
+            }
+        }
+    }
 
-                if (color == ChatColor.GREEN) {
-                    boolean allow = false;
-                    for (int i : topClasses.keySet()) {
+    /**
+     * Checks that a {@link Player} is permitted to "glow" with the specified {@link ChatColor}.
+     *
+     * @param playerData the given Player
+     * @param glowType  the given ChatColor
+     * @return true if color not specified, player has color override permission, or checks pass; false otherwise.
+     * @apiNote This should ONLY be called from an async context. Sync contexts will cause too much lag.
+     * @implNote If not called from an async context, this method will throw an exception. Seriously. Async.
+     */
+    public static boolean isPermitted(PlayerData playerData, GlowType glowType, Set<PlayerClass> topClasses, Set<Guild> topGuilds) {
+        if (Bukkit.isPrimaryThread()) {
+            throw new RuntimeException("Tried to call GlowUtils#isPermitted from the main game thread. This is a bug.");
+        }
 
-                        if (topClasses.get(i).size() <= 1 || i > 5) break;
+        if (glowType == null) {
+            return true;
+        }
 
-                        List<String> data = topClasses.get(i);
-                        if (data != null && data.get(0) != null && data.get(0).equalsIgnoreCase(player.getName())) {
-                            allow = true;
-                            break;
-                        }
-                    }
+        if (playerData.getPlayer().hasPermission(glowType.getPermission())) {
+            return true;
+        }
 
-                    return allow;
-                } else if (color == ChatColor.DARK_GREEN) {
-                    if (!topClasses.isEmpty()) {
-                        if (topClasses.get(1) != null && topClasses.get(1).get(0) != null && topClasses.get(1).get(0).equalsIgnoreCase(player.getName())) {
-                            return true;
-                        }
-                    }
-                }
-            } else if (topGuilds.contains(color)) {
-                HashMap<Integer, List<String>> topGuilds = RotMC.getInstance().getSqlManager().getTopGuilds();
+        List<GlowType> topClassColors = Arrays.asList(GlowType.TOP_FIVE_CHARACTER_GLOW, GlowType.TOP_CHARACTER_GLOW);
+        List<GlowType> topGuildColors = Arrays.asList(GlowType.TOP_THREE_GUILD_GLOW, GlowType.TOP_GUILD_GLOW);
 
-                if (color == ChatColor.LIGHT_PURPLE) {
-                    GuildsAPI guildsAPI = Guilds.getApi();
-                    Guild g = guildsAPI.getGuild(player);
+        if (topClassColors.contains(glowType)) {
+            List<PlayerClass> topFiveClasses = topClasses.stream().limit(5).collect(Collectors.toList());
 
-                    if (g == null || g.getName() == null) return false;
+            switch (glowType) {
+                case TOP_FIVE_CHARACTER_GLOW:
+                    // Is class in top five fame?
+                    return topFiveClasses.stream().anyMatch(clazz -> clazz.getUniqueId().equals(playerData.getSelectedClass().getUniqueId()));
+                case TOP_CHARACTER_GLOW:
+                    // Is class the number one fame?
+                    return topFiveClasses.get(0).getUniqueId().equals(playerData.getSelectedClass().getUniqueId());
+                default:
+                    return false;
+            }
+        } else if (topGuildColors.contains(glowType)) {
+            Guild memberGuild = Guilds.getApi().getGuild(playerData.getPlayer());
+            if (memberGuild == null) {
+                return false;
+            }
 
-                    boolean allow = false;
-                    for (int i : topGuilds.keySet()) {
+            List<Guild> topThreeGuilds = topGuilds.stream().limit(3).collect(Collectors.toList());
 
-                        if (topGuilds.get(i).size() <= 1 || i > 3) break;
-
-                        List<String> data = topGuilds.get(i);
-                        if (data != null && data.get(0) != null && data.get(0).equalsIgnoreCase(g.getName())) {
-                            allow = true;
-                            break;
-                        }
-                    }
-
-                    return allow;
-                } else if (color == ChatColor.DARK_PURPLE) {
-                    GuildsAPI guildsAPI = Guilds.getApi();
-                    Guild g = guildsAPI.getGuild(player);
-
-                    if (g == null || g.getName() == null) return false;
-
-                    if (!topGuilds.isEmpty()) {
-                        if (topGuilds.get(1) != null && topGuilds.get(1).get(0) != null && topGuilds.get(1).get(0).equalsIgnoreCase(g.getName())) {
-                            return true;
-                        }
-                    }
-                }
+            switch (glowType) {
+                case TOP_THREE_GUILD_GLOW:
+                    // Is member's guild in top three guilds?
+                    return topThreeGuilds.stream().anyMatch(guild -> guild.getId().equals(memberGuild.getId()));
+                case TOP_GUILD_GLOW:
+                    // Is member's guild the top guild?
+                    return topThreeGuilds.get(0).getId().equals(memberGuild.getId());
+                default:
+                    return false;
             }
         }
 
         return false;
-    }
-
-    public static void clearWhenForbidden(Player p) {
-        ChatColor c = getGlowColor(p);
-
-        if (!isPermitted(p, c)) {
-            clearGlow(p);
-            return;
-        }
-    }
-
-    public static ChatColor getColorFromMaterial(Material m) {
-        switch (m) {
-            case ORANGE_DYE:
-                return ChatColor.GOLD;
-            case GRAY_DYE:
-                return ChatColor.GRAY;
-            case YELLOW_DYE:
-                return ChatColor.YELLOW;
-            case WHITE_DYE:
-                return ChatColor.WHITE;
-            case LIGHT_BLUE_DYE:
-                return ChatColor.AQUA;
-            case LIME_DYE:
-                return ChatColor.GREEN;
-            case GREEN_DYE:
-                return ChatColor.DARK_GREEN;
-            case PINK_DYE:
-                return ChatColor.LIGHT_PURPLE;
-            case PURPLE_DYE:
-                return ChatColor.DARK_PURPLE;
-            case LAPIS_LAZULI:
-                return ChatColor.BLUE;
-            case BLACK_DYE:
-                return ChatColor.BLACK;
-        }
-
-        return ChatColor.RED;
     }
 }
