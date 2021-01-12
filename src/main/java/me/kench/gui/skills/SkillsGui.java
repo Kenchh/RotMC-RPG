@@ -6,6 +6,9 @@ import me.kench.RotMC;
 import me.kench.gui.skills.item.StatItem;
 import me.kench.items.ItemBuilder;
 import me.kench.player.PlayerClass;
+import me.kench.player.stat.Stat;
+import me.kench.player.stat.Stats;
+import me.kench.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,56 +25,36 @@ public class SkillsGui implements Listener {
 
     public SkillsGui() {
         StaticPane background = new StaticPane(0, 0, 9, 6);
-        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
+        background.fillWith(ItemBuilder.create(Material.BLACK_STAINED_GLASS_PANE).name(" ").build(), event -> event.setCancelled(true));
         this.background = background;
     }
 
     public void display(Player player) {
+        final Stats gemStats = ItemUtils.getGemStatsFromEquipment(player);
+        final Stats itemStats = ItemUtils.getItemStatsFromEquipment(player);
+
         RotMC.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(player.getUniqueId())
                 .async(data -> {
                     PlayerClass selectedClass = data.getSelectedClass();
+                    Stats overallStats = selectedClass.getStats().clone();
+                    overallStats.incrementStats(gemStats, itemStats);
 
                     ChestGui gui = new ChestGui(6, "Stats");
 
+                    StaticPane statPane = new StaticPane(2, 0, 5, 5);
+                    statPane.addItem(new StatItem(selectedClass, Stat.ATTACK, overallStats), 2, 0);
+                    statPane.addItem(new StatItem(selectedClass, Stat.SPEED, overallStats), 0, 2);
+                    statPane.addItem(new StatItem(selectedClass, Stat.HEALTH, overallStats), 2, 2);
+                    statPane.addItem(new StatItem(selectedClass, Stat.DEFENSE, overallStats), 4, 2);
+                    statPane.addItem(new StatItem(selectedClass, Stat.EVASION, overallStats), 2, 4);
+
                     gui.addPane(background);
+                    gui.addPane(statPane);
 
                     return gui;
                 })
                 .execute();
-    }
-
-    public SkillsGui(Player p) {
-        inv = Bukkit.createInventory(null, 5 * 9, "Stats");
-
-        PlayerClass pc = RotMC.getPlayerData(p).getMainClass();
-
-        ItemStack black = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta blackmeta = black.getItemMeta();
-        blackmeta.setDisplayName(" ");
-        black.setItemMeta(blackmeta);
-
-        ItemStack red = new ItemStack(Material.BARRIER);
-        ItemMeta redmeta = red.getItemMeta();
-        redmeta.setDisplayName(ChatColor.RED + "Exit");
-        red.setItemMeta(redmeta);
-
-        /* black panes */
-        for (int i = 0; i < inv.getSize(); i++) {
-            inv.setItem(i, black);
-        }
-
-        inv.setItem(2, new StatItem(pc, "Attack"));
-        inv.setItem(6, new StatItem(pc, "Defense"));
-        inv.setItem(6 + 9 * 2, new StatItem(pc, "Health"));
-        inv.setItem(2 + 9 * 2, new StatItem(pc, "Speed"));
-        inv.setItem(2 + 9 * 4, new StatItem(pc, "Dodge"));
-        inv.setItem(6 + 9 * 4, new StatItem(pc, "Vitality"));
-
-    }
-
-    public Inventory getInv() {
-        return inv;
     }
 
     @EventHandler

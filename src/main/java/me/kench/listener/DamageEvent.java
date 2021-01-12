@@ -99,7 +99,7 @@ public class DamageEvent implements Listener {
                         double damage = event.getDamage();
                         damage = damage - (damage * playerClass.getDefenseAllStat());
 
-                        if (ThreadLocalRandom.current().nextInt(100) + 1 <= playerClass.getDodgeAllStat()) {
+                        if (ThreadLocalRandom.current().nextInt(100) + 1 <= playerClass.getEvadeAllStat()) {
                             player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1F, 1F);
                             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + ChatColor.BOLD.toString() + "DODGE"));
                             damage = 0;

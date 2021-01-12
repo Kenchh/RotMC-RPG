@@ -81,7 +81,7 @@ public class GameItem {
             }
         }
 
-        stats.setPlayerStatBoost(ItemUtils.getItemStatsByLore(lore));
+        stats.setPlayerStatBoost(ItemUtils.getItemStatsFromLore(lore));
     }
 
     public ItemStack getItem() {

@@ -2,6 +2,8 @@ package me.kench.database.playerdata;
 
 import me.kench.RotMC;
 import me.kench.player.*;
+import me.kench.player.stat.Stat;
+import me.kench.player.stat.Stats;
 import me.kench.session.PlayerSession;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
@@ -78,7 +80,7 @@ public class PlayerData {
                             .put("attack", stats.getStat(Stat.ATTACK))
                             .put("defense", stats.getStat(Stat.DEFENSE))
                             .put("speed", stats.getStat(Stat.SPEED))
-                            .put("dodge", stats.getStat(Stat.DODGE))
+                            .put("dodge", stats.getStat(Stat.EVASION))
                             .put("vitality", stats.getStat(Stat.VITALITY))
                     )
                     .put("inv", clazz.getInventory())

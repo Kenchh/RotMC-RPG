@@ -2,7 +2,7 @@ package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
-import me.kench.player.Stat;
+import me.kench.player.stat.Stat;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

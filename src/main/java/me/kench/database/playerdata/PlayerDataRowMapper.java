@@ -2,8 +2,8 @@ package me.kench.database.playerdata;
 
 import me.kench.player.PlayerClass;
 import me.kench.player.RpgClass;
-import me.kench.player.Stat;
-import me.kench.player.Stats;
+import me.kench.player.stat.Stat;
+import me.kench.player.stat.Stats;
 import me.kench.utils.InventorySerializer;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -50,7 +50,7 @@ public class PlayerDataRowMapper implements RowMapper<PlayerData> {
                 stats.setStat(Stat.ATTACK, (float) statsObject.getDouble("attack"));
                 stats.setStat(Stat.DEFENSE, (float) statsObject.getDouble("defense"));
                 stats.setStat(Stat.SPEED, (float) statsObject.getDouble("speed"));
-                stats.setStat(Stat.DODGE, (float) statsObject.getDouble("dodge"));
+                stats.setStat(Stat.EVASION, (float) statsObject.getDouble("dodge"));
                 stats.setStat(Stat.VITALITY, (float) statsObject.getDouble("vitality"));
 
                 classes.add(new PlayerClass(

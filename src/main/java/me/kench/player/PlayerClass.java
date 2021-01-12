@@ -6,10 +6,12 @@ import me.kench.items.stats.EssenceType;
 import me.kench.items.stats.GemType;
 import me.kench.items.stats.RuneType;
 import me.kench.items.stats.essenceanimations.EssenceAnimation;
+import me.kench.player.stat.Stat;
+import me.kench.player.stat.Stats;
+import me.kench.player.stat.view.StatView;
 import me.kench.session.PlayerSession;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.Messaging;
-import me.kench.utils.StatUtils;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
@@ -35,7 +37,7 @@ public class PlayerClass implements Comparable<PlayerClass> {
     private int level = 1;
     private boolean selected;
     private Inventory inventory;
-    private float attackAllStat, dodgeAllStat, defenseAllStat;
+    private StatView attackAllStat, evadeAllStat, defenseAllStat;
 
     /**
      * Creates a NEW PlayerClass with default data, to later be saved to the database.
@@ -102,9 +104,9 @@ public class PlayerClass implements Comparable<PlayerClass> {
     }
 
     public void addStat(Stat stat) {
-        if (stats.getStat(stat) < stats.getCap(getRpgClass(), stat)) {
+        if (stats.getStat(stat).getStatPoints() < stats.getCap(getRpgClass(), stat)) {
             Messaging.sendMessage(getPlayer(), String.format("<green>Your %s stat has increased by %s1!", stat.getName(), GemType.fromStat(stat).getPrefix()));
-            stats.incrementStat(stat);
+            stats.incrementStat(stat, 1F);
         }
 
         applyStats();
@@ -154,27 +156,27 @@ public class PlayerClass implements Comparable<PlayerClass> {
         this.inventory = inventory;
     }
 
-    public float getAttackAllStat() {
+    public StatView getAttackAllStat() {
         return attackAllStat;
     }
 
-    public void setAttackAllStat(float attackAllStat) {
+    public void setAttackAllStat(StatView attackAllStat) {
         this.attackAllStat = attackAllStat;
     }
 
-    public float getDodgeAllStat() {
-        return dodgeAllStat;
+    public StatView getEvadeAllStat() {
+        return evadeAllStat;
     }
 
-    public void setDodgeAllStat(float dodgeAllStat) {
-        this.dodgeAllStat = dodgeAllStat;
+    public void setEvadeAllStat(StatView evadeAllStat) {
+        this.evadeAllStat = evadeAllStat;
     }
 
-    public float getDefenseAllStat() {
+    public StatView getDefenseAllStat() {
         return defenseAllStat;
     }
 
-    public void setDefenseAllStat(float defenseAllStat) {
+    public void setDefenseAllStat(StatView defenseAllStat) {
         this.defenseAllStat = defenseAllStat;
     }
 
@@ -217,7 +219,7 @@ public class PlayerClass implements Comparable<PlayerClass> {
                     double attackMultiplier = stats.getCapForLevel(rpgClass, Stat.ATTACK, newLevel) / 35 / 3.5;
                     double defenseMultiplier = stats.getCapForLevel(rpgClass, Stat.DEFENSE, newLevel) / 35 / 3.5;
                     double speedMultiplier = stats.getCapForLevel(rpgClass, Stat.SPEED, newLevel) / 35 / 3.5;
-                    double dodgeMultiplier = stats.getCapForLevel(rpgClass, Stat.DODGE, newLevel) / 35 / 3.5;
+                    double dodgeMultiplier = stats.getCapForLevel(rpgClass, Stat.EVASION, newLevel) / 35 / 3.5;
 
                     if ((((double) new Random().nextInt(100) + 1)) / 100D <= healthMultiplier) {
                         addStat(Stat.HEALTH);
@@ -236,7 +238,7 @@ public class PlayerClass implements Comparable<PlayerClass> {
                     }
 
                     if ((((double) new Random().nextInt(100) + 1)) / 100D <= dodgeMultiplier) {
-                        addStat(Stat.DODGE);
+                        addStat(Stat.EVASION);
                     }
 
                     // TODO: Vitality
@@ -298,73 +300,35 @@ public class PlayerClass implements Comparable<PlayerClass> {
     public void applyStats() {
         Player player = getPlayer();
 
-        List<PotionEffectType> effects = ItemUtils.getOverallRuneEffects(player);
-        for (PotionEffect pe : player.getActivePotionEffects()) {
-            boolean runeEffect = false;
+        List<PotionEffectType> effects = ItemUtils.getRuneEffects(player);
+        effects.forEach(effect -> player.addPotionEffect(new PotionEffect(effect, Integer.MAX_VALUE, 0)));
 
-            for (RuneType rt : RuneType.values()) {
-                if (rt.getPotionEffectType().getName().equalsIgnoreCase(pe.getType().getName())) {
-                    runeEffect = true;
-                    break;
-                }
-            }
+        for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+            PotionEffectType type = potionEffect.getType();
 
-            if (runeEffect) {
-                if (!effects.contains(pe.getType())) {
-                    player.removePotionEffect(pe.getType());
-                }
+            RuneType runeType = RuneType.getByPotionEffectType(type);
+            if (runeType == null) continue;
+
+            if (!effects.contains(type)) {
+                player.removePotionEffect(type);
             }
         }
 
-        for (PotionEffectType effect : effects) {
-            player.addPotionEffect(new PotionEffect(effect, Integer.MAX_VALUE, 0));
+        Stats overallStats = stats.clone();
+        overallStats.incrementStats(ItemUtils.getGemStatsFromEquipment(player));
+        overallStats.incrementStats(ItemUtils.getItemStatsFromEquipment(player));
+
+        // Default walk speed is 0.2F
+        player.setWalkSpeed(0.2F * overallStats.getStat(Stat.SPEED).getValue());
+
+        AttributeInstance maxHealthAttr = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if (maxHealthAttr != null) {
+            maxHealthAttr.setBaseValue(rpgClass.getBaseHealth() + overallStats.getStat(Stat.HEALTH).getValue());
         }
 
-        float speedPlayerStat = StatUtils.getSpeed(stats.getStat(Stat.SPEED), false, false);
-        float speedGemStat = StatUtils.getSpeed(ItemUtils.getOverallGemStatsFromEquipment(player).getStat(Stat.SPEED), false, true);
-        float speedItemStat = ItemUtils.getOverallItemStatsFromEquipment(player).getStat(Stat.SPEED) / 100F;
-        float speedAll = speedPlayerStat + speedItemStat + speedGemStat;
-        player.setWalkSpeed(0.2F + 0.2F * speedAll);
-
-        float healthPlayerStat = StatUtils.getHealth(stats.getStat(Stat.HEALTH), false, false);
-        float healthGemStat = StatUtils.getHealth(ItemUtils.getOverallGemStatsFromEquipment(player).getStat(Stat.HEALTH), false, true);
-        float healthItemStat = ItemUtils.getOverallItemStatsFromEquipment(player).getStat(Stat.HEALTH);
-        float healthAll = healthPlayerStat + healthItemStat + healthGemStat;
-
-        AttributeInstance maxHealthAttr = Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH));
-        switch (rpgClass) {
-            case NECROMANCER:
-                // robe
-                maxHealthAttr.setBaseValue(16 + healthAll);
-                break;
-            case HUNTRESS:
-            case ASSASSIN:
-            case ROGUE:
-                // leather
-                maxHealthAttr.setBaseValue(20 + healthAll);
-                break;
-            case WARRIOR:
-            case KNIGHT:
-                // heavy
-                maxHealthAttr.setBaseValue(24 + healthAll);
-                break;
-
-        }
-
-        float attackPlayerStat = StatUtils.getAttack(stats.getStat(Stat.ATTACK), false, false);
-        float attackGemStat = StatUtils.getAttack(ItemUtils.getOverallGemStatsFromEquipment(player).getStat(Stat.ATTACK), false, true);
-        float attackItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).getStat(Stat.ATTACK)) / 100F;
-        attackAllStat = attackPlayerStat + attackGemStat + attackItemStat;
-
-        float dodgePlayerStat = StatUtils.getDodge(stats.getStat(Stat.DODGE), true, false);
-        float dodgeGemStat = StatUtils.getDodge(ItemUtils.getOverallGemStatsFromEquipment(player).getStat(Stat.DODGE), true, true);
-        float dodgeItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).getStat(Stat.DODGE));
-        dodgeAllStat = dodgePlayerStat + dodgeGemStat + dodgeItemStat;
-
-        float defensePlayerStat = StatUtils.getDefense(stats.getStat(Stat.DEFENSE), false, false);
-        float defenseGemStat = StatUtils.getDefense(ItemUtils.getOverallGemStatsFromEquipment(player).getStat(Stat.DEFENSE), false, true);
-        float defenseItemStat = ((float) ItemUtils.getOverallItemStatsFromEquipment(player).getStat(Stat.DEFENSE)) / 200F;
-        defenseAllStat = defensePlayerStat + defenseGemStat + defenseItemStat;
+        attackAllStat = overallStats.getStat(Stat.ATTACK);
+        evadeAllStat = overallStats.getStat(Stat.EVASION);
+        defenseAllStat = overallStats.getStat(Stat.DEFENSE);
     }
 
     @Override

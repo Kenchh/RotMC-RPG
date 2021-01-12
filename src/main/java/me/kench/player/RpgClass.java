@@ -5,20 +5,22 @@ import org.bukkit.ChatColor;
 import java.util.*;
 
 public enum RpgClass {
-    KNIGHT(RpgWeapon.SWORD, new StatCaps(35, 25, 30, 15, 20, 35), 151),
-    WARRIOR(RpgWeapon.SWORD, new StatCaps(30, 35, 25, 20, 15, 30), 141),
-    HUNTRESS(RpgWeapon.BOW, new StatCaps(20, 30, 25, 35, 15, 25), 111),
-    NECROMANCER(RpgWeapon.STAFF, new StatCaps(30, 35, 25, 15, 20, 20), 101),
-    ASSASSIN(RpgWeapon.DAGGER, new StatCaps(15, 25, 20, 30 ,35, 25), 121),
-    ROGUE(RpgWeapon.DAGGER, new StatCaps(20, 25, 15, 35, 30, 30), 131);
+    KNIGHT(RpgWeapon.SWORD, new StatCaps(35, 25, 30, 15, 20, 35), 24, 151),
+    WARRIOR(RpgWeapon.SWORD, new StatCaps(30, 35, 25, 20, 15, 30), 24, 141),
+    HUNTRESS(RpgWeapon.BOW, new StatCaps(20, 30, 25, 35, 15, 25), 20, 111),
+    NECROMANCER(RpgWeapon.STAFF, new StatCaps(30, 35, 25, 15, 20, 20), 16, 101),
+    ASSASSIN(RpgWeapon.DAGGER, new StatCaps(15, 25, 20, 30 ,35, 25), 20, 121),
+    ROGUE(RpgWeapon.DAGGER, new StatCaps(20, 25, 15, 35, 30, 30), 20, 131);
 
     private final RpgWeapon weapon;
     private final StatCaps statCaps;
+    private final int baseHealth;
     private final int customModelData;
 
-    RpgClass(RpgWeapon weapon, StatCaps statCaps, int customModelData) {
+    RpgClass(RpgWeapon weapon, StatCaps statCaps, int baseHealth, int customModelData) {
         this.weapon = weapon;
         this.statCaps = statCaps;
+        this.baseHealth = baseHealth;
         this.customModelData = customModelData;
     }
 
@@ -28,6 +30,10 @@ public enum RpgClass {
 
     public StatCaps getStatCaps() {
         return statCaps;
+    }
+
+    public int getBaseHealth() {
+        return baseHealth;
     }
 
     public int getCustomModelData() {
@@ -120,15 +126,15 @@ public enum RpgClass {
         private final double attack;
         private final double defense;
         private final double speed;
-        private final double dodge;
+        private final double evasion;
         private final double vitality;
 
-        public StatCaps(double health, double attack, double defense, double speed, double dodge, double vitality) {
+        public StatCaps(double health, double attack, double defense, double speed, double evasion, double vitality) {
             this.health = health;
             this.attack = attack;
             this.defense = defense;
             this.speed = speed;
-            this.dodge = dodge;
+            this.evasion = evasion;
             this.vitality = vitality;
         }
 
@@ -148,8 +154,8 @@ public enum RpgClass {
             return speed;
         }
 
-        public double getDodge() {
-            return dodge;
+        public double getEvasion() {
+            return evasion;
         }
 
         public double getVitality() {

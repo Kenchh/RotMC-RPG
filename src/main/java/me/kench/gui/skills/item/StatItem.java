@@ -1,21 +1,24 @@
 package me.kench.gui.skills.item;
 
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import me.kench.player.PlayerClass;
-import me.kench.player.Stat;
-import me.kench.player.Stats;
+import me.kench.player.stat.Stat;
+import me.kench.player.stat.Stats;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.StatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.units.qual.A;
+import scala.Tuple3;
 
 import java.util.Arrays;
 
-public class StatItem extends ItemStack {
+public class StatItem extends GuiItem {
+    public StatItem(PlayerClass playerClass, Stat stat, Tuple3<Stats, Stats, Stats> stats) {
+        super(
 
-    public StatItem(PlayerClass pc, String s) {
+        );
         Stats stats = pc.getStats();
         this.setType(Material.CARROT_ON_A_STICK);
         this.setAmount(1);
@@ -24,8 +27,8 @@ public class StatItem extends ItemStack {
 
         switch (s) {
             case "Health":
-                float healthGemStat = StatUtils.getHealth(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.HEALTH), true, true);
-                float healthItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.HEALTH);
+                float healthGemStat = StatUtils.getHealth(ItemUtils.getGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.HEALTH), true, true);
+                float healthItemStat = ItemUtils.getItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.HEALTH);
 
                 meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.RED + s + ChatColor.translateAlternateColorCodes('&', "&7▸ " + ChatColor.WHITE + "+" + (StatUtils.getHealth(stats.getStat(Stat.HEALTH), true, false) + healthItemStat + healthGemStat)));
 
@@ -44,8 +47,8 @@ public class StatItem extends ItemStack {
                 meta.setCustomModelData(205);
                 break;
             case "Attack":
-                float attackGemStat = StatUtils.getAttack(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.ATTACK), true, true);
-                float attackItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.ATTACK);
+                float attackGemStat = StatUtils.getAttack(ItemUtils.getGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.ATTACK), true, true);
+                float attackItemStat = ItemUtils.getItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.ATTACK);
 
                 meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.AQUA + s + ChatColor.translateAlternateColorCodes('&', "&7▸ " + ChatColor.WHITE + "+" + (StatUtils.getAttack(stats.getStat(Stat.ATTACK), true, false) + attackItemStat + attackGemStat) + "%"));
 
@@ -64,8 +67,8 @@ public class StatItem extends ItemStack {
                 meta.setCustomModelData(201);
                 break;
             case "Defense":
-                float defenseGemStat = StatUtils.getDefense(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.DEFENSE), true, true);
-                float defenseItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.DEFENSE);
+                float defenseGemStat = StatUtils.getDefense(ItemUtils.getGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.DEFENSE), true, true);
+                float defenseItemStat = ItemUtils.getItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.DEFENSE);
 
                 meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.BLUE + s + ChatColor.translateAlternateColorCodes('&', "&7▸ " + ChatColor.WHITE + "+" + (StatUtils.getDefense(stats.getStat(Stat.DEFENSE), true, false) + defenseItemStat + defenseGemStat) + "%"));
 
@@ -84,8 +87,8 @@ public class StatItem extends ItemStack {
                 meta.setCustomModelData(203);
                 break;
             case "Speed":
-                float speedGemStat = StatUtils.getSpeed(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.SPEED), true, true);
-                float speedItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.SPEED);
+                float speedGemStat = StatUtils.getSpeed(ItemUtils.getGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.SPEED), true, true);
+                float speedItemStat = ItemUtils.getItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.SPEED);
 
                 meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.GREEN + s + ChatColor.translateAlternateColorCodes('&', "&7▸ " + ChatColor.WHITE + "+" + (StatUtils.getSpeed(stats.getStat(Stat.SPEED), true, false) + speedItemStat + speedGemStat) + "%"));
 
@@ -104,19 +107,19 @@ public class StatItem extends ItemStack {
                 meta.setCustomModelData(202);
                 break;
             case "Dodge":
-                float dodgeGemStat = StatUtils.getDodge(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.DODGE), true, true);
-                float dodgeItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.DODGE);
+                float dodgeGemStat = StatUtils.getDodge(ItemUtils.getGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.EVASION), true, true);
+                float dodgeItemStat = ItemUtils.getItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.EVASION);
 
-                meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.YELLOW + "Evasion" + ChatColor.translateAlternateColorCodes('&', "&7▸ " + ChatColor.WHITE + "+" + (StatUtils.getDodge(stats.getStat(Stat.DODGE), true, false) + dodgeItemStat + dodgeGemStat) + "%"));
+                meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.YELLOW + "Evasion" + ChatColor.translateAlternateColorCodes('&', "&7▸ " + ChatColor.WHITE + "+" + (StatUtils.getDodge(stats.getStat(Stat.EVASION), true, false) + dodgeItemStat + dodgeGemStat) + "%"));
 
-                String vdo = "&e" + (int) stats.getStat(Stat.DODGE);
+                String vdo = "&e" + (int) stats.getStat(Stat.EVASION);
 
-                if (stats.getStat(Stat.DODGE) >= pc.getLevel()) {
+                if (stats.getStat(Stat.EVASION) >= pc.getLevel()) {
                     vdo.replace("&e", "&6");
                 }
 
                 meta.setLore(Arrays.asList(
-                        ChatColor.translateAlternateColorCodes('&', "&7From Potions: (" + vdo + "&7/&6" + stats.getCap(pc.getRpgClass(), Stat.DODGE) + "&7) = &e" + StatUtils.getDodge(stats.getStat(Stat.DODGE), true, false) + "%"),
+                        ChatColor.translateAlternateColorCodes('&', "&7From Potions: (" + vdo + "&7/&6" + stats.getCap(pc.getRpgClass(), Stat.EVASION) + "&7) = &e" + StatUtils.getDodge(stats.getStat(Stat.EVASION), true, false) + "%"),
                         ChatColor.translateAlternateColorCodes('&', "&7From Item Stats: " + ChatColor.YELLOW + dodgeItemStat + "%"),
                         ChatColor.translateAlternateColorCodes('&', "&7From Gems: " + ChatColor.YELLOW + dodgeGemStat + "%")
                 ));
@@ -124,8 +127,8 @@ public class StatItem extends ItemStack {
                 meta.setCustomModelData(204);
                 break;
             case "Vitality":
-                float vitalityGemStat = StatUtils.getDodge(ItemUtils.getOverallGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.VITALITY), true, true);
-                float vitalityItemStat = ItemUtils.getOverallItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.VITALITY);
+                float vitalityGemStat = StatUtils.getDodge(ItemUtils.getGemStatsFromEquipment(pc.getPlayer()).getStat(Stat.VITALITY), true, true);
+                float vitalityItemStat = ItemUtils.getItemStatsFromEquipment(pc.getPlayer()).getStat(Stat.VITALITY);
 
                 meta.setDisplayName(ChatColor.BOLD + "" + ChatColor.YELLOW + "Vitality" + ChatColor.translateAlternateColorCodes('&', "&7▸ " + ChatColor.WHITE + "+" + (StatUtils.getDodge(stats.getStat(Stat.VITALITY), true, false) + vitalityItemStat + vitalityGemStat)));
 

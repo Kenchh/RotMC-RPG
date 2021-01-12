@@ -3,7 +3,7 @@ package me.kench.items;
 import me.kench.items.stats.Essence;
 import me.kench.items.stats.Gem;
 import me.kench.items.stats.Rune;
-import me.kench.player.Stats;
+import me.kench.player.stat.Stats;
 
 import java.util.ArrayList;
 import java.util.List;

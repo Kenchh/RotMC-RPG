@@ -3,6 +3,8 @@ package me.kench.items.stats;
 import org.bukkit.ChatColor;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
+
 public enum RuneType {
     WATER_BREATHING("Rune of Water Breathing", ChatColor.AQUA.toString(), PotionEffectType.WATER_BREATHING, 352),
     NIGHT_VISION("Rune of Night Vision", ChatColor.DARK_PURPLE.toString(), PotionEffectType.NIGHT_VISION, 354),
@@ -36,5 +38,9 @@ public enum RuneType {
 
     public int getModelData() {
         return modelData;
+    }
+
+    public static RuneType getByPotionEffectType(PotionEffectType potionEffectType) {
+        return Arrays.stream(RuneType.values()).filter(type -> type.effect == potionEffectType).findFirst().orElse(null);
     }
 }
