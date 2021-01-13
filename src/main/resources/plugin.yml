@@ -1,9 +1,9 @@
 name: RotMC
-version: 1.0
+version: 1.0.0
 author: FreakzBoy
 
-main: me.kench.RotMC
-api-version: 1.15
+main: me.kench.rotmc.RotMcPlugin
+api-version: 1.16
 softdepend: [ PlaceholderAPI, LuckPerms, Guilds, WorldGuard ]
 
 commands:
