@@ -55,7 +55,7 @@ public class GameItem {
             }
 
             if (ItemUtils.isRune(line)) {
-                stats.setRune(ItemUtils.getRuneFromString(line, 4));
+                stats.setRune(ItemUtils.getRuneFromString(line));
             }
 
             if (ItemUtils.isGem(line)) {

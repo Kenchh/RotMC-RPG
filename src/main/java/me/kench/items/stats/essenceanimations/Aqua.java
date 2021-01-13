@@ -18,9 +18,9 @@ public class Aqua extends EssenceAnimation {
     @Override
     public void run() {
 
-        Location ploc = p.getLocation().clone();
-        p.getWorld().spawnParticle(Particle.WATER_SPLASH, ploc, 5, 0.25, 0, 0.25);
-        p.getWorld().spawnParticle(Particle.WATER_BUBBLE, ploc, 10, 0.25, 0.25, 0.25);
+        Location ploc = player.getLocation().clone();
+        player.getWorld().spawnParticle(Particle.WATER_SPLASH, ploc, 5, 0.25, 0, 0.25);
+        player.getWorld().spawnParticle(Particle.WATER_BUBBLE, ploc, 10, 0.25, 0.25, 0.25);
         super.run();
     }
 

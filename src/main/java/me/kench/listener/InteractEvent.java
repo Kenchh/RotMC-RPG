@@ -1,14 +1,14 @@
 package me.kench.listener;
 
 import me.kench.RotMC;
-import me.kench.items.EssenceItem;
-import me.kench.items.GameItem;
-import me.kench.items.GemItem;
-import me.kench.items.RuneItem;
+import me.kench.items.*;
 import me.kench.player.PlayerClass;
+import me.kench.player.RpgClass;
+import me.kench.session.PlayerSession;
+import me.kench.utils.EventUtils;
 import me.kench.utils.ItemUtils;
+import me.kench.utils.Messaging;
 import me.kench.utils.armor.ArmorEquipEvent;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,206 +21,86 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class InteractEvent implements Listener {
     @EventHandler
-    public void onBreak(BlockBreakEvent e) {
-        Block brokenblock = e.getBlock();
+    public void onBreak(BlockBreakEvent event) {
+        PlayerSession session = RotMC.getInstance().getSessionManager().getSession(event.getPlayer().getUniqueId());
+        if (session == null) return;
 
-        PlayerData pd = RotMC.getPlayerData(e.getPlayer());
+        // TODO: make this prettier later
 
-        for (Block b : pd.goldblocks) {
-            if (sameLoc(b.getLocation(), brokenblock.getLocation()) && brokenblock.getType() == Material.GOLD_BLOCK) {
-                e.setCancelled(true);
+        Block brokenBlock = event.getBlock();
+
+        for (Block block : session.getGoldBlocks()) {
+            if (sameLoc(block.getLocation(), brokenBlock.getLocation()) && brokenBlock.getType() == Material.GOLD_BLOCK) {
+                event.setCancelled(true);
             }
         }
 
-        for (Block b : pd.iceblocks) {
-            if (sameLoc(b.getLocation(), brokenblock.getLocation()) &&
-                    (brokenblock.getType() == Material.ICE || brokenblock.getType() == Material.BLUE_ICE)) {
-                e.setCancelled(true);
+        for (Block block : session.getIceBlocks()) {
+            if (sameLoc(block.getLocation(), brokenBlock.getLocation()) && (brokenBlock.getType() == Material.ICE || brokenBlock.getType() == Material.BLUE_ICE)) {
+                event.setCancelled(true);
             }
         }
 
-        for (Block b : pd.obbyblocks) {
-            if (sameLoc(b.getLocation(), brokenblock.getLocation()) &&
-                    (brokenblock.getType() == Material.OBSIDIAN || brokenblock.getType() == Material.COAL_BLOCK)) {
-                e.setCancelled(true);
+        for (Block block : session.getObsidianBlocks()) {
+            if (sameLoc(block.getLocation(), brokenBlock.getLocation()) && (brokenBlock.getType() == Material.OBSIDIAN || brokenBlock.getType() == Material.COAL_BLOCK)) {
+                event.setCancelled(true);
             }
         }
-
     }
 
-    private boolean sameLoc(Location loc1, Location loc2) {
-        return loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
-    }
-
-    @EventHandler
-    public void onCancel(ArmorEquipEvent e) {
-        ItemStack clickedItem = e.getNewArmorPiece();
-        Player p = e.getPlayer();
-
-        if (clickedItem == null || !clickedItem.hasItemMeta()) return;
-
-        ItemMeta meta = clickedItem.getItemMeta();
-
-        if (!meta.hasLore()) return;
-
-        checkIfArmorPutOn(e, p, clickedItem, meta);
+    private boolean sameLoc(Location firstLocation, Location secondLocation) {
+        return firstLocation.getX() == secondLocation.getX() && firstLocation.getY() == secondLocation.getY() && firstLocation.getZ() == secondLocation.getZ();
     }
 
     @EventHandler
-    public void onInteract(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
-        ItemStack clickedItem = e.getItem();
-        if (e.getAction() == Action.PHYSICAL || clickedItem == null || !clickedItem.hasItemMeta()) return;
-
-        ItemMeta meta = clickedItem.getItemMeta();
-        if (!meta.hasLore()) return;
-
-        if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
-            if (ItemUtils.isGem(meta.getDisplayName())) {
-                GemItem gemItem = new GemItem(clickedItem);
-                gemItem.update();
-                return;
-            }
-
-            if (ItemUtils.isRune(meta.getDisplayName())) {
-                RuneItem runeItem = new RuneItem(clickedItem);
-                runeItem.update();
-                return;
-            }
-
-            if (ItemUtils.isEssence(meta.getDisplayName())) {
-                EssenceItem essenceItem = new EssenceItem(clickedItem);
-                essenceItem.update();
-                return;
-            }
-
-        }
-
-        if (clickedItem.getType() == Material.CARROT_ON_A_STICK) {
-
-            PlayerData pd = RotMC.getPlayerData(p);
-            if (pd == null) return;
-
-            PlayerClass pc = pd.getMainClass();
-            if (pc == null) return;
-
-            GameItem gameItem;
-
-            if (pd.gameItem == null || !pd.gameItem.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(meta.getDisplayName())) {
-                gameItem = new GameItem(clickedItem);
-            } else {
-                gameItem = pd.gameItem;
-            }
-
-            if (gameItem.getLevel() != 0) {
-                int level = gameItem.getLevel();
-
-                if (pc.getLevel() < level) {
-
-                    p.sendMessage(ChatColor.RED + "You need to be level " + level + " to use this item!");
-                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-                    return;
-                }
-            } else {
-                return;
-            }
-
-            boolean foundClass = false;
-            String currentclass = pc.getData().getName();
-            if (gameItem.getGameClasses().isEmpty() == false) {
-
-                for (GameClass gameClass : gameItem.getGameClasses()) {
-                    String className = gameClass.getName();
-
-                    if (className.equalsIgnoreCase(currentclass)) {
-                        foundClass = true;
-                        break;
-                    }
-                }
-            } else {
-                return;
-            }
-
-            if (!foundClass) {
-                p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-                return;
-            }
-
+    public void onCancel(ArmorEquipEvent event) {
+        ItemStack clickedItem = event.getNewArmorPiece();
+        if (clickedItem == null || !clickedItem.hasItemMeta()) {
             return;
         }
 
-        checkIfArmorPutOn(e, p, clickedItem, meta);
+        checkLevelAndClass(event, event.getPlayer(), clickedItem);
     }
 
-    private void checkIfArmorPutOn(Cancellable e, Player p, ItemStack clickedItem, ItemMeta meta) {
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        ItemStack clickedItem = event.getItem();
 
-        if (isWearable(clickedItem)) {
+        if (event.getAction() == Action.PHYSICAL || clickedItem == null || !clickedItem.hasItemMeta()) {
+            return;
+        }
 
-            Action action = e instanceof PlayerInteractEvent ? ((PlayerInteractEvent) e).getAction() : Action.RIGHT_CLICK_AIR;
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            ItemBuilder builder = ItemBuilder.of(clickedItem);
 
-            if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
+            if (ItemUtils.isGem(builder.name())) {
+                new GemItem(clickedItem).update();
+                return;
+            }
 
-                PlayerData pd = RotMC.getPlayerData(p);
-                if (pd == null) return;
+            if (ItemUtils.isRune(builder.name())) {
+                new RuneItem(clickedItem).update();
+                return;
+            }
 
-                PlayerClass pc = pd.getMainClass();
-                if (pc == null) return;
-
-                GameItem gameItem;
-
-                if (pd.gameItem == null || !pd.gameItem.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(meta.getDisplayName())) {
-                    gameItem = new GameItem(clickedItem);
-                } else {
-                    gameItem = pd.gameItem;
-                }
-
-                if (gameItem.getLevel() != 0) {
-                    int level = gameItem.getLevel();
-
-                    if (pc.getLevel() < level) {
-                        p.sendMessage(ChatColor.RED + "You need to be level " + level + " to use this item!");
-                        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-
-                boolean foundClass = false;
-                String currentclass = pc.getData().getName();
-                if (gameItem.getGameClasses().isEmpty() == false) {
-                    for (GameClass gameClass : gameItem.getGameClasses()) {
-                        String className = gameClass.getName();
-
-                        if (className.equalsIgnoreCase(currentclass)) {
-                            foundClass = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!foundClass) {
-                    p.sendMessage(ChatColor.RED + "That item is not suitable for " + currentclass + "!");
-                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1F, 1F);
-
-                    e.setCancelled(true);
-                    return;
-                }
+            if (ItemUtils.isEssence(builder.name())) {
+                new EssenceItem(clickedItem).update();
+                return;
             }
         }
+
+        checkLevelAndClass(event, event.getPlayer(), clickedItem);
     }
 
+    private void checkLevelAndClass(Cancellable event, Player player, ItemStack clickedItem) {
+        if (!EventUtils.isGameItem(clickedItem)) return;
 
-    private boolean isWearable(ItemStack item) {
-        String typename = item.getType().toString().toUpperCase();
-
-        return item.getType() == Material.ELYTRA ||
-                typename.contains("HELMET") || typename.contains("CHESTPLATE") || typename.contains("LEGGINGS") || typename.contains("BOOTS");
+        Action action = event instanceof PlayerInteractEvent ? ((PlayerInteractEvent) event).getAction() : Action.RIGHT_CLICK_AIR;
+        if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
+            EventUtils.checkLevelAndClass(event, player, clickedItem);
+        }
     }
-
 }

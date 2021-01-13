@@ -59,7 +59,7 @@ public class PlayerData {
         JSONArray array = new JSONArray();
 
         for (PlayerClass clazz : getClasses()) {
-            Stats stats = clazz.getStats().getPotionStats();
+            Stats potionStats = clazz.getStats().getPotionStats();
 
             // If the class we are currently looking at is currently in use, we need to ensure
             // that the inventory data is fresh.
@@ -77,12 +77,12 @@ public class PlayerData {
                     .put("xp", clazz.getFame())
                     .put("level", clazz.getLevel())
                     .put("stats", new JSONObject()
-                            .put("health", stats.getStat(Stat.HEALTH))
-                            .put("attack", stats.getStat(Stat.ATTACK))
-                            .put("defense", stats.getStat(Stat.DEFENSE))
-                            .put("speed", stats.getStat(Stat.SPEED))
-                            .put("dodge", stats.getStat(Stat.EVASION))
-                            .put("vitality", stats.getStat(Stat.VITALITY))
+                            .put("health", potionStats.getStat(Stat.HEALTH))
+                            .put("attack", potionStats.getStat(Stat.ATTACK))
+                            .put("defense", potionStats.getStat(Stat.DEFENSE))
+                            .put("speed", potionStats.getStat(Stat.SPEED))
+                            .put("dodge", potionStats.getStat(Stat.EVASION))
+                            .put("vitality", potionStats.getStat(Stat.VITALITY))
                     )
                     .put("inv", clazz.getInventory())
             );
@@ -230,7 +230,7 @@ public class PlayerData {
         return getRankHuntress() + getRankKnight() + getRankWarrior() + getRankNecromancer() + getRankAssassin() + getRankRogue();
     }
 
-    public PlayerSession getSession() {
+    public me.kench.session.PlayerSession getSession() {
         return RotMC.getInstance().getSessionManager().getSession(getUniqueId());
     }
 

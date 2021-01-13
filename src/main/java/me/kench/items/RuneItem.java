@@ -4,91 +4,80 @@ import me.kench.items.stats.Rune;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.TextUtils;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class RuneItem {
+    private final Rune rune;
+    private ItemStack item;
 
-    ItemStack item;
-    Rune rune;
-
-    public int successChance = 0;
+    private int successChance = 0;
 
     public RuneItem(ItemStack item) {
-        this.item = item;
-
-        ItemMeta meta = item.getItemMeta();
-        String name = meta.getDisplayName();
-
-        rune = ItemUtils.getRuneFromString(name, 0);
-
-        List<String> lore = new ArrayList<>();
-        if (meta.hasLore()) lore = meta.getLore();
+        ItemBuilder builder = ItemBuilder.of(item);
 
         int line = 0;
-        for (String s : lore) {
-            if (s.contains("Success Chance:")) {
-                if (s.contains("XXX")) {
+        for (String loreLine : builder.lore()) {
+            if (loreLine.contains("Success Chance:")) {
+                if (loreLine.contains("XXX")) {
                     createSuccessChance();
-                    lore.set(line, s.replace("XXX", successChance + ""));
+                    builder = builder.lore(line, loreLine.replace("XXX", String.format("%d", getSuccessChance())));
                 } else {
-                    successChance = Integer.parseInt(TextUtils.getLastNumber(s, 1));
+                    setSuccessChance(Integer.parseInt(TextUtils.getLastNumber(loreLine, 1)));
                 }
             }
+
             line++;
         }
 
-        meta.setLore(lore);
-        item.setItemMeta(meta);
+        this.rune = ItemUtils.getRuneFromString(builder.name());
+        this.item = builder.build();
     }
 
     public void update() {
+        if (item == null) {
+            return;
+        }
 
-        if (item == null) return;
+        ItemBuilder builder = ItemBuilder.of(item);
 
-        ItemMeta meta = item.getItemMeta();
+        if (rune != null) {
+            builder = builder.modelData(rune.getType().getModelData());
+        }
 
-        if (rune != null)
-            meta.setCustomModelData(rune.getType().getModelData());
-
-        List<String> lore = new ArrayList<>();
-        if (meta.hasLore()) lore = meta.getLore();
-
-        for (int i = 0; i < lore.size(); i++) {
-            String s = lore.get(i);
-            if (s.contains("Success Chance:")) {
-                if (!s.contains("XXX")) {
-                    String value = TextUtils.getLastNumber(s, 0);
-                    lore.set(i, s.replace("" + value, successChance + ""));
+        int line = 0;
+        for (String loreLine : builder.lore()) {
+            if (loreLine.contains("Success Chance:")) {
+                if (!loreLine.contains("XXX")) {
+                    builder = builder.lore(line, loreLine.replace(TextUtils.getLastNumber(loreLine, 0), String.format("%d", getSuccessChance())));
                 }
             }
-            if (s.contains("ZZZ")) {
-                String runetype = TextUtils.constantToName(rune.getType().toString());
-                lore.set(i, s.replace("ZZZ", runetype.substring(0, 1).toUpperCase() + runetype.substring(1).toLowerCase()));
+
+            if (loreLine.contains("ZZZ")) {
+                builder = builder.lore(line, loreLine.replace("ZZZ", rune.getType().getNiceConstant()));
             }
         }
 
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-    }
-
-    public int getSuccessChance() {
-        return successChance;
-    }
-
-    public Rune getRune() {
-        return rune;
+        item = builder.build();
     }
 
     public ItemStack getItem() {
         return item;
     }
 
-    private void createSuccessChance() {
-        successChance = new Random().nextInt(100) + 1;
+    public Rune getRune() {
+        return rune;
     }
 
+    public int getSuccessChance() {
+        return successChance;
+    }
+
+    private void createSuccessChance() {
+        setSuccessChance(new Random().nextInt(100) + 1);
+    }
+
+    public void setSuccessChance(int successChance) {
+        this.successChance = successChance;
+    }
 }

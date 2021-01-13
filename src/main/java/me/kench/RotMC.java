@@ -7,7 +7,6 @@ import me.kench.commands.subcommand.SubCommandManager;
 import me.kench.database.DataManager;
 import me.kench.listener.*;
 import me.kench.player.LevelProgression;
-import me.kench.gui.skills.SkillsGui;
 import me.kench.papi.GlowPlaceHolder;
 import me.kench.papi.StarPlaceHolder;
 import me.kench.session.SessionManager;
@@ -55,13 +54,12 @@ public class RotMC extends JavaPlugin {
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new GuiEvents(), this);
-        pluginManager.registerEvents(new SkillsGui(), this);
         pluginManager.registerEvents(new InteractEvent(), this);
         pluginManager.registerEvents(new JoinLeaveEvent(), this);
         pluginManager.registerEvents(new ChatEvent(), this);
         pluginManager.registerEvents(new DamageEvent(), this);
         pluginManager.registerEvents(new XPEvent(), this);
-        pluginManager.registerEvents(new InvEvents(), this);
+        pluginManager.registerEvents(new InventoryEvents(), this);
         pluginManager.registerEvents(new DeathEvent(), this);
         pluginManager.registerEvents(new DispenserArmorListener(), this);
         pluginManager.registerEvents(new ArmorListener(Collections.emptyList()), this);

@@ -1,7 +1,7 @@
 package me.kench.items.stats.essenceanimations;
 
 import me.kench.RotMC;
-import me.kench.database.playerdata.PlayerData;
+import me.kench.session.PlayerSession;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -10,66 +10,65 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Ganda extends EssenceAnimation {
-
     public Ganda() {
         super("Ganda", 40, 1);
     }
 
-    double lastX;
-    double lastY;
-    double lastZ;
-
-    PlayerData pd;
+    private double lastX;
+    private double lastY;
+    private double lastZ;
+    private PlayerSession session;
 
     @Override
-    public void start(Player p) {
-        pd = RotMC.getPlayerData(p);
+    public void start(Player player) {
+        session = RotMC.getInstance().getSessionManager().getSession(player.getUniqueId());
 
-        lastX = p.getLocation().getBlockX();
-        lastY = p.getLocation().getBlockY();
-        lastZ = p.getLocation().getBlockZ();
-        super.start(p);
+        lastX = player.getLocation().getBlockX();
+        lastY = player.getLocation().getBlockY();
+        lastZ = player.getLocation().getBlockZ();
+        
+        super.start(player);
     }
 
     @Override
     public synchronized void cancel() throws IllegalStateException {
+        List<Block> toRemove = new ArrayList<>();
 
-        ArrayList<Block> toremove = new ArrayList<>();
-        for (Block b : pd.goldblocks) {
-            b.getWorld().getBlockAt(b.getLocation()).setType(Material.AIR);
-            toremove.add(b);
+        for (Block block : session.getGoldBlocks()) {
+            block.getWorld().getBlockAt(block.getLocation()).setType(Material.AIR);
+            toRemove.add(block);
         }
 
-        for (Block tr : toremove) {
-            pd.goldblocks.remove(tr);
+        for (Block block : toRemove) {
+            session.getGoldBlocks().remove(block);
         }
+
         super.cancel();
     }
 
     @Override
     public void run() {
+        Location playerLocation = player.getLocation().clone();
 
-        Location ploc = p.getLocation().clone();
-
-        Block bu = ploc.getBlock().getRelative(BlockFace.DOWN);
+        Block blockBelow = playerLocation.getBlock().getRelative(BlockFace.DOWN);
 
         ArrayList<Block> blocks = new ArrayList<>();
-        blocks.add(bu);
-        blocks.add(bu.getRelative(BlockFace.NORTH));
-        blocks.add(bu.getRelative(BlockFace.EAST));
-        blocks.add(bu.getRelative(BlockFace.SOUTH));
-        blocks.add(bu.getRelative(BlockFace.WEST));
+        blocks.add(blockBelow);
+        blocks.add(blockBelow.getRelative(BlockFace.NORTH));
+        blocks.add(blockBelow.getRelative(BlockFace.EAST));
+        blocks.add(blockBelow.getRelative(BlockFace.SOUTH));
+        blocks.add(blockBelow.getRelative(BlockFace.WEST));
 
-        if (!(lastX == p.getLocation().getBlockX() && lastY == p.getLocation().getBlockY() && lastZ == p.getLocation().getBlockZ())) {
+        if (!(lastX == player.getLocation().getBlockX() && lastY == player.getLocation().getBlockY() && lastZ == player.getLocation().getBlockZ())) {
+            for (Block block : blocks) {
+                if (block.getType() == Material.CAVE_AIR || block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR) {
+                    block.setType(Material.GOLD_BLOCK);
 
-            for (Block b : blocks) {
-                if (b.getType() == Material.CAVE_AIR || b.getType() == Material.AIR || b.getType() == Material.CAVE_AIR) {
-                    b.setType(Material.GOLD_BLOCK);
-
-                    if (!pd.goldblocks.contains(b)) {
-                        pd.goldblocks.add(b);
+                    if (!session.getGoldBlocks().contains(block)) {
+                        session.getGoldBlocks().add(block);
                     }
 
                 }
@@ -82,24 +81,24 @@ public class Ganda extends EssenceAnimation {
 
                 @Override
                 public void run() {
+                    Block lastBlockBelow = player.getWorld().getBlockAt(lx, ly, lz).getRelative(BlockFace.DOWN);
 
-                    Block lastBU = p.getWorld().getBlockAt(lx, ly, lz).getRelative(BlockFace.DOWN);
+                    ArrayList<Block> lastBlocks = new ArrayList<>();
+                    lastBlocks.add(lastBlockBelow);
+                    lastBlocks.add(lastBlockBelow.getRelative(BlockFace.NORTH));
+                    lastBlocks.add(lastBlockBelow.getRelative(BlockFace.EAST));
+                    lastBlocks.add(lastBlockBelow.getRelative(BlockFace.SOUTH));
+                    lastBlocks.add(lastBlockBelow.getRelative(BlockFace.WEST));
 
-                    ArrayList<Block> lastblocks = new ArrayList<>();
-                    lastblocks.add(lastBU);
-                    lastblocks.add(lastBU.getRelative(BlockFace.NORTH));
-                    lastblocks.add(lastBU.getRelative(BlockFace.EAST));
-                    lastblocks.add(lastBU.getRelative(BlockFace.SOUTH));
-                    lastblocks.add(lastBU.getRelative(BlockFace.WEST));
+                    for (Block lastBlock : lastBlocks) {
+                        if (sameLoc(lastBlock.getLocation(), blockBelow.getLocation())) {
+                            continue;
+                        }
 
-                    for (Block lastB : lastblocks) {
-
-                        if (sameLoc(lastB.getLocation(), bu.getLocation())) continue;
-
-                        if (pd.goldblocks.contains(lastB)) {
-                            pd.goldblocks.remove(lastB);
-                            if (lastB.getType() == Material.GOLD_BLOCK) {
-                                lastB.setType(Material.AIR);
+                        if (session.getGoldBlocks().contains(lastBlock)) {
+                            session.getGoldBlocks().remove(lastBlock);
+                            if (lastBlock.getType() == Material.GOLD_BLOCK) {
+                                lastBlock.setType(Material.AIR);
                             }
                         }
                     }
@@ -107,18 +106,15 @@ public class Ganda extends EssenceAnimation {
                 }
             }.runTaskLater(RotMC.getInstance(), 15L);
 
-            lastX = p.getLocation().getBlockX();
-            lastY = p.getLocation().getBlockY();
-            lastZ = p.getLocation().getBlockZ();
+            lastX = player.getLocation().getBlockX();
+            lastY = player.getLocation().getBlockY();
+            lastZ = player.getLocation().getBlockZ();
         }
 
         super.run();
     }
 
     private boolean sameLoc(Location loc1, Location loc2) {
-        if (loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ()) return true;
-
-        return false;
+        return loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
     }
-
 }

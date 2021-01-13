@@ -30,7 +30,7 @@ public class Hadori extends EssenceAnimation {
     @Override
     public void run() {
 
-        Location ploc = p.getLocation().clone();
+        Location ploc = player.getLocation().clone();
 
         bloom(ploc);
 
@@ -75,7 +75,7 @@ public class Hadori extends EssenceAnimation {
                         b.setType(m);
                     }
 
-                    p.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, l, 1);
+                    player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, l, 1);
 
                 }
             }

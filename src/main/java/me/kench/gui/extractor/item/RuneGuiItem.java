@@ -34,7 +34,7 @@ public class RuneGuiItem extends GuiItem {
                     );
 
                     RuneItem runeItem = new RuneItem(givenItem.getItem());
-                    runeItem.successChance = 50;
+                    runeItem.setSuccessChance(50);
                     runeItem.update();
 
                     Rune rune = runeItem.getRune();

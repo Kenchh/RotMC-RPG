@@ -5,8 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class EssenceAnimation extends BukkitRunnable {
-
-    Player p;
+    Player player;
 
     String name;
 
@@ -23,8 +22,8 @@ public class EssenceAnimation extends BukkitRunnable {
         this.speed = speed;
     }
 
-    public void start(Player p) {
-        this.p = p;
+    public void start(Player player) {
+        this.player = player;
         this.runTaskTimer(RotMC.getInstance(), 1L, speed);
     }
 

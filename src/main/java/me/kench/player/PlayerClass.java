@@ -10,7 +10,6 @@ import me.kench.player.stat.PlayerStats;
 import me.kench.player.stat.Stat;
 import me.kench.player.stat.Stats;
 import me.kench.player.stat.view.StatView;
-import me.kench.session.PlayerSession;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.Messaging;
 import me.kench.utils.StatUtils;
@@ -275,7 +274,7 @@ public class PlayerClass implements Comparable<PlayerClass> {
     }
 
     public void tickEssences(PlayerData data) {
-        PlayerSession session = data.getSession();
+        me.kench.session.PlayerSession session = data.getSession();
 
         List<EssenceType> activeEssences = ItemUtils.getActiveEssences(getPlayer());
         List<EssenceType> etToRemove = new ArrayList<>();

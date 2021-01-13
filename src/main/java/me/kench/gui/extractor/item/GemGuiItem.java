@@ -35,7 +35,7 @@ public class GemGuiItem extends GuiItem {
                     );
 
                     GemItem gemItem = new GemItem(givenItem.getItem());
-                    gemItem.successChance = 50;
+                    gemItem.setSuccessChance(50);
                     gemItem.update();
 
                     givenItem.getStats().getGems().remove(event.getSlot() - 10);

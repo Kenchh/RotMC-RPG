@@ -5,7 +5,6 @@ import me.kench.database.playerdata.PlayerData;
 import me.kench.items.ItemBuilder;
 import me.kench.utils.GlowType;
 import me.kench.utils.GlowUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;

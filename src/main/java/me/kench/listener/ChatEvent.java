@@ -1,7 +1,6 @@
 package me.kench.listener;
 
 import me.kench.RotMC;
-import me.kench.database.playerdata.PlayerData;
 import me.kench.player.PlayerClass;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

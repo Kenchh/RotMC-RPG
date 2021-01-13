@@ -23,7 +23,7 @@ public class ItemUtils {
             if (armor != null && armor.getType() != Material.AIR) {
                 GameItem gameItem = new GameItem(armor);
                 if (gameItem.getStats().getPlayerStatBoost() != null) {
-                    stats.incrementStats(gameItem.getStats().getPlayerStatBoost());
+                    stats = stats.merge(gameItem.getStats().getPlayerStatBoost());
                 }
             }
         }
@@ -153,6 +153,7 @@ public class ItemUtils {
 
         return essenceTypes;
     }
+
     public static StatView getValueFromGemType(GemType gemType, int level) {
         Stats stats = new Stats();
         stats.addGem(gemType, level);

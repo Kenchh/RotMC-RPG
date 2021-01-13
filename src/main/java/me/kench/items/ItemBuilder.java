@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -26,7 +27,15 @@ public class ItemBuilder {
     }
 
     public static ItemBuilder of(ItemStack stack) {
+        if (stack == null) {
+            return null;
+        }
+
         return new ItemBuilder(stack);
+    }
+
+    public String name() {
+        return meta.getDisplayName();
     }
 
     public ItemBuilder name(String name) {
@@ -34,14 +43,32 @@ public class ItemBuilder {
         return this;
     }
 
+    public int amount() {
+        return stack.getAmount();
+    }
+
     public ItemBuilder amount(int amount) {
         stack.setAmount(amount);
         return this;
     }
 
+    public List<String> lore() {
+        return meta.getLore();
+    }
+
+    public ItemBuilder lore(int line, String text) {
+        List<String> current = lore();
+        current.set(line, text);
+        return lore(current.toArray(new String[0]));
+    }
+
     public ItemBuilder lore(String... lines) {
         meta.setLore(Arrays.asList(lines));
         return this;
+    }
+
+    public int modelData() {
+        return meta.getCustomModelData();
     }
 
     public ItemBuilder modelData(int modelData) {

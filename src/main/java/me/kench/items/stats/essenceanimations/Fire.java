@@ -21,7 +21,7 @@ public class Fire extends EssenceAnimation {
     @Override
     public void run() {
 
-        Location ploc = p.getLocation().clone();
+        Location ploc = player.getLocation().clone();
 
         double offxfire = (((double) (new Random().nextInt(10) + 1)) / 10D) - 0.5D;
         double offyfire = (((double) (new Random().nextInt(10) + 1)) / 10D);
@@ -29,14 +29,14 @@ public class Fire extends EssenceAnimation {
 
         Vector vfire = new Vector(offxfire, offyfire, offzfire);
 
-        p.getWorld().spawnParticle(Particle.FLAME, ploc.add(vfire), 0, 0, 0, 0);
+        player.getWorld().spawnParticle(Particle.FLAME, ploc.add(vfire), 0, 0, 0, 0);
 
         double offxsmoke = (((double) (new Random().nextInt(10) + 1)) / 10D) - 0.5D;
         double offzsmoke = (((double) (new Random().nextInt(10) + 1)) / 10D) - 0.5D;
 
         Vector vsmoke = new Vector(offxsmoke, -0.5, offzsmoke);
 
-        p.getWorld().spawnParticle(Particle.SMOKE_NORMAL, ploc.add(vsmoke), 0, 0, 0, 0);
+        player.getWorld().spawnParticle(Particle.SMOKE_NORMAL, ploc.add(vsmoke), 0, 0, 0, 0);
         super.run();
     }
 

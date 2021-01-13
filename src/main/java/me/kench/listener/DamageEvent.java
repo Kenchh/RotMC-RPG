@@ -2,7 +2,6 @@ package me.kench.listener;
 
 import me.kench.RotMC;
 import me.kench.database.playerdata.PlayerData;
-import me.kench.session.PlayerSession;
 import me.kench.utils.WorldGuardUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -43,7 +42,7 @@ public class DamageEvent implements Listener {
                 RotMC.getInstance().getDataManager().getPlayerData()
                         .chainLoadSafe(event.getEntity().getUniqueId())
                         .asyncLast(data -> {
-                            PlayerSession session = data.getSession();
+                            me.kench.session.PlayerSession session = data.getSession();
                             session.setLastKiller("");
                             session.setLastDamage(event.getCause().name().toLowerCase());
                         })
@@ -72,7 +71,7 @@ public class DamageEvent implements Listener {
             RotMC.getInstance().getDataManager().getPlayerData()
                     .chainLoadSafe(player.getUniqueId())
                     .async(data -> data.getSelectedClass().getAttackAllStat())
-                    .syncLast(stat -> event.setDamage(event.getDamage() + event.getDamage() * stat))
+                    .syncLast(stat -> event.setDamage(event.getDamage() + event.getDamage() * stat.getValue()))
                     .execute();
         }
 
@@ -97,9 +96,9 @@ public class DamageEvent implements Listener {
                     })
                     .syncLast(playerClass -> {
                         double damage = event.getDamage();
-                        damage = damage - (damage * playerClass.getDefenseAllStat());
+                        damage = damage - (damage * playerClass.getDefenseAllStat().getValue());
 
-                        if (ThreadLocalRandom.current().nextInt(100) + 1 <= playerClass.getEvadeAllStat()) {
+                        if (ThreadLocalRandom.current().nextInt(100) + 1 <= playerClass.getEvadeAllStat().getValue()) {
                             player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1F, 1F);
                             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + ChatColor.BOLD.toString() + "DODGE"));
                             damage = 0;

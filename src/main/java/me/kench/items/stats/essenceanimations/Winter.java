@@ -22,7 +22,7 @@ public class Winter extends EssenceAnimation {
     @Override
     public void run() {
 
-        Location ploc = p.getLocation().clone();
+        Location ploc = player.getLocation().clone();
 
         double offxSnow = (((double) (new Random().nextInt(10) + 1)) / 10D) - 0.5D;
         double offySnow = (((double) (new Random().nextInt(10) + 1)) / 10D);
@@ -30,14 +30,14 @@ public class Winter extends EssenceAnimation {
 
         Vector vfire = new Vector(offxSnow, offySnow, offzSnow);
 
-        p.getWorld().spawnParticle(Particle.SNOWBALL, ploc.add(vfire), 0, 0, 0, 0);
+        player.getWorld().spawnParticle(Particle.SNOWBALL, ploc.add(vfire), 0, 0, 0, 0);
 
         double offxsmoke = (((double) (new Random().nextInt(10) + 1)) / 10D) - 0.5D;
         double offzsmoke = (((double) (new Random().nextInt(10) + 1)) / 10D) - 0.5D;
 
         Vector vsmoke = new Vector(offxsmoke, -0.5, offzsmoke);
 
-        p.getWorld().spawnParticle(Particle.REDSTONE, ploc.add(vsmoke), 0, 0.001, 1, 0, 1, new Particle.DustOptions(Color.fromBGR(255, 255, 255), 1));
+        player.getWorld().spawnParticle(Particle.REDSTONE, ploc.add(vsmoke), 0, 0.001, 1, 0, 1, new Particle.DustOptions(Color.fromBGR(255, 255, 255), 1));
 
         super.run();
     }

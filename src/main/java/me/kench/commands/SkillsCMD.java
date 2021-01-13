@@ -13,9 +13,7 @@ public class SkillsCMD implements CommandExecutor {
             return true;
         }
 
-        Player player = (Player) sender;
-        player.openInventory(new SkillsGui(player).getInv());
-
+        new SkillsGui().display((Player) sender);
         return true;
     }
 }

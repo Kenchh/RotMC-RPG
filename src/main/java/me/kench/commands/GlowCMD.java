@@ -15,9 +15,7 @@ public class GlowCMD implements CommandExecutor {
             return true;
         }
 
-        Player player = (Player) sender;
-        player.openInventory(new GlowGui(player).getInv());
-
+        new GlowGui().display((Player) sender);
         return true;
     }
 }

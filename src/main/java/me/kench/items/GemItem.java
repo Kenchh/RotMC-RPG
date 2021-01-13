@@ -12,11 +12,10 @@ import java.util.List;
 import java.util.Random;
 
 public class GemItem {
-
     ItemStack item;
     Gem gem;
 
-    public int successChance = 0;
+    private int successChance = 0;
 
     public GemItem(ItemStack item) {
         this.item = item;
@@ -34,15 +33,15 @@ public class GemItem {
             if (s.contains("Success Chance:")) {
                 if (s.contains("XXX")) {
                     createSuccessChance();
-                    lore.set(line, s.replace("XXX", successChance + ""));
+                    lore.set(line, s.replace("XXX", getSuccessChance() + ""));
                 } else {
-                    successChance = Integer.parseInt(TextUtils.getLastNumber(s, 1));
+                    setSuccessChance(Integer.parseInt(TextUtils.getLastNumber(s, 1)));
                 }
             }
             if (s.contains("YYY:")) {
                 String gemtype = gem.getType().toString();
 
-                String value = "+" + ItemUtils.getValueFromGemType(gem.getType(), gem.getLevel(), true);
+                String value = "+" + ItemUtils.getValueFromGemType(gem.getType(), gem.getLevel());
 
                 if (gem.getType() != GemType.HEALTH && gem.getType() != GemType.VITALITY) value += "%";
 
@@ -72,7 +71,7 @@ public class GemItem {
             if (s.contains("Success Chance:")) {
                 if (!s.contains("XXX")) {
                     String value = TextUtils.getLastNumber(s, 1);
-                    lore.set(i, s.replace("" + value, successChance + ""));
+                    lore.set(i, s.replace("" + value, getSuccessChance() + ""));
                 }
             }
         }
@@ -94,7 +93,10 @@ public class GemItem {
     }
 
     private void createSuccessChance() {
-        successChance = new Random().nextInt(100) + 1;
+        setSuccessChance(new Random().nextInt(100) + 1);
     }
 
+    public void setSuccessChance(int successChance) {
+        this.successChance = successChance;
+    }
 }

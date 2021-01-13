@@ -1,7 +1,7 @@
 package me.kench.items.stats.essenceanimations;
 
 import me.kench.RotMC;
-import me.kench.database.playerdata.PlayerData;
+import me.kench.session.PlayerSession;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -10,74 +10,73 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Kabiri extends EssenceAnimation {
-
     public Kabiri() {
         super("Kabiri", 40, 1);
     }
 
-    double lastX;
-    double lastY;
-    double lastZ;
-
-    PlayerData pd;
+    private double lastX;
+    private double lastY;
+    private double lastZ;
+    private PlayerSession session;
 
     @Override
-    public void start(Player p) {
-        pd = RotMC.getPlayerData(p);
+    public void start(Player player) {
+        session = RotMC.getInstance().getSessionManager().getSession(player.getUniqueId());
 
-        lastX = p.getLocation().getBlockX();
-        lastY = p.getLocation().getBlockY();
-        lastZ = p.getLocation().getBlockZ();
-        super.start(p);
+        lastX = player.getLocation().getBlockX();
+        lastY = player.getLocation().getBlockY();
+        lastZ = player.getLocation().getBlockZ();
+
+        super.start(player);
     }
 
     @Override
     public synchronized void cancel() throws IllegalStateException {
+        List<Block> toRemove = new ArrayList<>();
 
-        ArrayList<Block> toremove = new ArrayList<>();
-        for (Block b : pd.obbyblocks) {
-            b.getWorld().getBlockAt(b.getLocation()).setType(Material.AIR);
-            toremove.add(b);
+        for (Block block : session.getObsidianBlocks()) {
+            block.getWorld().getBlockAt(block.getLocation()).setType(Material.AIR);
+            toRemove.add(block);
         }
 
-        for (Block tr : toremove) {
-            pd.obbyblocks.remove(tr);
+        for (Block block : toRemove) {
+            session.getObsidianBlocks().remove(block);
         }
+
         super.cancel();
     }
 
     @Override
     public void run() {
+        Location playerLocation = player.getLocation().clone();
 
-        Location ploc = p.getLocation().clone();
+        Block blockBelow = playerLocation.getBlock().getRelative(BlockFace.DOWN);
 
-        Block bu = ploc.getBlock().getRelative(BlockFace.DOWN);
+        List<Block> blocks = new ArrayList<>();
+        blocks.add(blockBelow);
+        blocks.add(blockBelow.getRelative(BlockFace.NORTH));
+        blocks.add(blockBelow.getRelative(BlockFace.EAST));
+        blocks.add(blockBelow.getRelative(BlockFace.SOUTH));
+        blocks.add(blockBelow.getRelative(BlockFace.WEST));
 
-        ArrayList<Block> blocks = new ArrayList<>();
-        blocks.add(bu);
-        blocks.add(bu.getRelative(BlockFace.NORTH));
-        blocks.add(bu.getRelative(BlockFace.EAST));
-        blocks.add(bu.getRelative(BlockFace.SOUTH));
-        blocks.add(bu.getRelative(BlockFace.WEST));
+        if (!(lastX == player.getLocation().getBlockX() && lastY == player.getLocation().getBlockY() && lastZ == player.getLocation().getBlockZ())) {
+            for (Block block : blocks) {
+                if (block.getType() == Material.LAVA) {
+                    if (block.getBlockData().getAsString().contains("level=0")) {
+                        block.setType(Material.OBSIDIAN);
 
-        if (!(lastX == p.getLocation().getBlockX() && lastY == p.getLocation().getBlockY() && lastZ == p.getLocation().getBlockZ())) {
-
-            for (Block b : blocks) {
-                if (b.getType() == Material.LAVA) {
-                    if (b.getBlockData().getAsString().contains("level=0")) {
-                        b.setType(Material.OBSIDIAN);
-
-                        if (!pd.obbyblocks.contains(b)) {
-                            pd.obbyblocks.add(b);
+                        if (!session.getObsidianBlocks().contains(block)) {
+                            session.getObsidianBlocks().add(block);
                         }
 
                     } else {
-                        b.setType(Material.COAL_BLOCK);
+                        block.setType(Material.COAL_BLOCK);
 
-                        if (!pd.obbyblocks.contains(b)) {
-                            pd.obbyblocks.add(b);
+                        if (!session.getObsidianBlocks().contains(block)) {
+                            session.getObsidianBlocks().add(block);
                         }
                     }
                 }
@@ -90,28 +89,28 @@ public class Kabiri extends EssenceAnimation {
 
                 @Override
                 public void run() {
-
-                    Block lastBU = p.getWorld().getBlockAt(lx, ly, lz).getRelative(BlockFace.DOWN);
+                    Block lastBlockBelow = player.getWorld().getBlockAt(lx, ly, lz).getRelative(BlockFace.DOWN);
 
                     ArrayList<Block> lastblocks = new ArrayList<>();
-                    lastblocks.add(lastBU);
-                    lastblocks.add(lastBU.getRelative(BlockFace.NORTH));
-                    lastblocks.add(lastBU.getRelative(BlockFace.EAST));
-                    lastblocks.add(lastBU.getRelative(BlockFace.SOUTH));
-                    lastblocks.add(lastBU.getRelative(BlockFace.WEST));
+                    lastblocks.add(lastBlockBelow);
+                    lastblocks.add(lastBlockBelow.getRelative(BlockFace.NORTH));
+                    lastblocks.add(lastBlockBelow.getRelative(BlockFace.EAST));
+                    lastblocks.add(lastBlockBelow.getRelative(BlockFace.SOUTH));
+                    lastblocks.add(lastBlockBelow.getRelative(BlockFace.WEST));
 
-                    for (Block lastB : lastblocks) {
+                    for (Block lastBlock : lastblocks) {
+                        if (sameLoc(lastBlock.getLocation(), blockBelow.getLocation())) {
+                            continue;
+                        }
 
-                        if (sameLoc(lastB.getLocation(), bu.getLocation())) continue;
-
-                        if (pd.obbyblocks.contains(lastB)) {
-                            pd.obbyblocks.remove(lastB);
-                            if (lastB.getType() == Material.COAL_BLOCK) {
-                                lastB.setType(Material.AIR);
+                        if (session.getObsidianBlocks().contains(lastBlock)) {
+                            session.getObsidianBlocks().remove(lastBlock);
+                            if (lastBlock.getType() == Material.COAL_BLOCK) {
+                                lastBlock.setType(Material.AIR);
                             }
 
-                            if (lastB.getType() == Material.OBSIDIAN) {
-                                lastB.setType(Material.LAVA);
+                            if (lastBlock.getType() == Material.OBSIDIAN) {
+                                lastBlock.setType(Material.LAVA);
                             }
                         }
                     }
@@ -119,18 +118,15 @@ public class Kabiri extends EssenceAnimation {
                 }
             }.runTaskLater(RotMC.getInstance(), 15L);
 
-            lastX = p.getLocation().getBlockX();
-            lastY = p.getLocation().getBlockY();
-            lastZ = p.getLocation().getBlockZ();
+            lastX = player.getLocation().getBlockX();
+            lastY = player.getLocation().getBlockY();
+            lastZ = player.getLocation().getBlockZ();
         }
 
         super.run();
     }
 
     private boolean sameLoc(Location loc1, Location loc2) {
-        if (loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ()) return true;
-
-        return false;
+        return loc1.getX() == loc2.getX() && loc1.getY() == loc2.getY() && loc1.getZ() == loc2.getZ();
     }
-
 }

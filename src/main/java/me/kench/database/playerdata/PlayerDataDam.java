@@ -78,7 +78,7 @@ public class PlayerDataDam {
      * Returns a readonly copy of the entire PlayerData table. Should be called from an async context. If needed
      * from a sync context, use {@link #chainLoadAll()} to go async and show results sync.
      *
-     * @return a {@link List<PlayerData>}
+     * @return a {@link List< PlayerData >}
      */
     public List<PlayerData> loadAll() {
         return Collections.unmodifiableList(dao.loadAll());
@@ -143,7 +143,7 @@ public class PlayerDataDam {
      * can then sync to the main thread to do stuff with the result if necessary.
      *
      * @param uniqueId the unique id of the Player
-     * @return a {@link TaskChain<PlayerData>} to be used in further task execution
+     * @return a {@link TaskChain< PlayerData >} to be used in further task execution
      */
     public TaskChain<PlayerData> chainLoad(UUID uniqueId) {
         return RotMC.newChain()
@@ -154,7 +154,7 @@ public class PlayerDataDam {
      * Exactly the same as {@link #chainLoad(UUID)} but aborts further tasks if the data is not found.
      *
      * @param uniqueId the unique id of the Player
-     * @return a {@link TaskChain<PlayerData>} to be used in further task execution
+     * @return a {@link TaskChain< PlayerData >} to be used in further task execution
      */
     public TaskChain<PlayerData> chainLoadSafe(UUID uniqueId) {
         return chainLoad(uniqueId).abortIfNull();

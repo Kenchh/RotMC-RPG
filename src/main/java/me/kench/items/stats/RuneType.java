@@ -28,6 +28,10 @@ public enum RuneType {
         return name;
     }
 
+    public String getNiceConstant() {
+        return name().charAt(0) + name().substring(1).toLowerCase();
+    }
+
     public String getPrefix() {
         return prefix;
     }

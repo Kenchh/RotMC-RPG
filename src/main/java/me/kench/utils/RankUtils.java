@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 
 public class RankUtils {
     public static int getCharacterRank(PlayerData data, RpgClass rpgClass) {
+        // TODO: make sure ranks are appropriately calculated upon levelUp as they are NOT yet
         switch (rpgClass) {
             case KNIGHT:
                 return data.getRankKnight();
@@ -21,21 +22,8 @@ public class RankUtils {
             case ROGUE:
                 return data.getRankRogue();
         }
-//        int rank = 0;
-//
-//        for (PlayerClass playerClass : RotMC.getPlayerData(player).getClasses()) {
-//            GameClass gameClass = playerClass.getGameClass();
-//
-//            if (gameClass.getName().equalsIgnoreCase(classname)) {
-//                return getRankFromFame(playerClass);
-//            }
-//
-//        }
-//
-//        String key = "rank" + classname.substring(0, 1).toUpperCase() + classname.substring(1).toLowerCase();
-//        rank = Math.max(rank, RotMC.getInstance().getSqlManager().getValueOrDefaultFromDatabase(player, key, Integer.class, 0));
-//
-//        return rank;
+
+        return -1;
     }
 
     public static int getRankFromFame(PlayerClass pc) {
