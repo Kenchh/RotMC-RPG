@@ -34,7 +34,7 @@ public class SubcommandManager {
                     return true;
                 }
 
-                if (sender instanceof Player && !((Player) sender).hasPermission(subCommand.getPermission())) {
+                if (sender instanceof Player && !sender.hasPermission(subCommand.getPermission())) {
                     sender.sendMessage(ChatColor.RED + "Insufficient permissions.");
                     return true;
                 }

@@ -21,11 +21,11 @@ public class InventorySerializer {
             bukkitObjectOutputStream.writeInt(player.getInventory().getSize() + 4);
 
             for (int i = 0; i < player.getInventory().getSize(); ++i) {
-                bukkitObjectOutputStream.writeObject((Object) player.getInventory().getItem(i));
+                bukkitObjectOutputStream.writeObject(player.getInventory().getItem(i));
             }
 
             for (int j = 0; j < 4; ++j) {
-                bukkitObjectOutputStream.writeObject((Object) player.getInventory().getArmorContents()[j]);
+                bukkitObjectOutputStream.writeObject(player.getInventory().getArmorContents()[j]);
             }
 
             bukkitObjectOutputStream.close();

@@ -1,7 +1,6 @@
 package me.kench.rotmc.listener;
 
 import me.kench.rotmc.RotMcPlugin;
-import me.kench.rotmc.database.playerdata.PlayerData;
 import me.kench.rotmc.player.PlayerClass;
 import me.kench.rotmc.player.PlayerMetadataKey;
 import me.kench.rotmc.utils.PlayerUtil;
@@ -32,11 +31,11 @@ public class DamageListener implements Listener {
                 .chainLoadSafe(player.getUniqueId())
                 .delay(1)
                 .syncLast(data -> {
-                    if (!data.hasSelectedClass()) {
-                        return;
-                    }
+                            if (!data.hasSelectedClass()) {
+                                return;
+                            }
 
-                    Bukkit.dispatchCommand(
+                            Bukkit.dispatchCommand(
                                     Bukkit.getConsoleSender(),
                                     String.format(
                                             "ultimatekits:kit %s %s",
@@ -129,33 +128,33 @@ public class DamageListener implements Listener {
     }
 
     private void handleDefender(Player attacker, Player defender, EntityDamageEvent event) {
-            RotMcPlugin.getInstance().getDataManager().getPlayerData()
-                    .chainLoadSafe(defender.getUniqueId())
-                    .syncLast(data -> {
-                        if (!data.hasSelectedClass()) {
-                            return;
-                        }
-                        
-                        PlayerClass playerClass = data.getSelectedClass();
+        RotMcPlugin.getInstance().getDataManager().getPlayerData()
+                .chainLoadSafe(defender.getUniqueId())
+                .syncLast(data -> {
+                    if (!data.hasSelectedClass()) {
+                        return;
+                    }
 
-                        double damage = event.getDamage() / playerClass.getDefenseAllStat().getValue();
+                    PlayerClass playerClass = data.getSelectedClass();
 
-                        if (ThreadLocalRandom.current().nextInt(100) + 1 <= playerClass.getEvadeAllStat().getValue()) {
-                            defender.playSound(defender.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1F, 1F);
-                            defender.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + ChatColor.BOLD.toString() + "DODGE"));
-                            damage = 0;
-                        }
+                    double damage = event.getDamage() / playerClass.getDefenseAllStat().getValue();
 
-                        if (defender.getHealth() - damage <= 0) {
-                            RotMcPlugin.getInstance().getSessionManager()
-                                    .getSession(defender.getUniqueId())
-                                    .setLastKiller(attacker);
-                        }
+                    if (ThreadLocalRandom.current().nextInt(100) + 1 <= playerClass.getEvadeAllStat().getValue()) {
+                        defender.playSound(defender.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1F, 1F);
+                        defender.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + ChatColor.BOLD.toString() + "DODGE"));
+                        damage = 0;
+                    }
 
-                        if (damage > 0) {
-                            defender.damage(damage, null);
-                        }
-                    })
-                    .execute();
+                    if (defender.getHealth() - damage <= 0) {
+                        RotMcPlugin.getInstance().getSessionManager()
+                                .getSession(defender.getUniqueId())
+                                .setLastKiller(attacker);
+                    }
+
+                    if (damage > 0) {
+                        defender.damage(damage, null);
+                    }
+                })
+                .execute();
     }
 }

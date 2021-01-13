@@ -75,9 +75,9 @@ public class Ganda extends EssenceAnimation {
             }
 
             new BukkitRunnable() {
-                int lx = (int) lastX;
-                int ly = (int) lastY;
-                int lz = (int) lastZ;
+                final int lx = (int) lastX;
+                final int ly = (int) lastY;
+                final int lz = (int) lastZ;
 
                 @Override
                 public void run() {

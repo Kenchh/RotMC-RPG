@@ -11,7 +11,7 @@ public class PlayerUtil {
     /**
      * Checks if a metadata key is stored on the target player
      *
-     * @param key the metadata key to check
+     * @param key    the metadata key to check
      * @param player the target player
      * @return true or false
      */
@@ -22,8 +22,8 @@ public class PlayerUtil {
     /**
      * Adds data to a metadata key on the specified Player so we can check it later
      *
-     * @param <T> the type of data being stored in the metadata
-     * @param key The metadata key to add
+     * @param <T>    the type of data being stored in the metadata
+     * @param key    The metadata key to add
      * @param player The player to add the metadata to
      */
     public static <T> void addMetadata(PlayerMetadataKey key, Player player, T data) {
@@ -33,8 +33,8 @@ public class PlayerUtil {
     /**
      * Gets the first found entry for the specified {@link PlayerMetadataKey}.
      *
-     * @param <T> the type of data being stored; method trusts programmer on type
-     * @param key The metadata key to get
+     * @param <T>    the type of data being stored; method trusts programmer on type
+     * @param key    The metadata key to get
      * @param player The target player
      * @return the stored string or empty string if null
      */
@@ -46,7 +46,7 @@ public class PlayerUtil {
     /**
      * Removes the specified metadata key from the specified player
      *
-     * @param key The metadata key to remove
+     * @param key    The metadata key to remove
      * @param player The target player
      */
     public static void removeMetadata(PlayerMetadataKey key, Player player) {
@@ -57,9 +57,9 @@ public class PlayerUtil {
      * Performs the task specified by the consumer if a value exists for the specified key in the specified
      * player's metadata. After running, if it ran, the key will be removed from the player's metadata.
      *
-     * @param <T> the type of data stored in the metadata
-     * @param key the metadata key to check and remove if present
-     * @param player the player to check
+     * @param <T>      the type of data stored in the metadata
+     * @param key      the metadata key to check and remove if present
+     * @param player   the player to check
      * @param consumer the action to perform
      */
     public static <T> void doIfPresent(PlayerMetadataKey key, Player player, Consumer<T> consumer) {

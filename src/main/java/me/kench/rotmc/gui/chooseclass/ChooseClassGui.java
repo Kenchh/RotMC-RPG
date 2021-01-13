@@ -11,7 +11,6 @@ import me.kench.rotmc.items.ItemBuilder;
 import me.kench.rotmc.player.PlayerClass;
 import me.kench.rotmc.utils.RankUtils;
 import me.kench.rotmc.utils.TextUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

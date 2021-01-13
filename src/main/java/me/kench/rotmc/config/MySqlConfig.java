@@ -12,8 +12,8 @@ public class MySqlConfig {
     public String hostname, database, username, password;
     public int port;
 
-    private File file;
-    private FileConfiguration config;
+    private final File file;
+    private final FileConfiguration config;
 
     public MySqlConfig() {
 

@@ -11,9 +11,9 @@ public class TextUtils {
     }
 
     public static String constantToName(String constant) {
-        String name = constant.toString().toLowerCase();
+        String name = constant.toLowerCase();
 
-        String words[] = name.split("_");
+        String[] words = name.split("_");
         name = "";
         for (String word : words) {
             String firstletter = word.substring(0, 1).toUpperCase();

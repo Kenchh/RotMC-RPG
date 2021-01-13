@@ -11,8 +11,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.security.MessageDigest;
-
 public class PlayerChatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event) {
@@ -29,9 +27,9 @@ public class PlayerChatListener implements Listener {
 
         PlayerClass selectedClass = data.getSelectedClass();
 
-            event.setFormat(event.getFormat()
-                    .replace("{sap_default_currentlevel}", String.format("%d", selectedClass.getLevel()))
-                    .replace("{sap_default_currentprefix}", selectedClass.getRpgClass().getName())
-            );
+        event.setFormat(event.getFormat()
+                .replace("{sap_default_currentlevel}", String.format("%d", selectedClass.getLevel()))
+                .replace("{sap_default_currentprefix}", selectedClass.getRpgClass().getName())
+        );
     }
 }
