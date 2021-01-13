@@ -20,7 +20,7 @@ public abstract class StatView {
     public abstract StatView merge(StatView... views);
 
     protected final float merge0(StatView... views) {
-        final float[] statPoints = { getStatPoints() };
+        final float[] statPoints = {getStatPoints()};
         Arrays.stream(views).forEach(view -> statPoints[0] += view.getStatPoints());
         return statPoints[0];
     }

@@ -21,7 +21,7 @@ public class FameCMD implements CommandExecutor {
                     .syncLast(top10 -> {
                         Messaging.sendMessage(sender, "<gold>Top 10 Characters with Highest Fame");
 
-                        final int[] count = { 1 };
+                        final int[] count = {1};
                         top10.forEach((playerClass, fame) -> {
                             Messaging.sendMessage(sender, String.format(
                                     "<yellow>%d. %s - <gold>%s %d",

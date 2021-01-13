@@ -44,10 +44,10 @@ public class EventUtils {
         String typeName = type.name();
 
         // TODO: fix this monstrosity
-        return type == Material.ELYTRA              ||
-                typeName.contains("HELMET")         ||
-                typeName.contains("CHESTPLATE")     ||
-                typeName.contains("LEGGINGS")       ||
+        return type == Material.ELYTRA ||
+                typeName.contains("HELMET") ||
+                typeName.contains("CHESTPLATE") ||
+                typeName.contains("LEGGINGS") ||
                 typeName.contains("BOOTS");
     }
 }

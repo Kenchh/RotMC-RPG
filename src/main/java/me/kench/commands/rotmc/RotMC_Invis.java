@@ -4,13 +4,11 @@ import me.kench.RotMC;
 import me.kench.commands.subcommand.SubCommand;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class RotMC_Invis extends SubCommand {
     public RotMC_Invis() {

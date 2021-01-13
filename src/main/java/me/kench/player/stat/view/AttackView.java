@@ -1,7 +1,5 @@
 package me.kench.player.stat.view;
 
-import java.util.Arrays;
-
 /**
  * Attack is considered a percentage. Its actual applicable value is generated via
  * {@code points / 100}. It's display value is a float with a single decimal point.

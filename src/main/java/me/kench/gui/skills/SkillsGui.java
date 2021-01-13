@@ -11,7 +11,6 @@ import me.kench.player.stat.Stats;
 import me.kench.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 public class SkillsGui {
     private final StaticPane background;

@@ -29,7 +29,7 @@ public class Ganda extends EssenceAnimation {
         lastX = player.getLocation().getBlockX();
         lastY = player.getLocation().getBlockY();
         lastZ = player.getLocation().getBlockZ();
-        
+
         super.start(player);
     }
 

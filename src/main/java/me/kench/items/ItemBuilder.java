@@ -7,7 +7,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ItemBuilder {
     private final ItemStack stack;

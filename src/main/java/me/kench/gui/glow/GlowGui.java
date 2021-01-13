@@ -15,7 +15,6 @@ import me.kench.utils.GlowType;
 import me.kench.utils.GlowUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import java.util.Set;
 

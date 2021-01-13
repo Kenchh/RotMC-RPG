@@ -2,7 +2,6 @@ package me.kench.player.stat;
 
 import me.kench.items.ItemBuilder;
 import me.kench.player.PlayerClass;
-import me.kench.player.RpgClass;
 import me.kench.player.stat.view.StatView;
 import me.kench.utils.ItemUtils;
 import me.kench.utils.StatUtils;

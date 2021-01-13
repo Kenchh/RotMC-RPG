@@ -45,7 +45,8 @@ public class GemGuiItem extends GuiItem {
                     Player player = (Player) event.getWhoClicked();
 
                     for (ItemStack itemStack : player.getInventory().getContents()) {
-                        if (!itemStack.hasItemMeta() || !Objects.requireNonNull(itemStack.getItemMeta()).hasDisplayName()) continue;
+                        if (!itemStack.hasItemMeta() || !Objects.requireNonNull(itemStack.getItemMeta()).hasDisplayName())
+                            continue;
                         if (itemStack.getItemMeta().getDisplayName().contains("Extractor")) {
                             itemStack.setAmount(itemStack.getAmount() - 1);
                             break;

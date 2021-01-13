@@ -9,7 +9,7 @@ public class StatUtils {
      * Gets the maximum cap (at level 20) for the given {@link Stat} in the given {@link RpgClass}.
      *
      * @param rpgClass the {@link RpgClass}
-     * @param stat the {@link Stat}
+     * @param stat     the {@link Stat}
      * @return the maximum stat points that can be achieved at level 20 for the given stat
      */
     public static int getCap(RpgClass rpgClass, Stat stat) {
@@ -20,8 +20,8 @@ public class StatUtils {
      * Gets the maximum cap at the given {@code level} for the given {@link Stat} in the given {@link RpgClass}.
      *
      * @param rpgClass the {@link RpgClass}
-     * @param stat the {@link Stat}
-     * @param level the level, from 1 thru 20, that should be used for cap calculation
+     * @param stat     the {@link Stat}
+     * @param level    the level, from 1 thru 20, that should be used for cap calculation
      * @return the maximum stat points that can be achieved at {@code level} for the given stat
      */
     public static double getCapForLevel(RpgClass rpgClass, Stat stat, int level) {

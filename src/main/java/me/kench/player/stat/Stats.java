@@ -54,7 +54,7 @@ public class Stats implements Cloneable {
      * Convenience method to add {@code 0.5 * gemLevel} stat points to a stat. See {@link #incrementStat(Stat, float)}.
      * Each gem is worth 0.5 stat points per level that the gem is. A level 5 gem will be worth 0.5 * 5 = 2.5 stat points.
      *
-     * @param gemType the type of gem to add
+     * @param gemType  the type of gem to add
      * @param gemLevel the level of the gem that we are adding
      */
     public void addGem(GemType gemType, int gemLevel) {
@@ -70,7 +70,7 @@ public class Stats implements Cloneable {
     /**
      * Adds {@code amount} of stat points to the specified {@link Stat}.
      *
-     * @param stat the stat to increment
+     * @param stat   the stat to increment
      * @param amount the amount of stat points to increment by
      */
     public void incrementStat(Stat stat, float amount) {
@@ -101,7 +101,7 @@ public class Stats implements Cloneable {
     /**
      * Sets a specific stat to the given {@code value}.
      *
-     * @param stat the stat to set
+     * @param stat  the stat to set
      * @param value the value to set the stat to
      */
     public void setStat(Stat stat, float value) {

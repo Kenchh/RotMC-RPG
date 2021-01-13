@@ -117,7 +117,7 @@ public class PlayerDataDam {
                         .findFirst().orElse(null);
 
                 if (memberData != null) {
-                    final long[] newFame = { 0L };
+                    final long[] newFame = {0L};
 
                     memberData.getClasses().forEach(playerClass -> {
                         newFame[0] += playerClass.getFame();

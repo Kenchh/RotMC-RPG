@@ -42,8 +42,9 @@ public class PlayerClass implements Comparable<PlayerClass> {
 
     /**
      * Creates a NEW PlayerClass with default data, to later be saved to the database.
+     *
      * @param playerUniqueId the owner's unique id
-     * @param rpgClass the {@link RpgClass} that this PlayerClass represents
+     * @param rpgClass       the {@link RpgClass} that this PlayerClass represents
      */
     public PlayerClass(UUID playerUniqueId, RpgClass rpgClass) {
         this(
@@ -60,14 +61,15 @@ public class PlayerClass implements Comparable<PlayerClass> {
 
     /**
      * Creates a PlayerClass that was previously saved in the database.
+     *
      * @param playerUniqueId the owner's unique id
-     * @param uniqueId the unique id of this PlayerClass
-     * @param rpgClass the {@link RpgClass} that this PlayerClass represents
-     * @param potionStats the {@link Stats} that represents potions / random chance levelUp stats of the PlayerClass
-     * @param fame the fame (xp) of the PlayerClass
-     * @param level the level; see {@link LevelProgression}.
-     * @param selected whether or not this PlayerClass is currently selected by the player
-     * @param inventory the inventory of this PlayerClass
+     * @param uniqueId       the unique id of this PlayerClass
+     * @param rpgClass       the {@link RpgClass} that this PlayerClass represents
+     * @param potionStats    the {@link Stats} that represents potions / random chance levelUp stats of the PlayerClass
+     * @param fame           the fame (xp) of the PlayerClass
+     * @param level          the level; see {@link LevelProgression}.
+     * @param selected       whether or not this PlayerClass is currently selected by the player
+     * @param inventory      the inventory of this PlayerClass
      */
     public PlayerClass(UUID playerUniqueId, UUID uniqueId, RpgClass rpgClass, Stats potionStats, long fame, int level, boolean selected, Inventory inventory) {
         this.playerUniqueId = playerUniqueId;
@@ -199,8 +201,8 @@ public class PlayerClass implements Comparable<PlayerClass> {
             if (user == null) return;
 
             for (int i = level; i >= newLevel + 1; i--) {
-                    user.data().remove(Node.builder(String.format("rotmc.level.{1-%d}", i)).build());
-                }
+                user.data().remove(Node.builder(String.format("rotmc.level.{1-%d}", i)).build());
+            }
 
             user.data().add(Node.builder(String.format("rotmc.level.{1-%d}", newLevel)).build());
             userManager.saveUser(user);
@@ -220,36 +222,36 @@ public class PlayerClass implements Comparable<PlayerClass> {
             Stats potionStats = stats.getPotionStats();
 
             for (int i = level + 1; i <= newLevel; i++) {
-                    double healthMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.HEALTH, newLevel) / 35 / 3.5;
-                    double attackMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.ATTACK, newLevel) / 35 / 3.5;
-                    double defenseMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.DEFENSE, newLevel) / 35 / 3.5;
-                    double speedMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.SPEED, newLevel) / 35 / 3.5;
-                    double dodgeMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.EVASION, newLevel) / 35 / 3.5;
+                double healthMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.HEALTH, newLevel) / 35 / 3.5;
+                double attackMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.ATTACK, newLevel) / 35 / 3.5;
+                double defenseMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.DEFENSE, newLevel) / 35 / 3.5;
+                double speedMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.SPEED, newLevel) / 35 / 3.5;
+                double dodgeMultiplier = StatUtils.getCapForLevel(rpgClass, Stat.EVASION, newLevel) / 35 / 3.5;
 
-                    if ((((double) new Random().nextInt(100) + 1)) / 100D <= healthMultiplier) {
-                        addPotionStat(Stat.HEALTH);
-                    }
-
-                    if ((((double) new Random().nextInt(100) + 1)) / 100D <= attackMultiplier) {
-                        addPotionStat(Stat.ATTACK);
-                    }
-
-                    if ((((double) new Random().nextInt(100) + 1)) / 100D <= defenseMultiplier) {
-                        addPotionStat(Stat.DEFENSE);
-                    }
-
-                    if ((((double) new Random().nextInt(100) + 1)) / 100D <= speedMultiplier) {
-                        addPotionStat(Stat.SPEED);
-                    }
-
-                    if ((((double) new Random().nextInt(100) + 1)) / 100D <= dodgeMultiplier) {
-                        addPotionStat(Stat.EVASION);
-                    }
-
-                    // TODO: Vitality
-
-                    user.data().add(Node.builder("rotmc.level.{1-" + i + "}").build());
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= healthMultiplier) {
+                    addPotionStat(Stat.HEALTH);
                 }
+
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= attackMultiplier) {
+                    addPotionStat(Stat.ATTACK);
+                }
+
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= defenseMultiplier) {
+                    addPotionStat(Stat.DEFENSE);
+                }
+
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= speedMultiplier) {
+                    addPotionStat(Stat.SPEED);
+                }
+
+                if ((((double) new Random().nextInt(100) + 1)) / 100D <= dodgeMultiplier) {
+                    addPotionStat(Stat.EVASION);
+                }
+
+                // TODO: Vitality
+
+                user.data().add(Node.builder("rotmc.level.{1-" + i + "}").build());
+            }
 
             userManager.saveUser(user);
 

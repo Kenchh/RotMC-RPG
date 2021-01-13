@@ -2,14 +2,17 @@ package me.kench.player;
 
 import org.bukkit.ChatColor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public enum RpgClass {
     KNIGHT(RpgWeapon.SWORD, new StatCaps(35, 25, 30, 15, 20, 35), 24, 151),
     WARRIOR(RpgWeapon.SWORD, new StatCaps(30, 35, 25, 20, 15, 30), 24, 141),
     HUNTRESS(RpgWeapon.BOW, new StatCaps(20, 30, 25, 35, 15, 25), 20, 111),
     NECROMANCER(RpgWeapon.STAFF, new StatCaps(30, 35, 25, 15, 20, 20), 16, 101),
-    ASSASSIN(RpgWeapon.DAGGER, new StatCaps(15, 25, 20, 30 ,35, 25), 20, 121),
+    ASSASSIN(RpgWeapon.DAGGER, new StatCaps(15, 25, 20, 30, 35, 25), 20, 121),
     ROGUE(RpgWeapon.DAGGER, new StatCaps(20, 25, 15, 35, 30, 30), 20, 131);
 
     private final RpgWeapon weapon;

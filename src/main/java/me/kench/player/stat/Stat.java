@@ -22,6 +22,7 @@ public enum Stat {
 
     /**
      * Needed because sometimes {@link #EVASION} is referred to as Dodge.
+     *
      * @return the new name in {@link #EVASION}'s case, otherwise see {@link #getName()}.
      */
     public String getItemStatsOrGemLoreName() {
@@ -37,8 +38,8 @@ public enum Stat {
      * which is used to calculate a multiplier via {@code level / 20}.
      *
      * @param rpgClass the {@link RpgClass}
-     * @param stat the {@link Stat}
-     * @param level the {@code level} to calculate the cap with
+     * @param stat     the {@link Stat}
+     * @param level    the {@code level} to calculate the cap with
      * @return the stat points cap for the given {@code level}
      */
     public static double getCapForLevel(RpgClass rpgClass, Stat stat, int level) {

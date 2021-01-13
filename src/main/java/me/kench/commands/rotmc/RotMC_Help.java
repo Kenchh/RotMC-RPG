@@ -2,12 +2,8 @@ package me.kench.commands.rotmc;
 
 import me.kench.commands.RotMCCMD;
 import me.kench.commands.subcommand.SubCommand;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class RotMC_Help extends SubCommand {
     public RotMC_Help() {

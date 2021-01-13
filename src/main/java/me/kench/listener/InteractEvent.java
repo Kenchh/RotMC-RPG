@@ -1,17 +1,16 @@
 package me.kench.listener;
 
 import me.kench.RotMC;
-import me.kench.items.*;
-import me.kench.player.PlayerClass;
-import me.kench.player.RpgClass;
+import me.kench.items.EssenceItem;
+import me.kench.items.GemItem;
+import me.kench.items.ItemBuilder;
+import me.kench.items.RuneItem;
 import me.kench.session.PlayerSession;
 import me.kench.utils.EventUtils;
 import me.kench.utils.ItemUtils;
-import me.kench.utils.Messaging;
 import me.kench.utils.armor.ArmorEquipEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

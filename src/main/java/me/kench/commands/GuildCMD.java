@@ -14,7 +14,7 @@ public class GuildCMD implements CommandExecutor {
                 .chainLoadTop10Guilds()
                 .syncLast(top10 -> {
                     Messaging.sendMessage(sender, "<gold>Top 10 Guilds with Highest Fame");
-                    final int[] count = { 1 };
+                    final int[] count = {1};
                     top10.forEach((guild, fame) -> {
                         Messaging.sendMessage(sender, String.format(
                                 "<yellow>%d. %s - %d",

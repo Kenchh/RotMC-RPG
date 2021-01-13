@@ -1,7 +1,6 @@
 package me.kench.player;
 
 import me.kench.RotMC;
-import me.kench.player.PlayerClass;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

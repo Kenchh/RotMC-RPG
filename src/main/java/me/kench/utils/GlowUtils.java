@@ -37,7 +37,7 @@ public class GlowUtils {
      * Sets the glow of the given {@link Player} to the glow color specified by the given {@link ChatColor}.
      *
      * @param targetPlayer the target player
-     * @param glowColor the desired glow color
+     * @param glowColor    the desired glow color
      */
     public static void setGlow(Player targetPlayer, ChatColor glowColor) {
         clearGlow(targetPlayer);
@@ -98,7 +98,7 @@ public class GlowUtils {
      * Checks that a {@link Player} is permitted to "glow" with the specified {@link ChatColor}.
      *
      * @param playerData the given Player
-     * @param glowType  the given ChatColor
+     * @param glowType   the given ChatColor
      * @return true if color not specified, player has color override permission, or checks pass; false otherwise.
      * @apiNote This should ONLY be called from an async context. Sync contexts will cause too much lag.
      * @implNote If not called from an async context, this method will throw an exception. Seriously. Async.

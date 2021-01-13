@@ -1,11 +1,10 @@
 package me.kench.database.playerdata;
 
 import me.kench.RotMC;
-import me.kench.player.*;
-import me.kench.player.stat.PlayerStats;
+import me.kench.player.PlayerClass;
+import me.kench.player.RpgClass;
 import me.kench.player.stat.Stat;
 import me.kench.player.stat.Stats;
-import me.kench.session.PlayerSession;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
@@ -18,7 +17,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerData {
     private final UUID uniqueId;
