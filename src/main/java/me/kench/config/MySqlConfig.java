@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class MySQLConfig {
+public class MySqlConfig {
 
     public String hostname, database, username, password;
     public int port;
@@ -15,7 +15,7 @@ public class MySQLConfig {
     private File file;
     private FileConfiguration config;
 
-    public MySQLConfig() {
+    public MySqlConfig() {
 
         if (!RotMC.getInstance().getDataFolder().exists()) {
             RotMC.getInstance().getDataFolder().mkdirs();

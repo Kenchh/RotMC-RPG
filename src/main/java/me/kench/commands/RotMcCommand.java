@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import java.util.Arrays;
 import java.util.List;
 
-public class RotMCCMD implements CommandExecutor {
+public class RotMcCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

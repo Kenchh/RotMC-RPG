@@ -1,6 +1,6 @@
 package me.kench.commands.rotmc;
 
-import me.kench.commands.subcommand.SubCommand;
+import me.kench.commands.subcommand.Subcommand;
 import me.kench.items.EssenceItem;
 import me.kench.items.GemItem;
 import me.kench.items.ItemBuilder;
@@ -15,8 +15,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RotMC_GiveItem extends SubCommand {
-    public RotMC_GiveItem() {
+public class RotMcGiveItemCommand extends Subcommand {
+    public RotMcGiveItemCommand() {
         super("giveitem", 1, "rotmc.admin", true, "giveitems");
     }
 

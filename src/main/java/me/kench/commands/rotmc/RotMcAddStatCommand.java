@@ -1,7 +1,7 @@
 package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
-import me.kench.commands.subcommand.SubCommand;
+import me.kench.commands.subcommand.Subcommand;
 import me.kench.player.stat.Stat;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
@@ -9,8 +9,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RotMC_AddStat extends SubCommand {
-    public RotMC_AddStat() {
+public class RotMcAddStatCommand extends Subcommand {
+    public RotMcAddStatCommand() {
         super("addstat", 1, "rotmc.admin", false, "addstats", "givestat", "givestats");
     }
 

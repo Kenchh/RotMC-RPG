@@ -1,18 +1,16 @@
 package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
-import me.kench.commands.subcommand.SubCommand;
+import me.kench.commands.subcommand.Subcommand;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
-public class RotMC_Invis extends SubCommand {
-    public RotMC_Invis() {
-        super("invis", 1, "rotmc.admin", false);
+public class RotMcDeleteSlotCommand extends Subcommand {
+    public RotMcDeleteSlotCommand() {
+        super("deleteslot", 1, "rotmc.admin", false, "removeslot", "removeslots", "deleteslots");
     }
 
     @Override
@@ -37,29 +35,12 @@ public class RotMC_Invis extends SubCommand {
         }
 
         final int finalAmount = amount;
-        RotMC.newChain()
-                .sync(() -> {
-                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                        onlinePlayer.hidePlayer(RotMC.getInstance(), target);
-                    }
-
-                    target.addPotionEffect(new PotionEffect(
-                            PotionEffectType.INVISIBILITY,
-                            20 * finalAmount,
-                            0
-                    ));
-                })
-                .delay(20 * finalAmount)
-                .sync(() -> {
-                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                        onlinePlayer.showPlayer(RotMC.getInstance(), target);
-                    }
-
-                    target.removePotionEffect(PotionEffectType.INVISIBILITY);
-                })
+        RotMC.getInstance().getDataManager().getPlayerData()
+                .chainLoadSafe(target.getUniqueId())
+                .asyncLast(data -> data.setMaxSlots(Math.max(data.getMaxSlots() - finalAmount, 2)))
+                .sync(() -> Messaging.sendMessage(sender, String.format("<green>Deleted %d profile slots for %s!", finalAmount, target.getName())))
                 .execute();
 
         return true;
     }
-
 }

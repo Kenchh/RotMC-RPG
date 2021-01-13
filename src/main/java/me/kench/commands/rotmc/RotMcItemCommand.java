@@ -1,15 +1,15 @@
 package me.kench.commands.rotmc;
 
-import me.kench.commands.subcommand.SubCommand;
+import me.kench.commands.subcommand.Subcommand;
 import me.kench.items.GameItem;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RotMC_Item extends SubCommand {
+public class RotMcItemCommand extends Subcommand {
 
-    public RotMC_Item() {
+    public RotMcItemCommand() {
         super("item", 1, "rotmc.admin", true);
     }
 

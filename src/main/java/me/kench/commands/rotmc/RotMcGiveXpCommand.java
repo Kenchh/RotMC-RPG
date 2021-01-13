@@ -1,15 +1,15 @@
 package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
-import me.kench.commands.subcommand.SubCommand;
+import me.kench.commands.subcommand.Subcommand;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RotMC_GiveXP extends SubCommand {
-    public RotMC_GiveXP() {
+public class RotMcGiveXpCommand extends Subcommand {
+    public RotMcGiveXpCommand() {
         super("givexp", 1, "rotmc.admin", false);
     }
 

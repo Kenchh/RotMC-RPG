@@ -8,25 +8,25 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class SubCommandManager {
-    ArrayList<SubCommand> subCommands = new ArrayList<>();
+public class SubcommandManager {
+    ArrayList<Subcommand> subcommands = new ArrayList<>();
 
-    public SubCommandManager() {
-        subCommands.add(new RotMC_Help());
-        subCommands.add(new RotMC_AddStat());
-        subCommands.add(new RotMC_DeleteSlot());
-        subCommands.add(new RotMC_GiveItem());
-        subCommands.add(new RotMC_GiveSlot());
-        subCommands.add(new RotMC_GiveXP());
-        subCommands.add(new RotMC_Help());
-        subCommands.add(new RotMC_Invis());
-        subCommands.add(new RotMC_Item());
-        subCommands.add(new RotMC_SetXP());
+    public SubcommandManager() {
+        subcommands.add(new RotMcHelpCommand());
+        subcommands.add(new RotMcAddStatCommand());
+        subcommands.add(new RotMcDeleteSlotCommand());
+        subcommands.add(new RotMcGiveItemCommand());
+        subcommands.add(new RotMcGiveSlotCommand());
+        subcommands.add(new RotMcGiveXpCommand());
+        subcommands.add(new RotMcHelpCommand());
+        subcommands.add(new RotMcInvisCommand());
+        subcommands.add(new RotMcItemCommand());
+        subcommands.add(new RotMcSetXpCommand());
     }
 
     public boolean getSubCommandAndExecute(CommandSender sender, Command cmd, String label, String[] args) {
         for (int i = 0; i < args.length; i++) {
-            SubCommand subCommand = getSubCommandByName(args[i]);
+            Subcommand subCommand = getSubCommandByName(args[i]);
             if (getSubCommandByName(args[i]) != null && getSubCommandByName(args[i]).getIndex() == i + 1) {
 
                 if (subCommand.isPlayeronly() && !(sender instanceof Player)) {
@@ -47,8 +47,8 @@ public class SubCommandManager {
         return false;
     }
 
-    private SubCommand getSubCommandByName(String name) {
-        for (SubCommand subcmd : subCommands) {
+    private Subcommand getSubCommandByName(String name) {
+        for (Subcommand subcmd : subcommands) {
             if (subcmd.getName().equalsIgnoreCase(name)) {
                 return subcmd;
             }

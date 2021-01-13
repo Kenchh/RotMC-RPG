@@ -3,7 +3,7 @@ package me.kench;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import me.kench.commands.*;
-import me.kench.commands.subcommand.SubCommandManager;
+import me.kench.commands.subcommand.SubcommandManager;
 import me.kench.database.DataManager;
 import me.kench.listener.*;
 import me.kench.papi.GlowPlaceHolder;
@@ -27,7 +27,7 @@ public class RotMC extends JavaPlugin {
     private static TaskChainFactory taskChainFactory;
     // TODO: why are most of these (below) static?
     private static LevelProgression levelProgression;
-    private static SubCommandManager subCommandManager;
+    private static SubcommandManager subCommandManager;
     private BukkitAudiences adventure;
     private DataManager dataManager;
     private SessionManager sessionManager;
@@ -42,15 +42,15 @@ public class RotMC extends JavaPlugin {
         dataManager = new DataManager(this);
         sessionManager = new SessionManager();
         levelProgression = new LevelProgression();
-        subCommandManager = new SubCommandManager();
+        subCommandManager = new SubcommandManager();
 
         Server server = getServer();
-        server.getPluginCommand("rotmc").setExecutor(new RotMCCMD());
-        server.getPluginCommand("class").setExecutor(new ClassCMD());
-        server.getPluginCommand("stats").setExecutor(new SkillsCMD());
-        server.getPluginCommand("ftop").setExecutor(new FameCMD());
-        server.getPluginCommand("gtop").setExecutor(new GuildCMD());
-        server.getPluginCommand("glow").setExecutor(new GlowCMD());
+        server.getPluginCommand("rotmc").setExecutor(new RotMcCommand());
+        server.getPluginCommand("class").setExecutor(new ClassCommand());
+        server.getPluginCommand("stats").setExecutor(new SkillsCommand());
+        server.getPluginCommand("ftop").setExecutor(new FameCommand());
+        server.getPluginCommand("gtop").setExecutor(new GuildCommand());
+        server.getPluginCommand("glow").setExecutor(new GlowCommand());
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new GuiEvents(), this);
@@ -86,7 +86,7 @@ public class RotMC extends JavaPlugin {
         return levelProgression;
     }
 
-    public SubCommandManager getSubCommandManager() {
+    public SubcommandManager getSubCommandManager() {
         return subCommandManager;
     }
 

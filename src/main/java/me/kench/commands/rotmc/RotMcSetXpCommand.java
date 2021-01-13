@@ -1,16 +1,16 @@
 package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
-import me.kench.commands.subcommand.SubCommand;
+import me.kench.commands.subcommand.Subcommand;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RotMC_DeleteSlot extends SubCommand {
-    public RotMC_DeleteSlot() {
-        super("deleteslot", 1, "rotmc.admin", false, "removeslot", "removeslots", "deleteslots");
+public class RotMcSetXpCommand extends Subcommand {
+    public RotMcSetXpCommand() {
+        super("setxp", 1, "rotmc.admin", false);
     }
 
     @Override
@@ -37,8 +37,8 @@ public class RotMC_DeleteSlot extends SubCommand {
         final int finalAmount = amount;
         RotMC.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(target.getUniqueId())
-                .asyncLast(data -> data.setMaxSlots(Math.max(data.getMaxSlots() - finalAmount, 2)))
-                .sync(() -> Messaging.sendMessage(sender, String.format("<green>Deleted %d profile slots for %s!", finalAmount, target.getName())))
+                .asyncLast(data -> data.getSelectedClass().setFame(finalAmount))
+                .sync(() -> Messaging.sendMessage(sender, String.format("<green>%s's fame has been set to <gold>%d <green>!", target.getName(), finalAmount)))
                 .execute();
 
         return true;

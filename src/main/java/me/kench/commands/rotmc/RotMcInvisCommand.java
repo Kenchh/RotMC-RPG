@@ -1,16 +1,18 @@
 package me.kench.commands.rotmc;
 
 import me.kench.RotMC;
-import me.kench.commands.subcommand.SubCommand;
+import me.kench.commands.subcommand.Subcommand;
 import me.kench.utils.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
-public class RotMC_SetXP extends SubCommand {
-    public RotMC_SetXP() {
-        super("setxp", 1, "rotmc.admin", false);
+public class RotMcInvisCommand extends Subcommand {
+    public RotMcInvisCommand() {
+        super("invis", 1, "rotmc.admin", false);
     }
 
     @Override
@@ -35,12 +37,29 @@ public class RotMC_SetXP extends SubCommand {
         }
 
         final int finalAmount = amount;
-        RotMC.getInstance().getDataManager().getPlayerData()
-                .chainLoadSafe(target.getUniqueId())
-                .asyncLast(data -> data.getSelectedClass().setFame(finalAmount))
-                .sync(() -> Messaging.sendMessage(sender, String.format("<green>%s's fame has been set to <gold>%d <green>!", target.getName(), finalAmount)))
+        RotMC.newChain()
+                .sync(() -> {
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        onlinePlayer.hidePlayer(RotMC.getInstance(), target);
+                    }
+
+                    target.addPotionEffect(new PotionEffect(
+                            PotionEffectType.INVISIBILITY,
+                            20 * finalAmount,
+                            0
+                    ));
+                })
+                .delay(20 * finalAmount)
+                .sync(() -> {
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        onlinePlayer.showPlayer(RotMC.getInstance(), target);
+                    }
+
+                    target.removePotionEffect(PotionEffectType.INVISIBILITY);
+                })
                 .execute();
 
         return true;
     }
+
 }

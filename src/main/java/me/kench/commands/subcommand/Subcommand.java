@@ -3,14 +3,14 @@ package me.kench.commands.subcommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public abstract class SubCommand {
+public abstract class Subcommand {
     private String name;
     private int index;
     private String permission;
     private boolean playeronly;
     private String[] aliases;
 
-    public SubCommand(String name, int index, String permission, boolean playeronly, String... aliases) {
+    public Subcommand(String name, int index, String permission, boolean playeronly, String... aliases) {
         this.name = name;
         this.index = index;
         this.permission = permission;

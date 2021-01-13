@@ -3,7 +3,7 @@ package me.kench.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.kench.RotMC;
-import me.kench.config.MySQLConfig;
+import me.kench.config.MySqlConfig;
 import me.kench.database.playerdata.PlayerDataDam;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
@@ -13,7 +13,7 @@ public class DataManager implements AutoCloseable {
     private final PlayerDataDam playerData;
 
     public DataManager(RotMC plugin) {
-        MySQLConfig config = new MySQLConfig();
+        MySqlConfig config = new MySqlConfig();
 
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
