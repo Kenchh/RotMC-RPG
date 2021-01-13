@@ -95,6 +95,10 @@ public class PlayerData {
         return classes.stream().filter(PlayerClass::isSelected).findFirst().orElse(null);
     }
 
+    public boolean hasSelectedClass() {
+        return getSelectedClass() != null;
+    }
+
     public boolean changeSelectedClass(UUID classUniqueId, boolean isNew) {
         Player player = getPlayer();
         if (player == null) return false;

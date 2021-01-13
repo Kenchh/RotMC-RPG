@@ -21,7 +21,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class InteractEvent implements Listener {
+public class VariousGameItemInteractListener implements Listener {
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         PlayerSession session = RotMcPlugin.getInstance().getSessionManager().getSession(event.getPlayer().getUniqueId());

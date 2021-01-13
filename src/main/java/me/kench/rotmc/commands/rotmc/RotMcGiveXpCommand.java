@@ -2,6 +2,7 @@ package me.kench.rotmc.commands.rotmc;
 
 import me.kench.rotmc.RotMcPlugin;
 import me.kench.rotmc.commands.subcommand.Subcommand;
+import me.kench.rotmc.player.PlayerClass;
 import me.kench.rotmc.utils.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -37,8 +38,13 @@ public class RotMcGiveXpCommand extends Subcommand {
         final int finalAmount = amount;
         RotMcPlugin.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(target.getUniqueId())
-                .asyncLast(data -> data.getSelectedClass().giveFame(finalAmount, false))
-                .sync(() -> Messaging.sendMessage(sender, String.format("<green>%s has received <gold>%d <green>fame!", target.getName(), finalAmount)))
+                .syncLast(data -> {
+                    PlayerClass playerClass = data.getSelectedClass();
+                    if (playerClass != null) {
+                        Messaging.sendMessage(sender, String.format("<green>%s has received <gold>%d <green>fame!", target.getName(), finalAmount));
+                        playerClass.giveFame(finalAmount, false);
+                    }
+                })
                 .execute();
 
         return true;

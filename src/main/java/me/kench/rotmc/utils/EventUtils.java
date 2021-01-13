@@ -1,6 +1,7 @@
 package me.kench.rotmc.utils;
 
 import me.kench.rotmc.RotMcPlugin;
+import me.kench.rotmc.database.playerdata.PlayerData;
 import me.kench.rotmc.items.GameItem;
 import me.kench.rotmc.player.PlayerClass;
 import me.kench.rotmc.player.RpgClass;
@@ -13,7 +14,13 @@ import org.bukkit.inventory.ItemStack;
 public class EventUtils {
     public static void checkLevelAndClass(Cancellable event, Player player, ItemStack clickedItem) {
         // Should hopefully be cached, but sync is unavoidable here without major rewrites
-        PlayerClass selectedClass = RotMcPlugin.getInstance().getDataManager().getPlayerData().load(player.getUniqueId()).getSelectedClass();
+        PlayerData data = RotMcPlugin.getInstance().getDataManager().getPlayerData().load(player.getUniqueId());
+        if (!data.hasSelectedClass()) {
+            event.setCancelled(true);
+            return;
+        }
+
+        PlayerClass selectedClass = data.getSelectedClass();
 
         GameItem gameItem = new GameItem(clickedItem);
         if (gameItem.getLevel() > 0) {

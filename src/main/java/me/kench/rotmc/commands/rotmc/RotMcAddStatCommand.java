@@ -2,6 +2,7 @@ package me.kench.rotmc.commands.rotmc;
 
 import me.kench.rotmc.RotMcPlugin;
 import me.kench.rotmc.commands.subcommand.Subcommand;
+import me.kench.rotmc.player.PlayerClass;
 import me.kench.rotmc.player.stat.Stat;
 import me.kench.rotmc.utils.Messaging;
 import org.bukkit.Bukkit;
@@ -30,8 +31,13 @@ public class RotMcAddStatCommand extends Subcommand {
 
         RotMcPlugin.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(target.getUniqueId())
-                .asyncLast(data -> data.getSelectedClass().addPotionStat(stat))
-                .sync(() -> Messaging.sendMessage(sender, String.format("<green>Added +1 %s to %s!", stat.getName(), target.getName())))
+                .syncLast(data -> {
+                    PlayerClass playerClass = data.getSelectedClass();
+                    if (playerClass != null) {
+                        Messaging.sendMessage(sender, String.format("<green>Added +1 %s to %s!", stat.getName(), target.getName()));
+                        playerClass.addPotionStat(stat);
+                    }
+                })
                 .execute();
 
         return true;

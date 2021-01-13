@@ -1,4 +1,4 @@
-package me.kench.rotmc.utils;
+package me.kench.rotmc.utils.external.worldguard;
 
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;

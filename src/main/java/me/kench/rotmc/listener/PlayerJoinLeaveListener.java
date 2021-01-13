@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 
-public class JoinLeaveEvent implements Listener {
+public class PlayerJoinLeaveListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -26,7 +26,6 @@ public class JoinLeaveEvent implements Listener {
                     RotMcPlugin.getInstance().getSessionManager().addSession(data.getUniqueId());
 
                     PlayerClass selectedClass = data.getSelectedClass();
-
                     if (selectedClass != null) {
                         RotMcPlugin.getInstance().getLevelProgression().displayLevelProgression(player);
 

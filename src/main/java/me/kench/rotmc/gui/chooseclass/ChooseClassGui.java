@@ -10,6 +10,7 @@ import me.kench.rotmc.gui.chooseclass.item.PlayerClassItem;
 import me.kench.rotmc.items.ItemBuilder;
 import me.kench.rotmc.player.PlayerClass;
 import me.kench.rotmc.utils.RankUtils;
+import me.kench.rotmc.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,19 +34,26 @@ public class ChooseClassGui {
 
                     ChestGui gui = new ChestGui(
                             6,
-                            String.format(
-                                    "%s✦ %sSelect your profile %d/30",
+                            TextUtils.parseMini(String.format(
+                                    "%s✦ <white>Select your profile %d/30",
                                     RankUtils.getStarColor(data),
-                                    ChatColor.WHITE,
                                     data.getOverallRank()
-                            )
+                            ))
                     );
 
                     OutlinePane slots = new OutlinePane(0, 1, 9, 4);
-                    for (int i = 0; i < 36; i++) slots.insertItem(new ClassSlotUnavailableItem(), i);
-                    for (int i = 0; i < data.getMaxSlots(); i++) slots.insertItem(new CreateNewClassItem(), i);
-                    for (int i = 0; i < classes.size(); i++)
+
+                    for (int i = 0; i < 36; i++) {
+                        slots.insertItem(new ClassSlotUnavailableItem(), i);
+                    }
+
+                    for (int i = 0; i < data.getMaxSlots(); i++) {
+                        slots.insertItem(new CreateNewClassItem(), i);
+                    }
+
+                    for (int i = 0; i < classes.size(); i++) {
                         slots.insertItem(new PlayerClassItem(data, classes.get(i)), i);
+                    }
 
                     gui.addPane(background);
                     gui.addPane(slots);

@@ -22,7 +22,7 @@ public class PlayerClassItem extends GuiItem {
                                         "<yellow>%s <gold>%d <green>**%s**",
                                         playerClass.getRpgClass().getName(),
                                         playerClass.getLevel(),
-                                        playerData.getSelectedClass().getUniqueId().equals(playerClass.getUniqueId()) ? "SELECTED" : ""
+                                        playerData.hasSelectedClass() ? (playerData.getSelectedClass().getUniqueId().equals(playerClass.getUniqueId()) ? "SELECTED" : "") : ""
                                 ))
                         )
                         .lore(

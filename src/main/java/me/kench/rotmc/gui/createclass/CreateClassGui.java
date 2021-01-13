@@ -63,6 +63,17 @@ public class CreateClassGui {
                     gui.addPane(classForeground);
                     gui.addPane(cancelButton);
 
+                    gui.setOnClose(event -> {
+                        RotMcPlugin.newChain()
+                                .delay(1)
+                                .sync(() -> {
+                                    if (data.getSelectedClass() == null) {
+                                        new CreateClassGui().display(player);
+                                    }
+                                })
+                                .execute();
+                    });
+
                     return gui;
                 })
                 .syncLast(gui -> gui.show(player))

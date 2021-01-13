@@ -8,7 +8,9 @@ import me.kench.rotmc.player.EssenceTicker;
 import me.kench.rotmc.player.PlayerClass;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -24,8 +26,8 @@ public class PlayerSession {
     private final List<Block> goldBlocks;
     private final List<Block> iceBlocks;
     private final List<Block> obsidianBlocks;
-    private String lastKiller;
-    private String lastDamage;
+    private Entity lastKiller;
+    private DamageCause lastDamageCause;
     private BukkitTask ticker;
     private GameItem gameItem;
     private PlayerClass clickedClass;
@@ -37,8 +39,8 @@ public class PlayerSession {
         goldBlocks = new ArrayList<>();
         iceBlocks = new ArrayList<>();
         obsidianBlocks = new ArrayList<>();
-        lastKiller = "";
-        lastDamage = "";
+        lastKiller = null;
+        lastDamageCause = DamageCause.CUSTOM;
     }
 
     public UUID getUniqueId() {
@@ -65,20 +67,20 @@ public class PlayerSession {
         return obsidianBlocks;
     }
 
-    public String getLastKiller() {
+    public Entity getLastKiller() {
         return lastKiller;
     }
 
-    public void setLastKiller(String lastKiller) {
+    public void setLastKiller(Entity lastKiller) {
         this.lastKiller = lastKiller;
     }
 
-    public String getLastDamage() {
-        return lastDamage;
+    public DamageCause getLastDamageCause() {
+        return lastDamageCause;
     }
 
-    public void setLastDamage(String lastDamage) {
-        this.lastDamage = lastDamage;
+    public void setLastDamageCause(DamageCause lastDamageCause) {
+        this.lastDamageCause = lastDamageCause;
     }
 
     public void startTicker() {

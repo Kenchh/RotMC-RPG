@@ -116,6 +116,12 @@ public class GlowUtils {
             return true;
         }
 
+        if (!playerData.hasSelectedClass()) {
+            return false;
+        }
+
+        PlayerClass selectedClass = playerData.getSelectedClass();
+
         List<GlowType> topClassColors = Arrays.asList(GlowType.TOP_FIVE_CHARACTER_GLOW, GlowType.TOP_CHARACTER_GLOW);
         List<GlowType> topGuildColors = Arrays.asList(GlowType.TOP_THREE_GUILD_GLOW, GlowType.TOP_GUILD_GLOW);
 
@@ -125,10 +131,10 @@ public class GlowUtils {
             switch (glowType) {
                 case TOP_FIVE_CHARACTER_GLOW:
                     // Is class in top five fame?
-                    return topFiveClasses.stream().anyMatch(clazz -> clazz.getUniqueId().equals(playerData.getSelectedClass().getUniqueId()));
+                    return topFiveClasses.stream().anyMatch(clazz -> clazz.getUniqueId().equals(selectedClass.getUniqueId()));
                 case TOP_CHARACTER_GLOW:
                     // Is class the number one fame?
-                    return topFiveClasses.get(0).getUniqueId().equals(playerData.getSelectedClass().getUniqueId());
+                    return topFiveClasses.get(0).getUniqueId().equals(selectedClass.getUniqueId());
                 default:
                     return false;
             }

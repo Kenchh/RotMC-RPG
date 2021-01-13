@@ -6,8 +6,8 @@ import me.kench.rotmc.commands.*;
 import me.kench.rotmc.commands.subcommand.SubcommandManager;
 import me.kench.rotmc.database.DataManager;
 import me.kench.rotmc.listener.*;
-import me.kench.rotmc.papi.GlowPlaceHolder;
-import me.kench.rotmc.papi.StarPlaceHolder;
+import me.kench.rotmc.utils.external.papi.GlowPlaceholder;
+import me.kench.rotmc.utils.external.papi.StarPlaceholder;
 import me.kench.rotmc.player.LevelProgression;
 import me.kench.rotmc.session.SessionManager;
 import me.kench.rotmc.utils.armor.ArmorListener;
@@ -53,20 +53,19 @@ public class RotMcPlugin extends JavaPlugin {
         server.getPluginCommand("glow").setExecutor(new GlowCommand());
 
         PluginManager pluginManager = getServer().getPluginManager();
-        pluginManager.registerEvents(new GuiEvents(), this);
-        pluginManager.registerEvents(new InteractEvent(), this);
-        pluginManager.registerEvents(new JoinLeaveEvent(), this);
-        pluginManager.registerEvents(new ChatEvent(), this);
-        pluginManager.registerEvents(new DamageEvent(), this);
-        pluginManager.registerEvents(new XPEvent(), this);
-        pluginManager.registerEvents(new InventoryEvents(), this);
-        pluginManager.registerEvents(new DeathEvent(), this);
+        pluginManager.registerEvents(new VariousGameItemInteractListener(), this);
+        pluginManager.registerEvents(new PlayerJoinLeaveListener(), this);
+        pluginManager.registerEvents(new PlayerChatListener(), this);
+        pluginManager.registerEvents(new DamageListener(), this);
+        pluginManager.registerEvents(new PlayerNativeXpLevelListener(), this);
+        pluginManager.registerEvents(new VariousGameItemInventoryListener(), this);
+        pluginManager.registerEvents(new PlayerDeathListener(), this);
         pluginManager.registerEvents(new DispenserArmorListener(), this);
         pluginManager.registerEvents(new ArmorListener(Collections.emptyList()), this);
 
         if (pluginManager.getPlugin("PlaceholderAPI") != null) {
-            new GlowPlaceHolder().register();
-            new StarPlaceHolder().register();
+            new GlowPlaceholder().register();
+            new StarPlaceholder().register();
         }
     }
 

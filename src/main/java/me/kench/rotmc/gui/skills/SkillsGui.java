@@ -9,6 +9,7 @@ import me.kench.rotmc.player.stat.PlayerStats;
 import me.kench.rotmc.player.stat.Stat;
 import me.kench.rotmc.player.stat.Stats;
 import me.kench.rotmc.utils.ItemUtils;
+import me.kench.rotmc.utils.Messaging;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -28,6 +29,10 @@ public class SkillsGui {
         RotMcPlugin.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(player.getUniqueId())
                 .async(data -> {
+                    if (!data.hasSelectedClass()) {
+                        return null;
+                    }
+
                     PlayerStats stats = data.getSelectedClass().getStats();
 
                     ChestGui gui = new ChestGui(6, "Stats");
@@ -44,7 +49,14 @@ public class SkillsGui {
 
                     return gui;
                 })
-                .syncLast(gui -> gui.show(player))
+                .syncLast(gui -> {
+                    if (gui == null) {
+                        Messaging.sendMessage(player, "<red>You need to select a class before you can view your stats.");
+                        return;
+                    }
+
+                    gui.show(player);
+                })
                 .execute();
     }
 }

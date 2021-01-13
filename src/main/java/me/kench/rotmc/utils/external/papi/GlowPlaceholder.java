@@ -1,11 +1,11 @@
-package me.kench.rotmc.papi;
+package me.kench.rotmc.utils.external.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.kench.rotmc.utils.GlowUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class GlowPlaceHolder extends PlaceholderExpansion {
+public class GlowPlaceholder extends PlaceholderExpansion {
     @Override
     public @NotNull String getIdentifier() {
         return "rotmcglow";

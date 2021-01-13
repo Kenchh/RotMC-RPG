@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 
-public class XPEvent implements Listener {
+public class PlayerNativeXpLevelListener implements Listener {
     @EventHandler
     public void onExpChange(PlayerExpChangeEvent event) {
         event.setAmount(0);

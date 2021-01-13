@@ -63,6 +63,10 @@ public class LevelProgression {
         RotMcPlugin.getInstance().getDataManager().getPlayerData()
                 .chainLoadSafe(player.getUniqueId())
                 .syncLast(data -> {
+                    if (!data.hasSelectedClass()) {
+                        return;
+                    }
+
                     PlayerClass selectedClass = data.getSelectedClass();
                     player.setLevel(selectedClass.getLevel());
                     player.setExp(getLevelProgressPercentage(selectedClass));
